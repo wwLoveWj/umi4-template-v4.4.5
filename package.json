@@ -2,18 +2,33 @@
   "private": true,
   "author": "wwLoveWj <blww885@163.com>",
   "scripts": {
-    "dev": "umi dev",
+    "dev": "cross-env HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem umi dev",
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev"
   },
   "dependencies": {
-    "umi": "^4.4.5"
+    "@types/md5": "^2.3.5",
+    "ahooks": "^3.8.4",
+    "antd-mobile": "^5.38.1",
+    "axios": "^1.7.9",
+    "cross-env": "^7.0.3",
+    "html5-qrcode": "^2.3.8",
+    "jsencrypt": "^3.3.2",
+    "jsqr": "^1.4.0",
+    "md5": "^2.3.0",
+    "postcss-px-to-viewport": "^1.1.1",
+    "postcss-px2rem-exclude": "^0.0.6",
+    "push.js": "^1.0.12",
+    "umi": "^4.4.5",
+    "umi-plugin-keep-alive": "^0.0.1-beta.35",
+    "vstores": "^0.0.17"
   },
   "devDependencies": {
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
+    "@umijs/plugins": "^4.4.5",
     "typescript": "^5.0.3"
   }
 }
