@@ -1,0 +1,35 @@
+.content {
+  height: 200px;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 48px;
+  user-select: none;
+}
+.homePage {
+  height: auto;
+  background: #ffffff;
+  position: relative;
+}
+.homePage h1 {
+  padding: 9px;
+}
+.homePage .headerSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.homePage .headSearch {
+  height: 160px;
+  width: 100%;
+  background: #002FA7;
+}
+.homePage .homeBottom {
+  padding: 9px;
+}
+.homePage .homeBottom .majorEvents {
+  background: #F9DC24;
+  padding: 9px;
+  margin: 6px 0;
+}
