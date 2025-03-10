@@ -1,0 +1,123 @@
+.loginPage {
+  width: 100%;
+  height: 100vh;
+  font-family: "Arima", system-ui;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: url('../../assets/lake.jpg') no-repeat;
+  background-size: cover;
+}
+.loginPage .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  margin: 12px;
+  border-radius: 6px;
+  color: #fff;
+}
+.loginPage .container h1 {
+  font-weight: 800;
+  color: #00ffff;
+  letter-spacing: 0.2133rem;
+  margin: 20px 12px 30px;
+}
+.loginPage .container .formCard {
+  width: 100%;
+  background: transparent;
+  margin: 0 12px;
+}
+.loginPage .container .formCard :global .adm-input-element {
+  padding-left: 12px !important;
+  color: #fff;
+}
+.loginPage .container .formCard .resetPassword {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.loginPage .container .formCard .resetPassword .loginInput {
+  outline: none;
+  background: transparent;
+  border: none;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 8px 0;
+  width: 100%;
+  margin: 0 12px 20px;
+}
+.loginPage .container .formCard .resetPassword .eye {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  padding: 4px;
+  cursor: pointer;
+}
+.loginPage .container .formCard .resetPassword .eye svg {
+  display: block;
+  font-size: var(--adm-font-size-7);
+}
+.loginPage .container .formCard .loginInfoCheck {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  width: calc(100% - 24px);
+  margin: 0 12px 12px;
+}
+.loginPage .container .formCard .loginInfoCheck .checkPwd {
+  font-size: 22px;
+}
+.loginPage .container .formCard .loginInfoCheck .forgetPwd {
+  font-size: 14px;
+  line-height: 22px;
+}
+.loginPage .container .formCard .loginInfoCheck .forgetPwd:hover {
+  color: #00ffff;
+}
+.loginPage .container .formCard .loginInput {
+  outline: none;
+  background: transparent;
+  border: none;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 8px 0;
+  width: calc(100% - 24px);
+  margin: 0 12px 20px;
+}
+.loginPage .container .formCard .submitItem {
+  width: calc(100% - 24px);
+  background: #00ffff;
+  border-color: #00ffff;
+  border-radius: 5px;
+  margin: 20px 12px 20px;
+  color: #fff;
+}
+.resetPassword {
+  display: flex;
+  align-items: center;
+}
+.resetPassword .loginInput {
+  outline: none;
+  background: transparent;
+  border: none;
+  border: 1px solid #d3d3d3;
+  border-radius: 5px;
+  font-size: 16px;
+  padding: 8px 0;
+  width: 100%;
+  margin: 0 12px 20px;
+  flex: auto;
+}
+.resetPassword .eye {
+  padding: 4px;
+  cursor: pointer;
+}
+.resetPassword .eye svg {
+  display: block;
+  font-size: var(--adm-font-size-7);
+}

@@ -1,0 +1,10 @@
+.tabBar {
+  background: #002FA7;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  color: aliceblue;
+  backdrop-filter: blur(10px);
+}

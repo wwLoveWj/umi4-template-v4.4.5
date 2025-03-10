@@ -6,41 +6,49 @@ import {
   MessageFill,
   UnorderedListOutline,
   UserOutline,
+  ScanningOutline,
 } from "antd-mobile-icons";
+import { useNavigate, useLocation } from "react-router-dom";
+import styles from "./style.less";
 
 export default () => {
   const tabs = [
     {
-      key: "home",
+      key: "/home",
       title: "首页",
       icon: <AppOutline />,
       badge: Badge.dot,
     },
     {
-      key: "todo",
-      title: "待办",
+      key: "/baby",
+      title: "育儿",
       icon: <UnorderedListOutline />,
       badge: "5",
     },
     {
-      key: "message",
+      key: "/scan",
+      icon: <ScanningOutline />,
+    },
+    {
+      key: "/msg",
       title: "消息",
       icon: (active: boolean) =>
         active ? <MessageFill /> : <MessageOutline />,
       badge: "99+",
     },
     {
-      key: "personalCenter",
-      title: "我的666",
+      key: "/person",
+      title: "我的",
       icon: <UserOutline />,
     },
   ];
 
   const [activeKey, setActiveKey] = useState("todo");
-
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
   return (
-    <>
-      <TabBar activeKey={activeKey} onChange={setActiveKey}>
+    <div className={styles.tabBar}>
+      <TabBar activeKey={pathname} onChange={(value) => navigate(value)}>
         {tabs.map((item) => (
           <TabBar.Item
             key={item.key}
@@ -50,6 +58,6 @@ export default () => {
           />
         ))}
       </TabBar>
-    </>
+    </div>
   );
 };

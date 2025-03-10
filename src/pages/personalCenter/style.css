@@ -1,0 +1,38 @@
+.avatarInfo {
+  background: url('../../assets/lake.jpg') no-repeat;
+  position: relative;
+  padding: 20px 20px 20px;
+  color: #fff;
+}
+.avatarInfo .qrcodeIcon {
+  position: absolute;
+  right: 20px;
+  line-height: 30px;
+  font-size: 32px;
+}
+.avatarInfo .avatarShow {
+  display: flex;
+  align-items: center;
+}
+.avatarInfo .avatarShow .authorInfo {
+  margin-left: 8px;
+}
+.funcList {
+  display: flex;
+  background: #fff;
+  justify-content: space-between;
+  margin: 12px 8px;
+  padding: 10px 20px;
+}
+.funcList li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.funcList li div:first-of-type {
+  font-size: 30px;
+}
+.canClickList {
+  padding: 9px;
+}

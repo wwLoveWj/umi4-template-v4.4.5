@@ -1,0 +1,147 @@
+.loginPage {
+    width: 100%;
+    height: 100vh;
+    font-family: "Arima", system-ui;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: url('../../assets/lake.jpg') no-repeat;
+    // background-color: rgb(218, 245, 255);
+    background-size: cover;
+
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        overflow: hidden;
+        margin: 12px;
+        border-radius: 6px;
+        color: #fff;
+
+        h1 {
+            font-weight: 800;
+            color: rgb(0, 255, 255);
+            letter-spacing: .2133rem;
+            margin: 20px 12px 30px;
+        }
+
+        .formCard {
+            width: 100%;
+            background: transparent;
+            margin: 0 12px;
+
+            :global {
+                .adm-input-element {
+                    padding-left: 12px !important;
+                    color: #fff;
+                }
+            }
+
+            .resetPassword {
+                display: flex;
+                align-items: center;
+                position: relative;
+
+                .loginInput {
+                    outline: none;
+                    background: transparent;
+                    border: none;
+                    border: 1px solid rgb(211, 211, 211, 0.2);
+                    border-radius: 5px;
+                    font-size: 16px;
+                    padding: 8px 0;
+                    width: 100%;
+                    margin: 0 12px 20px;
+                    // flex: auto;
+                }
+
+                .eye {
+                    position: absolute;
+                    right: 20px;
+                    top: 10px;
+                    padding: 4px;
+                    cursor: pointer;
+
+                    svg {
+                        display: block;
+                        font-size: var(--adm-font-size-7);
+                    }
+                }
+            }
+
+            .loginInfoCheck {
+                display: flex;
+                justify-content: space-between;
+                cursor: pointer;
+                width: calc(100% - 24px);
+                margin: 0 12px 12px;
+
+                .checkPwd {
+                    font-size: 22px;
+                }
+
+                .forgetPwd {
+                    font-size: 14px;
+                    line-height: 22px;
+                }
+
+                .forgetPwd:hover {
+                    color: rgb(0, 255, 255);
+                }
+            }
+
+            .loginInput {
+                outline: none;
+                background: transparent;
+                border: none;
+                border: 1px solid rgb(211, 211, 211, 0.2);
+                border-radius: 5px;
+                font-size: 16px;
+                padding: 8px 0;
+                width: calc(100% - 24px);
+                margin: 0 12px 20px;
+            }
+
+            // 登录按钮的样式
+            .submitItem {
+                width: calc(100% - 24px);
+                background: rgb(0, 255, 255);
+                border-color: rgb(0, 255, 255);
+                border-radius: 5px;
+                margin: 20px 12px 20px;
+                color: #fff;
+            }
+        }
+    }
+}
+
+.resetPassword {
+    display: flex;
+    align-items: center;
+
+    .loginInput {
+        outline: none;
+        background: transparent;
+        border: none;
+        border: 1px solid rgb(211, 211, 211, 0.2);
+        border-radius: 5px;
+        font-size: 16px;
+        padding: 8px 0;
+        width: 100%;
+        margin: 0 12px 20px;
+        flex: auto;
+    }
+
+    .eye {
+        padding: 4px;
+        cursor: pointer;
+
+        svg {
+            display: block;
+            font-size: var(--adm-font-size-7);
+        }
+    }
+}

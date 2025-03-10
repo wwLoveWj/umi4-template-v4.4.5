@@ -1,0 +1,21 @@
+.babyContainer {
+  padding: 9px;
+  height: 100vh;
+}
+.babyContainer .time {
+  display: flex;
+  justify-content: center;
+  padding: 9px;
+}
+.babyContainer .babyCard .content {
+  height: 50px;
+}
+.babyContainer .babyCard .footer {
+  padding-top: 11px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+}
+.babyContainer .babyCard .customBody {
+  color: var(--adm-color-success);
+}
