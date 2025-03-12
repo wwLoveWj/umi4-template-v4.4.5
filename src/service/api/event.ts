@@ -1,8 +1,10 @@
 import request from "../request";
 
 // 大事件信息
-export const EventInfoListQueryAPI = (params: any) => {
-  return request.get<{ list: API.EventInfoType[] }>("/event/query", { params });
+export const EventInfoListQueryAPI = (
+  params: any
+): Promise<API.EventInfoType[]> => {
+  return request.get("/event/query", { params });
 };
 // 事件记录新增
 export const EventInfoCreateAPI = (params: any): Promise<any> => {

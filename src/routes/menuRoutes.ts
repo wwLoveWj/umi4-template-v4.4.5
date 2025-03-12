@@ -97,6 +97,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./personalCenter/components/WwGoal",
   },
   {
+    key: "todo",
+    title: "我的待办",
+    path: "/todo",
+    component: "./personalCenter/components/WwTodo",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "collect",
     title: "收藏",
     path: "/collect",

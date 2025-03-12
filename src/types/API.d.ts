@@ -102,6 +102,8 @@ declare namespace API {
     descrption: string;
     createTime: string;
     finishTime: string;
+    processTime: string;
+    description?: string;
     status: "finish" | "error" | "wait" | "process";
     tag: number; //事情重要程度
   }

@@ -11,6 +11,13 @@ type StorageType = {
   loginChecked: string;
   menuList: string[];
   tagList: { tagName: string; tagId: string }[];
+  todoList: {
+    title: string;
+    description: string;
+    noticeTime: string;
+    status: number;
+    todoId: string;
+  }[];
 };
 
 export const storage = vstores.create<StorageType>({

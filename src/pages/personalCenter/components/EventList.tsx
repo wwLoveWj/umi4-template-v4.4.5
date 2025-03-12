@@ -117,7 +117,7 @@ export default function EventList() {
         大事件
       </NavBar>
       {direction}
-      {eventInfoList?.length > 0 ? (
+      {eventInfoList && eventInfoList?.length > 0 ? (
         <List>
           {(eventInfoList || [])?.map((item, index) => (
             <SwipeAction

@@ -13,7 +13,7 @@ export default function Index({
 }: {
   defaultActiveKey: string;
   items: ItemsProps[];
-  onChange: (e: string) => void;
+  onChange?: (e: string) => void;
 }) {
   return (
     <Tabs defaultActiveKey={defaultActiveKey} onChange={onChange}>

@@ -1,0 +1,21 @@
+.todoContainer {
+  padding: 9px;
+  height: 100vh;
+}
+.todoContainer .time {
+  display: flex;
+  justify-content: center;
+  padding: 9px;
+}
+.todoContainer .babyCard .content {
+  height: 50px;
+}
+.todoContainer .babyCard .footer {
+  padding-top: 11px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+}
+.todoContainer .babyCard .customBody {
+  color: var(--adm-color-success);
+}

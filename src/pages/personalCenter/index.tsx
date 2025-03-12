@@ -63,7 +63,9 @@ export default function Index() {
     {
       title: "设置",
       icon: <SetOutline />,
-      onClick: () => {},
+      onClick: () => {
+        history.push("/todo");
+      },
     },
     {
       title: "我的待办",
