@@ -114,7 +114,9 @@ export default function Index() {
     {
       title: "接种记录",
       icon: <MovieOutline />,
-      onClick: () => {},
+      onClick: () => {
+        history.push("/vaccination");
+      },
     },
   ];
   // 自定义上传按钮

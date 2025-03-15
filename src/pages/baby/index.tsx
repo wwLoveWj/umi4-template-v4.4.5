@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import { Card, Toast, Button, FloatingBubble } from "antd-mobile";
-import {
-  AntOutline,
-  RightOutline,
-  MessageFill,
-  AddOutline,
-} from "antd-mobile-icons";
-import { history } from "umi";
+import { Card, Toast, Button } from "antd-mobile";
+import { AntOutline, RightOutline } from "antd-mobile-icons";
+import WjPopup from "@/components/WjPopup";
+import AddFloatingBubble from "@/components/floatingBubble";
+import AddFeedingRecords from "./components/Add";
 import styles from "./style.less";
 
 export default function Index() {
-  const [offset, setOffset] = useState({ x: -24, y: -24 });
+  const [visible, setVisible] = useState(false);
   const onHeaderClick = () => {
     Toast.show("点击了卡片Header区域");
   };
@@ -66,30 +63,19 @@ export default function Index() {
           </div>
         );
       })}
-
-      <FloatingBubble
-        axis="xy"
-        style={{
-          "--initial-position-bottom": "122px",
-          "--initial-position-right": "0",
-        }}
-        onOffsetChange={(offset) => {
-          setOffset(offset);
-        }}
-        offset={offset}
+      <AddFloatingBubble onClick={() => setVisible(true)} />
+      <WjPopup
+        value={visible}
+        onChange={setVisible}
+        isShowSubmit={false}
+        title={"喂奶记录"}
       >
-        <AddOutline
-          fontSize={32}
-          onClick={() =>
-            history.push(
-              {
-                pathname: "/baby/add",
-              },
-              { feedingId: "" }
-            )
-          }
+        <AddFeedingRecords
+          onClose={() => {
+            setVisible(false);
+          }}
         />
-      </FloatingBubble>
+      </WjPopup>
     </div>
   );
 }

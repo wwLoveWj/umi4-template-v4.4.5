@@ -141,6 +141,7 @@ export default function EventList() {
         onChange={setVisible}
         isShowSubmit={false}
         title={"添加大事"}
+        // popupHeight="85vh"
       >
         <EventAdd
           onClose={() => {

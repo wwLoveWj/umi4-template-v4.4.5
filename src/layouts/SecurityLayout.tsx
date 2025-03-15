@@ -34,13 +34,25 @@ export default function Layout() {
     return currentRouter?.showBack;
   }, [pathname, routes]);
   return (
-    <div className={styles.navs}>
+    <div className={styles.layoutContainer}>
       {shouldShowBack && (
-        <NavBar back="返回" onBack={() => history.back()}>
+        <NavBar
+          back="返回"
+          onBack={() => history.back()}
+          style={{
+            background: "#002FA7",
+            color: "#fff",
+            position: "sticky",
+            top: 0,
+            zIndex: 999,
+          }}
+        >
           {currentRoute?.title}
         </NavBar>
       )}
-      <Outlet />
+      <div className={styles.layoutContent}>
+        <Outlet />
+      </div>
       {shouldShowTabBar && <TabBar />}
     </div>
   );

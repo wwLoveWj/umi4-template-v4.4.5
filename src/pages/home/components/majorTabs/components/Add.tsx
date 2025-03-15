@@ -37,7 +37,7 @@ export default function Add({ onClose }: { onClose?: () => void }) {
 
     const params = {
       ...values,
-      processTime: dayjs().format("YYYY-MM-DD HH:mm:ss"),
+      processTime: dayjs(values?.processTime).format("YYYY-MM-DD HH:mm:ss"),
       eventId: guid(),
       status: "wait",
     };

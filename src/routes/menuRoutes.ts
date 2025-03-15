@@ -105,6 +105,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     showBack: true,
   },
   {
+    key: "vaccination",
+    title: "接种记录",
+    path: "/vaccination",
+    component: "./personalCenter/components/WwVaccination",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "collect",
     title: "收藏",
     path: "/collect",

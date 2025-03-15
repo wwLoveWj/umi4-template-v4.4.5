@@ -30,13 +30,13 @@ const marks = {
   180: 180,
   200: 200,
 };
-export default function Add() {
+export default function Add({ onClose }: { onClose?: () => void }) {
   const { feedingId } = (useLocation() as any).state || {};
   const isEditMode = !!feedingId;
   const requestFeedingInfoCreateAPI = useRequest(FeedingInfoCreateAPI, {
     manual: true,
     onSuccess: (res) => {
-      history.push("/baby");
+      onClose?.();
       // TODO: 查询列表更新信息
       // 语音提示用户任务
       const utterThis = new window.SpeechSynthesisUtterance(
