@@ -17,6 +17,7 @@ import dayjs from "dayjs";
 import { history } from "umi";
 import WjPopup from "@/components/WjPopup";
 import EventAdd from "@/pages/home/components/majorTabs/components/Add";
+import styles from "../style.less";
 
 export default function EventList() {
   const orientation = window.screen.orientation;
@@ -112,11 +113,11 @@ export default function EventList() {
     };
   }, []);
   return (
-    <>
-      <NavBar back="返回" onBack={() => history.push("/person")}>
+    <div className={styles.eventList}>
+      {/* <NavBar back="返回" onBack={() => history.push("/person")}>
         大事件
-      </NavBar>
-      {direction}
+      </NavBar> */}
+      {/* {direction} */}
       {eventInfoList && eventInfoList?.length > 0 ? (
         <List>
           {(eventInfoList || [])?.map((item, index) => (
@@ -150,6 +151,6 @@ export default function EventList() {
           }}
         />
       </WjPopup>
-    </>
+    </div>
   );
 }

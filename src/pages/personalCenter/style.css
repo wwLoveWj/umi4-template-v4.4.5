@@ -10,6 +10,12 @@
   line-height: 30px;
   font-size: 32px;
 }
+.avatarInfo .tool {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  height: 25px;
+}
 .avatarInfo .avatarShow {
   display: flex;
   align-items: center;
@@ -35,4 +41,7 @@
 }
 .canClickList {
   padding: 9px;
+}
+.eventList {
+  padding: 6px;
 }

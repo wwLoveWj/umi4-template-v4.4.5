@@ -28,7 +28,8 @@ export const menuRoutes: API.MenuRoutesType[] = [
     title: "大事件",
     path: "/event",
     component: "./personalCenter/components/EventList",
-    hideTabBar: true, // 需要隐藏 TabBar 的页面
+    hideTabBar: true,
+    showBack: true,
   },
   {
     key: "event",

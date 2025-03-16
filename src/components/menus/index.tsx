@@ -25,10 +25,10 @@ export default () => {
       icon: <UnorderedListOutline />,
       badge: "5",
     },
-    {
-      key: "/scan",
-      icon: <ScanningOutline />,
-    },
+    // {
+    //   key: "/scan",
+    //   icon: <ScanningOutline />,
+    // },
     {
       key: "/msg",
       title: "消息",

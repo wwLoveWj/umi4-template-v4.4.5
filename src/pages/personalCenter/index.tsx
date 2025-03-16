@@ -158,6 +158,10 @@ export default function Index() {
         >
           <SystemQRcodeOutline />
         </div>
+        {/* <div className={styles?.tool}>
+          <BellOutline />
+          <SetOutline />
+        </div> */}
         <div className={styles?.avatarShow}>
           <ImageUploader
             value={fileList}
