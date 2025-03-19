@@ -168,6 +168,7 @@ export default function Index() {
             onChange={setFileList}
             upload={mockUpload}
             maxCount={1}
+            deletable={false}
           >
             <div
               style={{

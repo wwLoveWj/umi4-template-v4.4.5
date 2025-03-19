@@ -107,4 +107,15 @@ declare namespace API {
     status: "finish" | "error" | "wait" | "process";
     tag: number; //事情重要程度
   }
+  // =============================接种疫苗=================================
+  interface VaccinationType {
+    batchNumber: string;
+    vaccineName: string;
+    inoculabilityTime?: string;
+    noticeTime?: string;
+    createTime?: string;
+    description?: string;
+    status?: "finish" | "error" | "wait" | "process";
+    tag: number; //事情重要程度
+  }
 }

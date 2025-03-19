@@ -20,6 +20,10 @@
   display: flex;
   align-items: center;
 }
+.avatarInfo .avatarShow :global .adm-image-img,
+.avatarInfo .avatarShow :global .adm-image-tip {
+  border-radius: 50%;
+}
 .avatarInfo .avatarShow .authorInfo {
   margin-left: 8px;
 }
