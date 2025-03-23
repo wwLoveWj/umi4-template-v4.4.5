@@ -13,6 +13,8 @@ import {
 import dayjs from "dayjs";
 import type { DatePickerRef } from "antd-mobile/es/components/date-picker";
 import type { RefObject } from "react";
+import { ScanningOutline } from "antd-mobile-icons";
+import { useModel } from "umi";
 
 const basicColumns = [
   [
@@ -24,8 +26,14 @@ const basicColumns = [
     { label: "五联", value: "trt" },
   ],
 ];
-export default function RegisterVaccination() {
+export default function RegisterVaccination({
+  onClose,
+}: {
+  onClose?: () => void;
+}) {
   const [formRef] = Form.useForm();
+  const { getCameras, html5QrCode, stop } = useModel("useScan");
+
   const onFinish = (values: API.VaccinationType) => {
     let params = {
       ...values,
@@ -34,113 +42,146 @@ export default function RegisterVaccination() {
         "YYYY-MM-DD HH:mm"
       ),
     };
-    debugger;
+    // 语音提示用户任务
+    const utterThis = new window.SpeechSynthesisUtterance(
+      `${
+        basicColumns[0]?.find((item) => item?.value === values?.vaccineName[0])
+          ?.label
+      }疫苗接种成功，请观察30分钟后再回家~`
+    );
+    formRef.resetFields();
+    onClose?.();
+    window.speechSynthesis.speak(utterThis);
   };
   return (
-    <Form
-      name="form"
-      form={formRef}
-      onFinish={onFinish}
-      footer={
-        <Button block type="submit" color="primary" size="large">
-          登记
-        </Button>
-      }
-    >
-      <NoticeBar
-        content={"系统会根据您的接种时间，在30天后通知您进行二次接种"}
-        color="alert"
-      />
-      <Form.Item
-        name="batchNumber"
-        label="疫苗批次号"
-        rules={[{ required: true }]}
-      >
-        <Input placeholder="请输入疫苗批次号" />
-      </Form.Item>
-      <Form.Item
-        name="vaccineName"
-        label="疫苗名称"
-        rules={[{ required: true }]}
-      >
-        {/* {(value, onChage) => ( */}
-        <Picker
-          columns={basicColumns}
-          value={formRef?.getFieldValue("vaccineName")}
-          onConfirm={(e) => {
-            formRef?.setFieldValue("vaccineName", e);
-          }}
-          //   onSelect={(val, extend) => {
-          //     console.log("onSelect", val, extend.items);
-          //   }}
-        >
-          {(items, { open }) => {
-            return (
-              <Space align="center">
-                {items.every((item) => item === null) ? (
-                  <span onClick={open}>请选择疫苗</span>
-                ) : (
-                  items.map((item) => item?.label)
-                )}
-              </Space>
-            );
-          }}
-        </Picker>
-      </Form.Item>
-      <Form.Item
-        name="tag"
-        label="接种情况"
-        rules={[{ required: true }]}
-        initialValue={[0]}
-      >
-        <Selector
-          columns={3}
-          options={[
-            {
-              label: "未接种",
-              value: 0,
-            },
-            {
-              label: "待接种",
-              value: 1,
-            },
-            {
-              label: "已接种",
-              value: 2,
-            },
-          ]}
-        />
-      </Form.Item>
-      <Form.Item
-        name="inoculabilityTime"
-        // label={
-        //   formRef?.getFieldValue("tag") === 2
-        //     ? "接种时间"
-        //     : formRef?.getFieldValue("tag") === 1
-        //     ? "待接种时间"
-        //     : "创建时间"
-        // }
-        label="接种时间"
-        trigger="onConfirm"
-        rules={[{ required: true }]}
-        onClick={(e, datePickerRef: RefObject<DatePickerRef>) => {
-          datePickerRef.current?.open();
-        }}
-      >
-        <DatePicker precision="minute">
-          {(value) =>
-            value ? dayjs(value).format("YYYY-MM-DD HH:mm") : "请选择接种时间"
+    <>
+      <div id="home">
+        <Form
+          name="form"
+          form={formRef}
+          onFinish={onFinish}
+          footer={
+            <Button block type="submit" color="primary" size="large">
+              登记
+            </Button>
           }
-        </DatePicker>
-      </Form.Item>
-      <Form.Item name="description" label="备注">
-        <TextArea
-          placeholder="请输入备注内容"
-          autoSize={{ minRows: 3, maxRows: 5 }}
-          showCount
-          maxLength={500}
-        />
-      </Form.Item>
-    </Form>
+        >
+          <NoticeBar
+            content={"系统会根据您的接种时间，在30天后通知您进行二次接种"}
+            color="alert"
+          />
+          <Form.Item
+            name="batchNumber"
+            label={
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>疫苗批次号</span>
+                <ScanningOutline
+                  style={{ color: "#002FA7", fontSize: "18px" }}
+                  onClick={() => {
+                    // console.log(html5QrCode, "疫苗");
+                    // debugger;
+                    // if (html5QrCode) stop();
+                    getCameras();
+                    onClose?.();
+                  }}
+                />
+              </div>
+            }
+            rules={[{ required: true }]}
+          >
+            <Input placeholder="请输入疫苗批次号" />
+          </Form.Item>
+          <Form.Item
+            name="vaccineName"
+            label="疫苗名称"
+            rules={[{ required: true }]}
+          >
+            {/* {(value, onChage) => ( */}
+            <Picker
+              columns={basicColumns}
+              value={formRef?.getFieldValue("vaccineName")}
+              onConfirm={(e) => {
+                formRef?.setFieldValue("vaccineName", e);
+              }}
+              //   onSelect={(val, extend) => {
+              //     console.log("onSelect", val, extend.items);
+              //   }}
+            >
+              {(items, { open }) => {
+                return (
+                  <Space align="center" onClick={open}>
+                    {items.every((item) => item === null) ? (
+                      <span>请选择疫苗</span>
+                    ) : (
+                      items.map((item) => item?.label)
+                    )}
+                  </Space>
+                );
+              }}
+            </Picker>
+          </Form.Item>
+          <Form.Item
+            name="tag"
+            label="接种情况"
+            rules={[{ required: true }]}
+            initialValue={[0]}
+          >
+            <Selector
+              columns={3}
+              options={[
+                {
+                  label: "未接种",
+                  value: 0,
+                },
+                {
+                  label: "待接种",
+                  value: 1,
+                },
+                {
+                  label: "已接种",
+                  value: 2,
+                },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
+            name="inoculabilityTime"
+            // label={
+            //   formRef?.getFieldValue("tag") === 2
+            //     ? "接种时间"
+            //     : formRef?.getFieldValue("tag") === 1
+            //     ? "待接种时间"
+            //     : "创建时间"
+            // }
+            label="接种时间"
+            trigger="onConfirm"
+            rules={[{ required: true }]}
+            onClick={(e, datePickerRef: RefObject<DatePickerRef>) => {
+              datePickerRef.current?.open();
+            }}
+          >
+            <DatePicker precision="minute">
+              {(value) =>
+                value
+                  ? dayjs(value).format("YYYY-MM-DD HH:mm")
+                  : "请选择接种时间"
+              }
+            </DatePicker>
+          </Form.Item>
+          <Form.Item name="description" label="备注">
+            <TextArea
+              placeholder="请输入备注内容"
+              autoSize={{ minRows: 3, maxRows: 5 }}
+              showCount
+              maxLength={500}
+            />
+          </Form.Item>
+        </Form>
+      </div>
+      <div className="qrcode">
+        <div id="reader"></div>
+        <div id="msg"></div>
+      </div>
+    </>
   );
 }

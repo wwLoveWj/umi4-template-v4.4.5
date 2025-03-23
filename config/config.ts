@@ -20,8 +20,8 @@ export default defineConfig({
   publicPath: isPrd ? "./" : "/",
   // TODO:启用initialState、model配置需要安装@umijs/plugins包，
   // 并在下面plugins配置两个插件：@umijs/plugins/dist/initial-state、@umijs/plugins/dist/model
-  //   initialState: {},
-  //   model: {}, // 使用useModel需要这个配置
+  initialState: {},
+  model: {}, // 使用useModel需要这个配置
 
   // locale: {},
   // icons: {},
@@ -56,12 +56,12 @@ export default defineConfig({
     "@service": "/src/service",
   },
   // 配置插件
-  //   plugins: [
-  //     "@umijs/plugins/dist/initial-state",//有 src/app.ts 并且导出 getInitialState 方法时启用。’
-  //     "@umijs/plugins/dist/model",
-  //     // "@umijs/plugins/dist/locale",
-  //     "umi-plugin-keep-alive",
-  //   ],
+  plugins: [
+    "@umijs/plugins/dist/initial-state", //有 src/app.ts 并且导出 getInitialState 方法时启用。’
+    "@umijs/plugins/dist/model",
+    // "@umijs/plugins/dist/locale",
+    // "umi-plugin-keep-alive",
+  ],
   // TODO:如果编写mobile移动端可以设置rem转换配置，注意exclude: /node_modules|excludeFile\.css$/一定要填写，
   // 不然它会转换三方包antd mobile中的数据，导致二次转换出现错误，三方包组件页面字变得很小
   extraPostCSSPlugins: [

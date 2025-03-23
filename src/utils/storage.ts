@@ -18,6 +18,7 @@ type StorageType = {
     status: number;
     todoId: string;
   }[];
+  html5QrCode: any;
 };
 
 export const storage = vstores.create<StorageType>({
