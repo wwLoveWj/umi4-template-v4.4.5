@@ -1,5 +1,6 @@
 .content {
-    height: 200px;
+    width: 100%;
+    height: 100%;
     color: #ffffff;
     display: flex;
     justify-content: center;
@@ -23,11 +24,6 @@
         align-items: center;
     }
 
-    .headSearch {
-        height: 160px;
-        width: 100%;
-        background: #002FA7;
-    }
 
     .homeBottom {
         padding: 9px;
@@ -38,4 +34,35 @@
             margin: 6px 0;
         }
     }
+}
+
+
+.main {
+    position: relative;
+    height: (calc(100vh - 80px));
+    overflow-y: auto;
+
+    :global {
+        .adm-tabs {
+            position: sticky;
+            top: 56px;
+            background-color: #fff;
+            z-index: 2;
+        }
+    }
+}
+
+.title {
+    position: sticky;
+    top: 0;
+    z-index: 26;
+    background: #fff;
+}
+
+.bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 140px;
+    background-color: pink;
 }

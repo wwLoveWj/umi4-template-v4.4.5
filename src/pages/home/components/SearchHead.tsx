@@ -17,34 +17,22 @@ export default function SearchHead() {
     };
   }, []);
   return (
-    <div className={styles?.headSearch}>
-      <Space
-        block
-        direction="vertical"
-        style={{
-          padding: "12px",
-          width: `calc(100% - 24px)`,
-          // position: "fixed",
-          zIndex: 999,
-          // background: "#002FA7",
+    <div style={{ padding: "12px", background: "pink" }}>
+      <SearchBar
+        ref={searchRef}
+        placeholder="请输入搜索内容"
+        searchIcon={
+          <ScanningOutline
+            style={{ color: "#002FA7", fontSize: "24px" }}
+            onClick={() => {
+              getCameras();
+            }}
+          />
+        }
+        onFocus={() => {
+          setVisible1(true);
         }}
-      >
-        <SearchBar
-          ref={searchRef}
-          placeholder="请输入搜索内容"
-          searchIcon={
-            <ScanningOutline
-              style={{ color: "#002FA7", fontSize: "24px" }}
-              onClick={() => {
-                getCameras();
-              }}
-            />
-          }
-          onFocus={() => {
-            setVisible1(true);
-          }}
-        />
-      </Space>
+      />
       <Popup
         visible={visible1}
         onMaskClick={() => {
