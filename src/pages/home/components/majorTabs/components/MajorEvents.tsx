@@ -53,6 +53,7 @@ export default function MajorEvents({ title = "近期大事件" }) {
                 </div>
               }
               status={item.status}
+              key={item.eventId}
               description={
                 <div>
                   <p>重要时刻：{formateTime(item?.processTime)}</p>

@@ -49,27 +49,8 @@ export default function Index() {
   const [visible1, setVisible1] = useState(false);
   const canChgList = [
     {
-      title: "重大事件",
-      icon: <UnorderedListOutline />,
-      onClick: () => {
-        history.push("/event");
-      },
-    },
-    {
-      title: "总资产",
-      icon: <PayCircleOutline />,
-      onClick: () => {},
-    },
-    {
       title: "设置",
       icon: <SetOutline />,
-      onClick: () => {
-        history.push("/todo");
-      },
-    },
-    {
-      title: "我的待办",
-      icon: <BellOutline />,
       onClick: () => {
         // createNotification("通知我");
         Push.Permission.request();
@@ -90,18 +71,29 @@ export default function Index() {
             navigator.vibrate(2000);
           }
         }, 1000);
-
-        // var u = navigator.userAgent;
-        // var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1;
-        // var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-        // var msg = "hello world";
-        // if (isAndroid) {
-        //   // sms:后面跟收件人的手机号,body后接短信内容
-
-        //   window.location.href = "sms:15868191835?body=" + msg;
-        // } else if (isIOS) {
-        //   window.location.href = "sms:10086&body=" + msg;
-        // }
+      },
+    },
+    {
+      title: "快捷操作",
+      icon: <PayCircleOutline />,
+      onClick: () => {
+        var u = navigator.userAgent;
+        var isAndroid = u.indexOf("Android") > -1 || u.indexOf("Adr") > -1;
+        var isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+        var msg = "hello world";
+        if (isAndroid) {
+          // sms:后面跟收件人的手机号,body后接短信内容
+          window.location.href = "sms:15868191835?body=" + msg;
+        } else if (isIOS) {
+          window.location.href = "sms:10086&body=" + msg;
+        }
+      },
+    },
+    {
+      title: "我的待办",
+      icon: <BellOutline />,
+      onClick: () => {
+        history.push("/todo");
       },
     },
     {
@@ -117,6 +109,18 @@ export default function Index() {
       onClick: () => {
         history.push("/vaccination");
       },
+    },
+    {
+      title: "重大事件",
+      icon: <UnorderedListOutline />,
+      onClick: () => {
+        history.push("/event");
+      },
+    },
+    {
+      title: "总资产",
+      icon: <PayCircleOutline />,
+      onClick: () => {},
     },
   ];
   // 自定义上传按钮
@@ -201,7 +205,7 @@ export default function Index() {
       </ul>
       <List header="可点击列表" className={styles?.canClickList}>
         {canChgList?.map((item) => (
-          <List.Item prefix={item.icon} onClick={item.onClick}>
+          <List.Item prefix={item.icon} onClick={item.onClick} key={item.title}>
             {item?.title}
           </List.Item>
         ))}

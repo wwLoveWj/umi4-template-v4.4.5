@@ -1,23 +1,22 @@
-import React, { useEffect, useRef, useState } from "react";
-import { SearchBar, Space, Toast, Popup, NavBar } from "antd-mobile";
+import React, { useRef, useState } from "react";
+import { SearchBar, Popup, NavBar } from "antd-mobile";
 import { SearchBarRef } from "antd-mobile/es/components/search-bar";
 import { ScanningOutline } from "antd-mobile-icons";
-import styles from "../style.less";
+// import styles from "../style.less";
 import { useModel } from "umi";
 
 export default function SearchHead() {
   const [visible1, setVisible1] = useState(false);
   const searchRef = useRef<SearchBarRef>(null);
-  const { getCameras, html5QrCode, stop } = useModel("useScan");
+  const { getCameras } = useModel("useScan");
 
-  useEffect(() => {
-    return () => {
-      console.log(html5QrCode, "首页");
-      if (html5QrCode) stop();
-    };
-  }, []);
   return (
-    <div style={{ padding: "12px", background: "pink" }}>
+    <div
+      style={{
+        padding: "12px",
+        background: "pink",
+      }}
+    >
       <SearchBar
         ref={searchRef}
         placeholder="请输入搜索内容"

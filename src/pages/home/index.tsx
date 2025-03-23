@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { history } from "umi";
+import React, { useRef, useState, useEffect } from "react";
+import { history, useModel } from "umi";
 import {
   Swiper,
   Toast,
@@ -26,15 +26,22 @@ import MajorEvents from "./components/majorTabs/index";
 import styles from "./style.less";
 
 export const demoImages = [
-  img1,
-  "https://images.unsplash.com/photo-1601128533718-374ffcca299b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3128&q=80",
-  "https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3113&q=80",
-  "https://images.unsplash.com/photo-1624993590528-4ee743c9896e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=1000&q=80",
+  "https://img1.baidu.com/it/u=788315313,2675512338&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=d7ef9e580911b86b75eb1cbd9687d9eb",
+  "https://img2.baidu.com/it/u=3423686319,3061697869&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=bcbf5e63683bf34f6737c7316fba973a",
+  "https://img2.baidu.com/it/u=815774148,3892081775&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=a34940ab279a5306e0e51da75fd4f72a",
+  "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=fca949e753c4f127a6c67a1560b73368",
 ];
-const swiperImages = [img1, img1, img1, img1, img1];
+const swiperImages = [
+  "https://img1.baidu.com/it/u=788315313,2675512338&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=d7ef9e580911b86b75eb1cbd9687d9eb",
+  "https://img2.baidu.com/it/u=3423686319,3061697869&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=bcbf5e63683bf34f6737c7316fba973a",
+  "https://img2.baidu.com/it/u=815774148,3892081775&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=a34940ab279a5306e0e51da75fd4f72a",
+  "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=fca949e753c4f127a6c67a1560b73368",
+];
 export default function Index() {
+  const { html5QrCode, stop } = useModel("useScan");
   const searchRef = useRef<SearchBarRef>(null);
   const [visible, setVisible] = useState(false);
+  const [imgWatchIdx, setImgWatchIdx] = useState(0);
 
   const items = swiperImages.map((imgSrc, index) => (
     <Swiper.Item key={index}>
@@ -45,6 +52,7 @@ export default function Index() {
         onClick={() => {
           setVisible(true);
           Toast.show(`你点击了卡片 ${index + 1}`);
+          setImgWatchIdx(index);
         }}
       />
     </Swiper.Item>
@@ -70,10 +78,15 @@ export default function Index() {
   //     closeWebSocket();
   //   };
   // }, []);
-
+  useEffect(() => {
+    return () => {
+      console.log(html5QrCode, "首页");
+      if (html5QrCode) stop();
+    };
+  }, []);
   return (
     <>
-      <div id="home" className={styles.homePage}>
+      <div className={styles.homePage} id="home">
         <SearchHead />
         <div className={styles.main}>
           <div className={styles.bg}></div>
@@ -93,10 +106,9 @@ export default function Index() {
             {items}
           </Swiper>
           {/* 照片查看器 */}
-          <ImageViewer.Multi
-            images={demoImages}
+          <ImageViewer
+            image={demoImages[imgWatchIdx]}
             visible={visible}
-            defaultIndex={1}
             onClose={() => {
               setVisible(false);
             }}
@@ -140,10 +152,10 @@ export default function Index() {
             <Button onClick={() => stop()}>关闭888</Button>
           </div>
         </div>
-        <div className="qrcode">
-          <div id="reader"></div>
-          <div id="msg"></div>
-        </div>
+      </div>
+      <div className="qrcode">
+        <div id="reader"></div>
+        <div id="msg"></div>
       </div>
     </>
   );
