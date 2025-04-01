@@ -50,7 +50,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     title: "喂养记录",
     path: "/baby/add",
     hideTabBar: true,
-    component: "./baby/components/Add",
+    component: "./baby/feeding/components/Add",
     showBack: true,
   },
   {

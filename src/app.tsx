@@ -4,7 +4,7 @@ import { ConfigProvider } from "antd-mobile";
 import Package from "../package.json";
 import React from "react";
 import zhCN from "antd-mobile/es/locales/zh-CN";
-
+import "@/utils/app-back-button.js";
 // 初始化路由菜单数据
 // export async function getInitialState() {
 //   return {};

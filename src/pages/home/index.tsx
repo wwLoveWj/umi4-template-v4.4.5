@@ -81,12 +81,12 @@ export default function Index() {
   useEffect(() => {
     return () => {
       console.log(html5QrCode, "首页");
-      if (html5QrCode) stop();
+      if (html5QrCode?.isScanning) stop();
     };
   }, []);
   return (
     <>
-      <div className={styles.homePage} id="home">
+      <div className={styles.homePage}>
         <SearchHead />
         <div className={styles.main}>
           <div className={styles.bg}></div>
@@ -153,10 +153,10 @@ export default function Index() {
           </div>
         </div>
       </div>
-      <div className="qrcode">
+      {/* <div className="qrcode">
         <div id="reader"></div>
         <div id="msg"></div>
-      </div>
+      </div> */}
     </>
   );
 }

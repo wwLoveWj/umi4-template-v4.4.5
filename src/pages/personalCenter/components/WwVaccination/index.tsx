@@ -41,7 +41,7 @@ export default function MajorEvents({ title = "疫苗接种登记" }) {
   useEffect(() => {
     return () => {
       console.log(html5QrCode, "疫苗");
-      if (html5QrCode) stop();
+      if (html5QrCode?.isScanning) stop();
     };
   }, []);
   return (
