@@ -1,8 +1,16 @@
-.avatarInfo {
-    background: url('../../assets/lake.jpg') no-repeat;
+.bgAvtar {
+
     position: relative;
+    width: 100%;
+    // padding-bottom: 20px;
+    height: 170px;
+}
+
+.avatarInfo {
     padding: 20px 20px 20px;
     color: #fff;
+    background: url('../../assets/lake.jpg') no-repeat;
+    height: 150px;
 
     .qrcodeIcon {
         position: absolute;
@@ -44,6 +52,11 @@
     justify-content: space-between;
     margin: 12px 8px;
     padding: 10px 20px;
+    border-radius: 8px;
+    position: absolute;
+    bottom: -20px;
+    right: 0;
+    left: 0;
 
     li {
         display: flex;
@@ -59,7 +72,7 @@
 }
 
 .canClickList {
-    padding: 9px;
+    padding: 32px 9px;
 }
 
 // 事件记录

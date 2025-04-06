@@ -122,6 +122,11 @@ export default function Index() {
       icon: <PayCircleOutline />,
       onClick: () => {},
     },
+    {
+      title: "宝宝相册",
+      icon: <PayCircleOutline />,
+      onClick: () => {},
+    },
   ];
   // 自定义上传按钮
   const [fileList, setFileList] = useState<ImageUploadItem[]>([
@@ -137,73 +142,75 @@ export default function Index() {
   }
   return (
     <>
-      <div className={styles?.avatarInfo}>
-        <div
-          className={styles?.qrcodeIcon}
-          onClick={() =>
-            Dialog.alert({
-              content: (
-                <div>
-                  <img
-                    src={require("@/assets/ocr.png")}
-                    style={{
-                      objectFit: "cover",
-                      width: "100%",
-                      height: "100%",
-                    }}
-                  />
-                </div>
-              ),
-              onConfirm: () => {
-                console.log("Confirmed");
-              },
-            })
-          }
-        >
-          <SystemQRcodeOutline />
-        </div>
-        {/* <div className={styles?.tool}>
+      <div className={styles?.bgAvtar}>
+        <div className={styles?.avatarInfo}>
+          <div
+            className={styles?.qrcodeIcon}
+            onClick={() =>
+              Dialog.alert({
+                content: (
+                  <div>
+                    <img
+                      src={require("@/assets/ocr.png")}
+                      style={{
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      }}
+                    />
+                  </div>
+                ),
+                onConfirm: () => {
+                  console.log("Confirmed");
+                },
+              })
+            }
+          >
+            <SystemQRcodeOutline />
+          </div>
+          {/* <div className={styles?.tool}>
           <BellOutline />
           <SetOutline />
         </div> */}
-        <div className={styles?.avatarShow}>
-          <ImageUploader
-            value={fileList}
-            onChange={setFileList}
-            upload={mockUpload}
-            maxCount={1}
-            deletable={false}
-          >
-            <div
-              style={{
-                width: 80,
-                height: 80,
-                borderRadius: 40,
-                backgroundColor: "#f5f5f5",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                color: "#999999",
-              }}
+          <div className={styles?.avatarShow}>
+            <ImageUploader
+              value={fileList}
+              onChange={setFileList}
+              upload={mockUpload}
+              maxCount={1}
+              deletable={false}
             >
-              <PictureOutline style={{ fontSize: 32 }} />
+              <div
+                style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: 40,
+                  backgroundColor: "#f5f5f5",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "#999999",
+                }}
+              >
+                <PictureOutline style={{ fontSize: 32 }} />
+              </div>
+            </ImageUploader>
+            <div className={styles.authorInfo}>
+              <h3>我的名字</h3>
+              <span>关注量</span>
             </div>
-          </ImageUploader>
-          <div className={styles.authorInfo}>
-            <h3>我的名字</h3>
-            <span>关注量</span>
           </div>
         </div>
+        <ul className={styles?.funcList}>
+          {configList?.map((item, index) => (
+            <li key={index} onClick={item?.onClick}>
+              <div>{item?.icon}</div>
+              <div>{item?.title}</div>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul className={styles?.funcList}>
-        {configList?.map((item, index) => (
-          <li key={index} onClick={item?.onClick}>
-            <div>{item?.icon}</div>
-            <div>{item?.title}</div>
-          </li>
-        ))}
-      </ul>
-      <List header="可点击列表" className={styles?.canClickList}>
+      <List className={styles?.canClickList}>
         {canChgList?.map((item) => (
           <List.Item prefix={item.icon} onClick={item.onClick} key={item.title}>
             {item?.title}

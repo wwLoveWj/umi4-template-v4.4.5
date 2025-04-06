@@ -1,6 +1,8 @@
 import React, { useEffect, RefObject } from "react";
 import schedule from "node-schedule";
 import { createNotification } from "@/utils/index";
+// import sendEmail from "@/utils/email";
+const sendEmail = require("@/utils/email");
 import { Button, DatePicker, TextArea, Form, Input } from "antd-mobile";
 import type { DatePickerRef } from "antd-mobile/es/components/date-picker";
 import dayjs from "dayjs";
@@ -12,23 +14,37 @@ export default function Index({
   onClose?: (params: any) => void;
 }) {
   const todoList = storage?.get("todoList") || [];
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     const noticeTime = {
       hour: dayjs(values?.noticeTime).hour(),
       minute: dayjs(values?.noticeTime).minute(),
     };
-    schedule.scheduleJob(noticeTime, (time) => {
-      try {
-        // 定时提醒时间到了发送邮件/通知
-        console.log("通知时间", time);
-        debugger;
-        createNotification(values?.title, {
-          body: values?.description,
-        });
-      } catch (error) {
-        console.error("Send reminder email error:", error);
-      }
+    await sendEmail({
+      title: values?.title,
+      content: values?.description,
+      sendToWho: "xxx@163.com",
+    }).then((res) => {
+      debugger;
     });
+    // schedule.scheduleJob(noticeTime, (time) => {
+    //   try {
+    //     // 定时提醒时间到了发送邮件/通知
+    //     console.log("通知时间", time);
+    //     debugger;
+    //     createNotification(values?.title, {
+    //       body: values?.description,
+    //     });
+    //     sendMail({
+    //       title: values?.title,
+    //       content: values?.description,
+    //       sendToWho: "xxx@hh.com",
+    //     }).then((res) => {
+    //       debugger;
+    //     });
+    //   } catch (error) {
+    //     console.error("Send reminder email error:", error);
+    //   }
+    // });
     let arr = [
       ...todoList,
       {

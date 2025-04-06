@@ -1,11 +1,19 @@
 import React from "react";
 import { Form, Input, Button, Dialog, TextArea } from "antd-mobile";
-
+import { MailSendAPI } from "@/service/api/mail";
 export default function SendMail({ onClose }: { onClose?: () => void }) {
   const [formRef] = Form.useForm();
   const onFinish = (values: any) => {
     Dialog.alert({
       content: <pre>{JSON.stringify(values, null, 2)}</pre>,
+    });
+    MailSendAPI({
+      to: values?.email,
+      text: values?.content,
+      subject: values?.title,
+      nickname: "系统",
+      recipientname: "女王大人",
+      currentUser: "xxx123@163.com",
     });
     formRef.resetFields();
     onClose?.();
