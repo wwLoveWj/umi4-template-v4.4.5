@@ -35,25 +35,31 @@ export default function Layout() {
   }, [pathname, routes]);
   return (
     <div className={styles.layoutContainer}>
-      {shouldShowBack && (
-        <NavBar
-          back="返回"
-          onBack={() => history.back()}
-          style={{
-            background: "#002FA7",
-            color: "#fff",
-            position: "sticky",
-            top: 0,
-            zIndex: 999,
-          }}
-        >
-          {currentRoute?.title}
-        </NavBar>
-      )}
-      <div className={styles.layoutContent}>
-        <Outlet />
+      <div id="home">
+        {shouldShowBack && (
+          <NavBar
+            back="返回"
+            onBack={() => history.back()}
+            style={{
+              background: "#002FA7",
+              color: "#fff",
+              position: "sticky",
+              top: 0,
+              zIndex: 999,
+            }}
+          >
+            {currentRoute?.title}
+          </NavBar>
+        )}
+        <div className={styles.layoutContent}>
+          <Outlet />
+        </div>
+        {shouldShowTabBar && <TabBar />}
       </div>
-      {shouldShowTabBar && <TabBar />}
+      <div className="qrcode">
+        <div id="reader"></div>
+        <div id="msg"></div>
+      </div>
     </div>
   );
 }

@@ -1955,6 +1955,17 @@
     regenerate-unicode-properties "10.1.1"
     spdy "^4.0.2"
 
+"@umijs/bundler-utils@4.4.6":
+  version "4.4.6"
+  resolved "https://registry.npmjs.org/@umijs/bundler-utils/-/bundler-utils-4.4.6.tgz#792490d3dec7e70f71d5b539c2fb68d0f29c674a"
+  integrity sha512-JTqva1w4OVNw9ARlHvRgWFiynGQEDXhG79dxaQ2OWw7Y/dKUk5NP67DIA6xlFFCWXLXWQYV0bsYm1ESmaSdk9g==
+  dependencies:
+    "@umijs/utils" "4.4.6"
+    esbuild "0.21.4"
+    regenerate "^1.4.2"
+    regenerate-unicode-properties "10.1.1"
+    spdy "^4.0.2"
+
 "@umijs/bundler-vite@4.4.5":
   version "4.4.5"
   resolved "https://registry.npmjs.org/@umijs/bundler-vite/-/bundler-vite-4.4.5.tgz#a6245bdf99c29b9412920cf45e3a3569fd4b84c4"
@@ -2188,10 +2199,10 @@
   dependencies:
     tsx "3.12.2"
 
-"@umijs/plugins@^4.4.5":
-  version "4.4.5"
-  resolved "https://registry.npmjs.org/@umijs/plugins/-/plugins-4.4.5.tgz#3db09ac010979fd7cd74ba312d02854d6b88f6cb"
-  integrity sha512-MC2248NM4E+j3FzNz1luz4m55MkTHfe99DCKr43pAsKhOsKT3KOij+Eph3nNKYgSf4mcLAs99v4MLpxACv6qcw==
+"@umijs/plugins@^4.4.6":
+  version "4.4.6"
+  resolved "https://registry.npmjs.org/@umijs/plugins/-/plugins-4.4.6.tgz#4e3e3efcae5b965d9ac5d651e39af55f25ca976a"
+  integrity sha512-A6lhGITIR3cnjzlApGO/1sMXgX0wnGrC57cEtq9yrbEF6c13Ehi/8jAFeLP7EcbfLAKebRVTGky+LquSVs1UEQ==
   dependencies:
     "@ahooksjs/use-request" "^2.0.0"
     "@ant-design/antd-theme-variable" "^1.0.0"
@@ -2201,7 +2212,7 @@
     "@ant-design/pro-components" "^2.0.1"
     "@tanstack/react-query" "^4.24.10"
     "@tanstack/react-query-devtools" "^4.24.10"
-    "@umijs/bundler-utils" "4.4.5"
+    "@umijs/bundler-utils" "4.4.6"
     "@umijs/valtio" "1.0.4"
     antd-dayjs-webpack-plugin "^1.0.6"
     axios "^0.27.2"
@@ -2337,6 +2348,14 @@
   version "4.4.5"
   resolved "https://registry.npmjs.org/@umijs/utils/-/utils-4.4.5.tgz#0c472ffc1d8eca68764f04638f32a7ee6c11bdca"
   integrity sha512-DMey4yrb7WQFhFeSNbrCqnnGtNtbYVV3FB174dEmKim5SK+stEh8aACRqhMFBqr+b1DlEI3/FpbUsawpIiJWTg==
+  dependencies:
+    chokidar "3.5.3"
+    pino "7.11.0"
+
+"@umijs/utils@4.4.6":
+  version "4.4.6"
+  resolved "https://registry.npmjs.org/@umijs/utils/-/utils-4.4.6.tgz#92c98e7edd0715621b652d70f766fe822a2bfb61"
+  integrity sha512-W273HinahK0ZmfYQ/x8GsgS9ZMCknLB9ID+6sQhPoiA1ARKmD3RYD0ZHrboz19fILD4amFqeAYaF22rLuyz7OQ==
   dependencies:
     chokidar "3.5.3"
     pino "7.11.0"
@@ -6214,6 +6233,11 @@ node-schedule@^2.1.1:
     cron-parser "^4.2.0"
     long-timeout "0.1.1"
     sorted-array-functions "^1.3.0"
+
+nodemailer@^6.9.13:
+  version "6.10.0"
+  resolved "https://registry.npmjs.org/nodemailer/-/nodemailer-6.10.0.tgz#1f24c9de94ad79c6206f66d132776b6503003912"
+  integrity sha512-SQ3wZCExjeSatLE/HBaXS5vqUOQk6GtBdIIKxiFdmm01mOQZX/POJkO3SUX1wDiYcwUOJwT23scFSC9fY2H8IA==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"
