@@ -97,6 +97,20 @@
   margin: 20px 12px 20px;
   color: #fff;
 }
+.loginPage .container .formCard .qrLoginButton {
+  width: calc(100% - 24px);
+  background: transparent;
+  border: 1px solid #00ffff;
+  border-radius: 5px;
+  margin: 0 12px 20px;
+  color: #00ffff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+.loginPage .container .formCard .qrLoginButton:hover {
+  background: rgba(0, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
 .resetPassword {
   display: flex;
   align-items: center;

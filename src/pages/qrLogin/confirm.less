@@ -1,0 +1,274 @@
+.confirmPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    .container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 450px;
+        width: 100%;
+        text-align: center;
+
+        .loadingWrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+
+            p {
+                margin-top: 20px;
+                color: #666;
+                font-size: 16px;
+            }
+        }
+
+        .header {
+            margin-bottom: 30px;
+
+            h1 {
+                font-size: 28px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            p {
+                color: #666;
+                font-size: 16px;
+                margin: 0;
+            }
+        }
+
+        .userInfo {
+            margin-bottom: 30px;
+
+            .avatarSection {
+                display: flex;
+                align-items: center;
+                margin-bottom: 25px;
+                padding: 20px;
+                background: #f8f9fa;
+                border-radius: 15px;
+
+                .avatar {
+                    width: 80px;
+                    height: 80px;
+                    margin-right: 20px;
+                    border: 3px solid #667eea;
+                }
+
+                .userDetails {
+                    text-align: left;
+                    flex: 1;
+
+                    h2 {
+                        font-size: 22px;
+                        font-weight: 600;
+                        color: #333;
+                        margin: 0 0 8px 0;
+                    }
+
+                    .email {
+                        color: #666;
+                        font-size: 14px;
+                        margin: 0 0 5px 0;
+                    }
+
+                    .loginName {
+                        color: #999;
+                        font-size: 13px;
+                        margin: 0;
+                    }
+                }
+            }
+
+            .loginInfo {
+                background: #f8f9fa;
+                border-radius: 12px;
+                padding: 20px;
+
+                .infoItem {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    padding: 10px 0;
+                    border-bottom: 1px solid #e9ecef;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+
+                    .label {
+                        color: #666;
+                        font-size: 14px;
+                        font-weight: 500;
+                    }
+
+                    .value {
+                        color: #333;
+                        font-size: 14px;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .securityTips {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+
+            h3 {
+                font-size: 16px;
+                font-weight: 600;
+                color: #856404;
+                margin: 0 0 15px 0;
+                text-align: center;
+            }
+
+            ul {
+                margin: 0;
+                padding-left: 20px;
+
+                li {
+                    color: #856404;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    margin-bottom: 8px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+
+            .confirmButton {
+                height: 50px;
+                border-radius: 12px;
+                font-size: 16px;
+                font-weight: 600;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border: none;
+                color: white;
+                transition: all 0.3s;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                }
+
+                &:disabled {
+                    opacity: 0.7;
+                    transform: none;
+                }
+            }
+
+            .cancelButton {
+                height: 50px;
+                border-radius: 12px;
+                font-size: 16px;
+                color: #666;
+                border: 2px solid #e1e5e9;
+                background: white;
+                transition: all 0.3s;
+
+                &:hover {
+                    border-color: #667eea;
+                    color: #667eea;
+                }
+
+                &:disabled {
+                    opacity: 0.5;
+                }
+            }
+        }
+
+        .footer {
+            p {
+                color: #999;
+                font-size: 12px;
+                margin: 0;
+            }
+        }
+    }
+}
+
+// 响应式设计
+@media (max-width: 480px) {
+    .confirmPage {
+        padding: 10px;
+
+        .container {
+            padding: 20px;
+
+            .header {
+                h1 {
+                    font-size: 24px;
+                }
+
+                p {
+                    font-size: 14px;
+                }
+            }
+
+            .userInfo {
+                .avatarSection {
+                    flex-direction: column;
+                    text-align: center;
+
+                    .avatar {
+                        margin-right: 0;
+                        margin-bottom: 15px;
+                    }
+
+                    .userDetails {
+                        text-align: center;
+                    }
+                }
+            }
+
+            .actions {
+
+                .confirmButton,
+                .cancelButton {
+                    height: 45px;
+                    font-size: 15px;
+                }
+            }
+        }
+    }
+}
+
+// 加载动画
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirmPage .container {
+    animation: fadeIn 0.5s ease-out;
+}

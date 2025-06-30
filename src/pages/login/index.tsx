@@ -241,6 +241,17 @@ const Login = () => {
           >
             登录
           </Button>
+
+          {/* 扫码登录按钮 */}
+          <Button
+            className={styles.qrLoginButton}
+            fill="outline"
+            onClick={() => {
+              history.push("/qrLogin");
+            }}
+          >
+            📱 扫码登录
+          </Button>
         </div>
       </div>
     </div>

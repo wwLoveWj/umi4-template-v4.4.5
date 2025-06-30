@@ -1,0 +1,281 @@
+.qrLoginPage {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.qrLoginPage .container {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+.qrLoginPage .container .header {
+  margin-bottom: 30px;
+}
+.qrLoginPage .container .header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+}
+.qrLoginPage .container .header p {
+  color: #666;
+  font-size: 16px;
+  margin: 0;
+}
+.qrLoginPage .container .scanContainer {
+  margin-bottom: 30px;
+}
+.qrLoginPage .container .scanContainer .cameraSelector {
+  margin-bottom: 20px;
+}
+.qrLoginPage .container .scanContainer .cameraSelector select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e1e5e9;
+  border-radius: 10px;
+  font-size: 16px;
+  background: white;
+  color: #333;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.qrLoginPage .container .scanContainer .cameraSelector select:focus {
+  border-color: #667eea;
+}
+.qrLoginPage .container .scanContainer .cameraSelector select:disabled {
+  background: #f5f5f5;
+  color: #999;
+}
+.qrLoginPage .container .scanContainer .scanArea {
+  position: relative;
+  margin-bottom: 20px;
+}
+.qrLoginPage .container .scanContainer .scanArea .qrReader {
+  width: 100%;
+  height: 300px;
+  border-radius: 15px;
+  overflow: hidden;
+  border: 3px solid #e1e5e9;
+  background: #f8f9fa;
+}
+.qrLoginPage .container .scanContainer .scanArea .qrReader video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.qrLoginPage .container .scanContainer .scanArea .qrReader::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  border: 2px solid #667eea;
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 10;
+}
+.qrLoginPage .container .scanContainer .scanArea .qrReader::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px;
+  background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
+  border-radius: 10px;
+  pointer-events: none;
+  z-index: 5;
+  animation: scanAnimation 2s infinite;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  z-index: 20;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay .successIcon,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay .successIcon,
+.qrLoginPage .container .scanContainer .scanArea .successOverlay .errorIcon,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay .errorIcon {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay .successIcon,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay .successIcon {
+  color: #52c41a;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay .errorIcon,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay .errorIcon {
+  color: #ff4d4f;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay p,
+.qrLoginPage .container .scanContainer .scanArea .errorOverlay p {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+}
+.qrLoginPage .container .scanContainer .scanArea .successOverlay .successIcon {
+  animation: successPulse 1s ease-in-out;
+}
+.qrLoginPage .container .scanContainer .controls {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.qrLoginPage .container .scanContainer .controls .scanButton,
+.qrLoginPage .container .scanContainer .controls .stopButton,
+.qrLoginPage .container .scanContainer .controls .switchButton {
+  flex: 1;
+  min-width: 120px;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+.qrLoginPage .container .scanContainer .controls .scanButton:disabled,
+.qrLoginPage .container .scanContainer .controls .stopButton:disabled,
+.qrLoginPage .container .scanContainer .controls .switchButton:disabled {
+  opacity: 0.6;
+}
+.qrLoginPage .container .scanContainer .controls .scanButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+}
+.qrLoginPage .container .scanContainer .controls .scanButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+}
+.qrLoginPage .container .scanContainer .controls .stopButton {
+  border: 2px solid #ff4d4f;
+  color: #ff4d4f;
+}
+.qrLoginPage .container .scanContainer .controls .stopButton:hover {
+  background: #ff4d4f;
+  color: white;
+}
+.qrLoginPage .container .scanContainer .controls .switchButton {
+  border: 2px solid #667eea;
+  color: #667eea;
+}
+.qrLoginPage .container .scanContainer .controls .switchButton:hover {
+  background: #667eea;
+  color: white;
+}
+.qrLoginPage .container .tips {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.qrLoginPage .container .tips h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.qrLoginPage .container .tips ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.qrLoginPage .container .tips ul li {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.qrLoginPage .container .tips ul li:last-child {
+  margin-bottom: 0;
+}
+.qrLoginPage .container .actions .backButton {
+  width: 100%;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 16px;
+  color: #666;
+  border: 2px solid #e1e5e9;
+  background: white;
+  transition: all 0.3s;
+}
+.qrLoginPage .container .actions .backButton:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+@keyframes scanAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+@keyframes successPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (max-width: 480px) {
+  .qrLoginPage {
+    padding: 10px;
+  }
+  .qrLoginPage .container {
+    padding: 20px;
+  }
+  .qrLoginPage .container .header h1 {
+    font-size: 24px;
+  }
+  .qrLoginPage .container .header p {
+    font-size: 14px;
+  }
+  .qrLoginPage .container .scanContainer .scanArea .qrReader {
+    height: 250px;
+  }
+  .qrLoginPage .container .scanContainer .scanArea .qrReader::before,
+  .qrLoginPage .container .scanContainer .scanArea .qrReader::after {
+    width: 180px;
+    height: 180px;
+  }
+  .qrLoginPage .container .scanContainer .controls {
+    flex-direction: column;
+  }
+  .qrLoginPage .container .scanContainer .controls .scanButton,
+  .qrLoginPage .container .scanContainer .controls .stopButton,
+  .qrLoginPage .container .scanContainer .controls .switchButton {
+    width: 100%;
+  }
+}

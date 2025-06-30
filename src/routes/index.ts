@@ -28,6 +28,26 @@ const routes: API.MenuRoutesType[] = [
     layout: false,
   },
   {
+    path: "/qrLogin",
+    component: "@/pages/qrLogin", // 扫码登录页面
+    layout: false,
+  },
+  {
+    path: "/qrLogin/confirm",
+    component: "@/pages/qrLogin/confirm", // 扫码确认页面
+    layout: false,
+  },
+  {
+    path: "/qrTest",
+    component: "@/pages/qrLogin/test", // 扫码测试页面
+    layout: false,
+  },
+  {
+    path: "/qrDebug",
+    component: "@/pages/qrLogin/debug", // 扫码调试页面
+    layout: false,
+  },
+  {
     path: "/forgetPwd",
     component: "@/pages/login/components/ResetPwd",
   },
@@ -40,7 +60,7 @@ const routes: API.MenuRoutesType[] = [
         path: "/",
         exact: true,
         hidden: true,
-        redirect: "/home",
+        redirect: "/qrLogin",
       },
       ...menuRoutes,
     ],

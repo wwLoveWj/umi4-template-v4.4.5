@@ -1,0 +1,339 @@
+.qrLoginPage {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    .container {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+
+        .header {
+            margin-bottom: 30px;
+
+            h1 {
+                font-size: 28px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            p {
+                color: #666;
+                font-size: 16px;
+                margin: 0;
+            }
+        }
+
+        .scanContainer {
+            margin-bottom: 30px;
+
+            .cameraSelector {
+                margin-bottom: 20px;
+
+                select {
+                    width: 100%;
+                    padding: 12px;
+                    border: 2px solid #e1e5e9;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    background: white;
+                    color: #333;
+                    outline: none;
+                    transition: border-color 0.3s;
+
+                    &:focus {
+                        border-color: #667eea;
+                    }
+
+                    &:disabled {
+                        background: #f5f5f5;
+                        color: #999;
+                    }
+                }
+            }
+
+            .scanArea {
+                position: relative;
+                margin-bottom: 20px;
+
+                .qrReader {
+                    width: 100%;
+                    height: 300px;
+                    border-radius: 15px;
+                    overflow: hidden;
+                    border: 3px solid #e1e5e9;
+                    background: #f8f9fa;
+
+                    // 自定义扫码框样式
+                    video {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+
+                    // 扫码框指示器
+                    &::before {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 200px;
+                        height: 200px;
+                        border: 2px solid #667eea;
+                        border-radius: 10px;
+                        pointer-events: none;
+                        z-index: 10;
+                    }
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 200px;
+                        height: 200px;
+                        background: linear-gradient(45deg, transparent 30%, rgba(102, 126, 234, 0.1) 50%, transparent 70%);
+                        border-radius: 10px;
+                        pointer-events: none;
+                        z-index: 5;
+                        animation: scanAnimation 2s infinite;
+                    }
+                }
+
+                .successOverlay,
+                .errorOverlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: rgba(255, 255, 255, 0.95);
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 15px;
+                    z-index: 20;
+
+                    .successIcon,
+                    .errorIcon {
+                        font-size: 48px;
+                        margin-bottom: 15px;
+                    }
+
+                    .successIcon {
+                        color: #52c41a;
+                    }
+
+                    .errorIcon {
+                        color: #ff4d4f;
+                    }
+
+                    p {
+                        font-size: 18px;
+                        font-weight: 500;
+                        margin: 0;
+                    }
+                }
+
+                .successOverlay {
+                    .successIcon {
+                        animation: successPulse 1s ease-in-out;
+                    }
+                }
+            }
+
+            .controls {
+                display: flex;
+                gap: 15px;
+                justify-content: center;
+                flex-wrap: wrap;
+
+                .scanButton,
+                .stopButton,
+                .switchButton {
+                    flex: 1;
+                    min-width: 120px;
+                    height: 48px;
+                    border-radius: 12px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    transition: all 0.3s;
+
+                    &:disabled {
+                        opacity: 0.6;
+                    }
+                }
+
+                .scanButton {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    border: none;
+                    color: white;
+
+                    &:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+                    }
+                }
+
+                .stopButton {
+                    border: 2px solid #ff4d4f;
+                    color: #ff4d4f;
+
+                    &:hover {
+                        background: #ff4d4f;
+                        color: white;
+                    }
+                }
+
+                .switchButton {
+                    border: 2px solid #667eea;
+                    color: #667eea;
+
+                    &:hover {
+                        background: #667eea;
+                        color: white;
+                    }
+                }
+            }
+        }
+
+        .tips {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+
+            h3 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+            ul {
+                margin: 0;
+                padding-left: 20px;
+
+                li {
+                    color: #666;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    margin-bottom: 8px;
+
+                    &:last-child {
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+
+        .actions {
+            .backButton {
+                width: 100%;
+                height: 48px;
+                border-radius: 12px;
+                font-size: 16px;
+                color: #666;
+                border: 2px solid #e1e5e9;
+                background: white;
+                transition: all 0.3s;
+
+                &:hover {
+                    border-color: #667eea;
+                    color: #667eea;
+                }
+            }
+        }
+    }
+}
+
+// 扫码动画
+@keyframes scanAnimation {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+// 成功动画
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+// 响应式设计
+@media (max-width: 480px) {
+    .qrLoginPage {
+        padding: 10px;
+
+        .container {
+            padding: 20px;
+
+            .header {
+                h1 {
+                    font-size: 24px;
+                }
+
+                p {
+                    font-size: 14px;
+                }
+            }
+
+            .scanContainer {
+                .scanArea {
+                    .qrReader {
+                        height: 250px;
+
+                        &::before,
+                        &::after {
+                            width: 180px;
+                            height: 180px;
+                        }
+                    }
+                }
+
+                .controls {
+                    flex-direction: column;
+
+                    .scanButton,
+                    .stopButton,
+                    .switchButton {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}
