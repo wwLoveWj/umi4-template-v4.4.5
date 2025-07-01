@@ -22,7 +22,7 @@ const SliderVerify: React.FC<SliderVerifyProps> = ({ onPass }) => {
   // 动态计算滑块最大距离
   useEffect(() => {
     if (sliderRef.current) {
-      setMaxOffset(sliderRef.current.offsetWidth - BUTTON_WIDTH);
+      setMaxOffset(sliderRef.current.offsetWidth - BUTTON_WIDTH - 5);
     }
     const handleResize = () => {
       if (sliderRef.current) {

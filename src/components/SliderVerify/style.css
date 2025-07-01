@@ -7,7 +7,7 @@
   margin: 0 12px;
   overflow: hidden;
   user-select: none;
-  width: 100%;
+  width: calc(100% - 24px);
   max-width: 340px;
   display: flex;
   align-items: center;
