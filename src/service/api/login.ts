@@ -35,5 +35,12 @@ export const sendMailCodeAPI = (params: any): Promise<any> => {
 
 // 扫码登录
 export const scanCodeAPI = (params: any): Promise<any> => {
-  return request.get("/scan/login", params);
+  const { sessionId, action } = params;
+  let url = "";
+  if (action === "confirm") {
+    url = `/scan/login/confirm?sessionId=${sessionId}&action=confirm`;
+  } else {
+    url = `/scan/login?sessionId=${sessionId}`;
+  }
+  return request.get(url);
 };

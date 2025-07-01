@@ -60,7 +60,7 @@ const routes: API.MenuRoutesType[] = [
         path: "/",
         exact: true,
         hidden: true,
-        redirect: "/qrLogin",
+        redirect: "/home",
       },
       ...menuRoutes,
     ],
