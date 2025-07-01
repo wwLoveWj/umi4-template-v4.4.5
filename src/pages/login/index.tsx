@@ -12,6 +12,7 @@ import { setPrivateKey, getPrivateKey } from "@/utils";
 import { storage } from "@/utils/storage";
 import { EyeInvisibleOutline, EyeOutline } from "antd-mobile-icons";
 import { validateEmail, validatePhone, validatePassword } from "@/utils/check";
+import SliderVerify from "@/components/SliderVerify";
 // import VerifyLogin from "@/components/VerifyLogin";
 
 /**
@@ -202,7 +203,6 @@ const Login = () => {
     // 清除之前的错误信息
     setLoginNameError("");
     setPasswordError("");
-
     // 验证用户名/邮箱/手机号
     if (!validateLoginName(loginName)) {
       return;
@@ -216,6 +216,7 @@ const Login = () => {
     // 判断是否通过滑块校验
     if (!isPassing) {
       setIsClickPass(true);
+      Toast.show({ content: "请先完成滑块验证", icon: "fail" });
       return;
     }
 
@@ -301,6 +302,18 @@ const Login = () => {
               </a>
             </div>
           )}
+
+          {/* 滑块验证 */}
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              width: "100%",
+            }}
+          >
+            <SliderVerify onPass={() => setIsPassing(true)} />
+          </div>
 
           <Button
             className={styles.submitItem}
