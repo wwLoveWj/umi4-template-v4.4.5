@@ -6,7 +6,9 @@
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "optimize-images": "node scripts/optimize-images.js",
+    "optimize-bg": "imagemin src/assets/lake.jpg --out-dir=src/assets --plugin.mozjpeg.quality=85"
   },
   "dependencies": {
     "@types/md5": "^2.3.5",

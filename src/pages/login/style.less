@@ -5,9 +5,75 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background: url('../../assets/lake.jpg') no-repeat;
-    // background-color: rgb(218, 245, 255);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-image: url('../../assets/lake.jpg');
+    background-repeat: no-repeat;
     background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    will-change: background-image;
+
+    // 添加硬件加速
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+
+    // 优化背景图渲染
+    background-blend-mode: normal;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        z-index: -1;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+
+    &.bgLoaded::before {
+        opacity: 0;
+    }
+
+    @media (max-width: 768px) {
+        background-image: url('../../assets/lake.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        background-image: url('../../assets/lake.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    @media (min-width: 1025px) {
+        background-image: url('../../assets/lake.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    &.loading {
+        &::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin: -20px 0 0 -20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 10;
+        }
+    }
 
     .container {
         display: flex;
@@ -20,6 +86,8 @@
         margin: 12px;
         border-radius: 6px;
         color: #fff;
+        position: relative;
+        z-index: 1;
 
         h1 {
             font-weight: 800;
@@ -37,6 +105,47 @@
                 .adm-input-element {
                     padding-left: 12px !important;
                     color: #fff;
+                }
+            }
+
+            .inputWrapper {
+                margin-bottom: 20px;
+
+                .errorInput {
+                    border-color: #ff4d4f !important;
+                    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+                }
+
+                .errorMessage {
+                    color: #ff4d4f;
+                    font-size: 12px;
+                    margin-top: 5px;
+                    margin-left: 12px;
+                    text-shadow: 0 0 2px rgba(255, 77, 79, 0.5);
+                }
+
+                .passwordTips {
+                    margin-top: 10px;
+                    padding: 10px;
+                    background: rgba(255, 255, 255, 0.1);
+                    border-radius: 5px;
+                    font-size: 12px;
+                    color: rgba(255, 255, 255, 0.8);
+
+                    p {
+                        margin: 0 0 5px 0;
+                        font-weight: 500;
+                    }
+
+                    ul {
+                        margin: 0;
+                        padding-left: 15px;
+
+                        li {
+                            margin-bottom: 2px;
+                            line-height: 1.4;
+                        }
+                    }
                 }
             }
 
@@ -113,6 +222,12 @@
                 border-radius: 5px;
                 margin: 20px 12px 20px;
                 color: #fff;
+
+                &:disabled {
+                    background: rgba(0, 255, 255, 0.5);
+                    border-color: rgba(0, 255, 255, 0.5);
+                    cursor: not-allowed;
+                }
             }
 
             // 扫码登录按钮的样式
@@ -160,5 +275,16 @@
             display: block;
             font-size: var(--adm-font-size-7);
         }
+    }
+}
+
+// 添加加载动画
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
     }
 }

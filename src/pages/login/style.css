@@ -5,8 +5,69 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: url('../../assets/lake.jpg') no-repeat;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('../../assets/lake.jpg');
+  background-repeat: no-repeat;
   background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  will-change: background-image;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  background-blend-mode: normal;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+.loginPage::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: -1;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.loginPage.bgLoaded::before {
+  opacity: 0;
+}
+@media (max-width: 768px) {
+  .loginPage {
+    background-image: url('../../assets/lake.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+}
+@media (min-width: 769px) and (max-width: 1024px) {
+  .loginPage {
+    background-image: url('../../assets/lake.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+}
+@media (min-width: 1025px) {
+  .loginPage {
+    background-image: url('../../assets/lake.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+}
+.loginPage.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin: -20px 0 0 -20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  z-index: 10;
 }
 .loginPage .container {
   display: flex;
@@ -18,6 +79,8 @@
   margin: 12px;
   border-radius: 6px;
   color: #fff;
+  position: relative;
+  z-index: 1;
 }
 .loginPage .container h1 {
   font-weight: 800;
@@ -33,6 +96,40 @@
 .loginPage .container .formCard :global .adm-input-element {
   padding-left: 12px !important;
   color: #fff;
+}
+.loginPage .container .formCard .inputWrapper {
+  margin-bottom: 20px;
+}
+.loginPage .container .formCard .inputWrapper .errorInput {
+  border-color: #ff4d4f !important;
+  box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.2);
+}
+.loginPage .container .formCard .inputWrapper .errorMessage {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 12px;
+  text-shadow: 0 0 2px rgba(255, 77, 79, 0.5);
+}
+.loginPage .container .formCard .inputWrapper .passwordTips {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.loginPage .container .formCard .inputWrapper .passwordTips p {
+  margin: 0 0 5px 0;
+  font-weight: 500;
+}
+.loginPage .container .formCard .inputWrapper .passwordTips ul {
+  margin: 0;
+  padding-left: 15px;
+}
+.loginPage .container .formCard .inputWrapper .passwordTips ul li {
+  margin-bottom: 2px;
+  line-height: 1.4;
 }
 .loginPage .container .formCard .resetPassword {
   display: flex;
@@ -97,6 +194,11 @@
   margin: 20px 12px 20px;
   color: #fff;
 }
+.loginPage .container .formCard .submitItem:disabled {
+  background: rgba(0, 255, 255, 0.5);
+  border-color: rgba(0, 255, 255, 0.5);
+  cursor: not-allowed;
+}
 .loginPage .container .formCard .qrLoginButton {
   width: calc(100% - 24px);
   background: transparent;
@@ -134,4 +236,12 @@
 .resetPassword .eye svg {
   display: block;
   font-size: var(--adm-font-size-7);
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
