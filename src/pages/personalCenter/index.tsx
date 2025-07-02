@@ -1,6 +1,16 @@
 import React, { useState } from "react";
-import { List, ImageUploader, Popup, NavBar, Dialog } from "antd-mobile";
+import {
+  List,
+  ImageUploader,
+  Popup,
+  NavBar,
+  Dialog,
+  Button,
+  Toast,
+} from "antd-mobile";
 import type { ImageUploadItem } from "antd-mobile";
+import { setToken } from "@/utils/localToken";
+import { storage } from "@/utils/storage";
 import {
   UnorderedListOutline,
   PayCircleOutline,
@@ -140,6 +150,14 @@ export default function Index() {
       url: URL.createObjectURL(file),
     };
   }
+
+  const handleLogout = () => {
+    setToken(""); // 清除token
+    storage.del("login-info"); // 清除用户信息
+    storage.del("loginChecked"); // 清除记住密码
+    Toast.show({ content: "已退出登录", icon: "success" });
+    history.replace("/login"); // 跳转到登录页
+  };
   return (
     <>
       <div className={styles?.bgAvtar}>
@@ -217,6 +235,14 @@ export default function Index() {
           </List.Item>
         ))}
       </List>
+      <Button
+        color="danger"
+        block
+        style={{ margin: "0 12px 62px", width: "calc(100% - 24px)" }}
+        onClick={handleLogout}
+      >
+        退出登录
+      </Button>
       <Popup
         visible={visible1}
         onMaskClick={() => {
