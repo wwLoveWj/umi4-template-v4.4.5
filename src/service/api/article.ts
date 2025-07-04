@@ -1,12 +1,4 @@
 import request from "../request";
-import {
-  mockCategories,
-  mockArticles,
-  mockComments,
-  generateMockArticleDetail,
-  getArticlesByCategory,
-  getCollectedArticles,
-} from "@/utils/mockArticleData";
 
 /**
  * 文章系统API服务
@@ -16,26 +8,18 @@ export const articleApi = {
    * 获取文章分类列表
    */
   getCategories: () => {
-    // 使用模拟数据
-    return Promise.resolve(mockCategories);
+    return request<API.ArticleCategoryType[]>("/api/article/categories", {
+      method: "GET",
+    });
   },
 
   /**
    * 获取文章列表
    */
   getArticleList: (params: API.ArticleListParams) => {
-    // 使用模拟数据
-    const { category, page, pageSize } = params;
-    const filteredArticles = getArticlesByCategory(category);
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const list = filteredArticles.slice(start, end);
-
-    return Promise.resolve({
-      list,
-      total: filteredArticles.length,
-      page,
-      pageSize,
+    return request<API.ArticleListResponse>("/api/article/list", {
+      method: "GET",
+      params,
     });
   },
 
@@ -43,12 +27,9 @@ export const articleApi = {
    * 获取文章详情
    */
   getArticleDetail: (id: string) => {
-    // 使用模拟数据
-    const articleDetail = generateMockArticleDetail(id);
-    if (!articleDetail) {
-      return Promise.reject(new Error("文章不存在"));
-    }
-    return Promise.resolve(articleDetail);
+    return request<API.ArticleDetailType>(`/api/article/detail/${id}`, {
+      method: "GET",
+    });
   },
 
   /**
@@ -59,18 +40,13 @@ export const articleApi = {
     page: number = 1,
     pageSize: number = 20
   ) => {
-    // 使用模拟数据
-    const filteredComments = mockComments.filter(
-      (comment) => comment.articleId === articleId
+    return request<{ list: API.CommentType[]; total: number }>(
+      "/api/article/comments",
+      {
+        method: "GET",
+        params: { articleId, page, pageSize },
+      }
     );
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const list = filteredComments.slice(start, end);
-
-    return Promise.resolve({
-      list,
-      total: filteredComments.length,
-    });
   },
 
   /**
@@ -131,17 +107,9 @@ export const articleApi = {
    * 获取我的收藏文章列表
    */
   getMyCollections: (page: number = 1, pageSize: number = 20) => {
-    // 使用模拟数据
-    const collectedArticles = getCollectedArticles();
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-    const list = collectedArticles.slice(start, end);
-
-    return Promise.resolve({
-      list,
-      total: collectedArticles.length,
-      page,
-      pageSize,
+    return request<API.ArticleListResponse>("/api/article/my-collections", {
+      method: "GET",
+      params: { page, pageSize },
     });
   },
 

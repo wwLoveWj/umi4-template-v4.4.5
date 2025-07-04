@@ -59,7 +59,6 @@ const ArticleList: React.FC = () => {
         page: currentPage,
         pageSize,
       });
-
       if (isRefresh) {
         setArticles(response.list);
         setPage(1);
@@ -84,9 +83,10 @@ const ArticleList: React.FC = () => {
     setArticles([]);
     setPage(1);
     setHasMore(true);
-    loadArticles(true);
   };
-
+  useEffect(() => {
+    loadArticles(true);
+  }, [activeTab]);
   /**
    * 点赞/取消点赞
    */
@@ -220,39 +220,38 @@ const ArticleList: React.FC = () => {
                   <div className="article-info">
                     <h3 className="article-title">{article.title}</h3>
                     <p className="article-summary">{article.summary}</p>
-                    <div className="article-meta">
-                      <div className="author-info">
-                        <Avatar src={article.authorAvatar} />
-                        <span className="author-name">{article.author}</span>
-                        <span className="publish-time">
-                          {formatTime(article.publishTime)}
-                        </span>
-                      </div>
-                      <div className="article-stats">
-                        <span className="stat-item">
-                          <EyeOutline />
-                          {article.readCount}
-                        </span>
-                        <span className="stat-item">
-                          {article.isLiked ? (
-                            <HeartFill color="#ff4757" />
-                          ) : (
-                            <HeartOutline />
-                          )}
-                          {article.likeCount}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="article-tags">
-                      {article.tags.slice(0, 3).map((tag) => (
-                        <Tag key={tag} color="primary" fill="outline">
-                          {tag}
-                        </Tag>
-                      ))}
-                    </div>
                   </div>
                 </div>
-
+                <div className="article-meta">
+                  <div className="author-info">
+                    <Avatar src={article.authorAvatar} />
+                    <span className="author-name">{article.author}</span>
+                    <span className="publish-time">
+                      {formatTime(article.publishTime)}
+                    </span>
+                  </div>
+                  <div className="article-stats">
+                    <span className="stat-item">
+                      <EyeOutline />
+                      {article.readCount}
+                    </span>
+                    <span className="stat-item">
+                      {article.isLiked ? (
+                        <HeartFill color="#ff4757" />
+                      ) : (
+                        <HeartOutline />
+                      )}
+                      {article.likeCount}
+                    </span>
+                  </div>
+                </div>
+                <div className="article-tags">
+                  {article.tags.slice(0, 3).map((tag) => (
+                    <Tag key={tag} color="primary" fill="outline">
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
                 {/* 操作按钮 */}
                 <div className="article-actions">
                   <div

@@ -29,10 +29,15 @@
     }
 
     .article-content {
-        padding: 12px;
+        // padding: 12px;
+        box-sizing: border-box;
 
         :global(.adm-list) {
             background: transparent;
+        }
+
+        :global(.adm-list-item-content-arrow) {
+            display: none !important;
         }
 
         :global(.adm-list-item) {
@@ -42,14 +47,17 @@
         }
 
         .article-card {
+            width: 100%;
             background: #fff;
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
 
             .article-header {
                 display: flex;
-                padding: 16px;
+                padding: 0;
                 gap: 12px;
 
                 .article-cover {
@@ -69,6 +77,9 @@
                 .article-info {
                     flex: 1;
                     min-width: 0;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
 
                     .article-title {
                         margin: 0 0 8px 0;
@@ -93,57 +104,60 @@
                         overflow: hidden;
                     }
 
-                    .article-meta {
+
+                }
+            }
+
+            .article-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 8px;
+
+                .author-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    .author-name {
+                        font-size: 12px;
+                        color: #999;
+                    }
+
+                    .publish-time {
+                        font-size: 12px;
+                        color: #999;
+                    }
+                }
+
+                .article-stats {
+                    display: flex;
+                    gap: 12px;
+
+                    .stat-item {
                         display: flex;
-                        justify-content: space-between;
                         align-items: center;
-                        margin-bottom: 8px;
+                        gap: 4px;
+                        font-size: 12px;
+                        color: #999;
 
-                        .author-info {
-                            display: flex;
-                            align-items: center;
-                            gap: 6px;
-
-                            .author-name {
-                                font-size: 12px;
-                                color: #999;
-                            }
-
-                            .publish-time {
-                                font-size: 12px;
-                                color: #999;
-                            }
-                        }
-
-                        .article-stats {
-                            display: flex;
-                            gap: 12px;
-
-                            .stat-item {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-                                font-size: 12px;
-                                color: #999;
-
-                                svg {
-                                    font-size: 14px;
-                                }
-                            }
+                        svg {
+                            font-size: 14px;
                         }
                     }
+                }
+            }
 
-                    .article-tags {
-                        display: flex;
-                        gap: 6px;
-                        flex-wrap: wrap;
+            .article-tags {
+                display: flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                margin-bottom: 8px;
 
-                        :global(.adm-tag) {
-                            font-size: 10px;
-                            padding: 2px 6px;
-                            border-radius: 4px;
-                        }
-                    }
+                :global(.adm-tag) {
+                    font-size: 10px;
+                    padding: 2px 6px;
+                    border-radius: 4px;
                 }
             }
 

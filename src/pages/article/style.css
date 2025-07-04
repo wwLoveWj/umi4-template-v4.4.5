@@ -24,10 +24,13 @@
   background-color: #1677ff;
 }
 .article-list-page .article-content {
-  padding: 12px;
+  box-sizing: border-box;
 }
 .article-list-page .article-content :global(.adm-list) {
   background: transparent;
+}
+.article-list-page .article-content :global(.adm-list-item-content-arrow) {
+  display: none !important;
 }
 .article-list-page .article-content :global(.adm-list-item) {
   padding: 0;
@@ -35,14 +38,17 @@
   background: transparent;
 }
 .article-list-page .article-content .article-card {
+  width: 100%;
   background: #fff;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
 }
 .article-list-page .article-content .article-card .article-header {
   display: flex;
-  padding: 16px;
+  padding: 0;
   gap: 12px;
 }
 .article-list-page .article-content .article-card .article-header .article-cover {
@@ -60,6 +66,9 @@
 .article-list-page .article-content .article-card .article-header .article-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .article-list-page .article-content .article-card .article-header .article-info .article-title {
   margin: 0 0 8px 0;
@@ -82,45 +91,46 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta {
+.article-list-page .article-content .article-card .article-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .author-info {
+.article-list-page .article-content .article-card .article-meta .author-info {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .author-info .author-name {
+.article-list-page .article-content .article-card .article-meta .author-info .author-name {
   font-size: 12px;
   color: #999;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .author-info .publish-time {
+.article-list-page .article-content .article-card .article-meta .author-info .publish-time {
   font-size: 12px;
   color: #999;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .article-stats {
+.article-list-page .article-content .article-card .article-meta .article-stats {
   display: flex;
   gap: 12px;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .article-stats .stat-item {
+.article-list-page .article-content .article-card .article-meta .article-stats .stat-item {
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 12px;
   color: #999;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-meta .article-stats .stat-item svg {
+.article-list-page .article-content .article-card .article-meta .article-stats .stat-item svg {
   font-size: 14px;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-tags {
+.article-list-page .article-content .article-card .article-tags {
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  margin-bottom: 8px;
 }
-.article-list-page .article-content .article-card .article-header .article-info .article-tags :global(.adm-tag) {
+.article-list-page .article-content .article-card .article-tags :global(.adm-tag) {
   font-size: 10px;
   padding: 2px 6px;
   border-radius: 4px;
