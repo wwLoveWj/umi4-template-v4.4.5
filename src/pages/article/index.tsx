@@ -18,6 +18,7 @@ import {
   EyeOutline,
 } from "antd-mobile-icons";
 import "./style.less";
+import { addMessage } from "@/utils/messageCenter";
 
 /**
  * 文章列表页面
@@ -109,6 +110,13 @@ const ArticleList: React.FC = () => {
               : item
           )
         );
+        // 推送点赞消息
+        addMessage({
+          type: "like",
+          articleId: article.id,
+          articleTitle: article.title,
+          content: `您的文章《${article.title}》收到一个新的点赞！`,
+        });
       }
     } catch (error) {
       console.error("操作失败:", error);
@@ -134,6 +142,13 @@ const ArticleList: React.FC = () => {
             item.id === article.id ? { ...item, isCollected: true } : item
           )
         );
+        // 推送收藏消息
+        addMessage({
+          type: "collect",
+          articleId: article.id,
+          articleTitle: article.title,
+          content: `您的文章《${article.title}》被收藏啦！`,
+        });
       }
     } catch (error) {
       console.error("操作失败:", error);

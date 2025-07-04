@@ -22,6 +22,7 @@ import {
   LeftOutline,
 } from "antd-mobile-icons";
 import { articleApi } from "@/service/api/article";
+import { addMessage } from "@/utils/messageCenter";
 import "./detail.less";
 
 /**
@@ -134,7 +135,6 @@ const ArticleDetail: React.FC = () => {
    */
   const handleLikeArticle = async () => {
     if (!article) return;
-
     try {
       if (article.isLiked) {
         await articleApi.unlikeArticle(article.id);
@@ -143,6 +143,13 @@ const ArticleDetail: React.FC = () => {
             ? { ...prev, isLiked: false, likeCount: prev.likeCount - 1 }
             : null
         );
+        // 推送点赞消息
+        addMessage({
+          type: "like",
+          articleId: article.id,
+          articleTitle: article.title,
+          content: `您的文章《${article.title}》收到一个新的点赞！`,
+        });
       } else {
         await articleApi.likeArticle(article.id);
         setArticle((prev) =>
@@ -150,6 +157,13 @@ const ArticleDetail: React.FC = () => {
             ? { ...prev, isLiked: true, likeCount: prev.likeCount + 1 }
             : null
         );
+        // 推送点赞消息
+        addMessage({
+          type: "like",
+          articleId: article.id,
+          articleTitle: article.title,
+          content: `您的文章《${article.title}》收到一个新的点赞！`,
+        });
       }
     } catch (error) {
       console.error("操作失败:", error);
@@ -165,7 +179,6 @@ const ArticleDetail: React.FC = () => {
    */
   const handleCollectArticle = async () => {
     if (!article) return;
-
     try {
       if (article.isCollected) {
         await articleApi.uncollectArticle(article.id);
@@ -180,6 +193,13 @@ const ArticleDetail: React.FC = () => {
         Toast.show({
           icon: "success",
           content: "收藏成功",
+        });
+        // 推送收藏消息
+        addMessage({
+          type: "collect",
+          articleId: article.id,
+          articleTitle: article.title,
+          content: `您的文章《${article.title}》被收藏啦！`,
         });
       }
     } catch (error) {
