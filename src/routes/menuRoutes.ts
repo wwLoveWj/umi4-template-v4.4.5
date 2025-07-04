@@ -114,6 +114,28 @@ export const menuRoutes: API.MenuRoutesType[] = [
     showBack: true,
   },
   {
+    key: "article",
+    title: "文章",
+    path: "/article",
+    component: "./article/index",
+  },
+  {
+    key: "article-detail",
+    title: "文章详情",
+    path: "/article/detail/:id",
+    component: "./article/detail",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
+    key: "article-collections",
+    title: "我的收藏",
+    path: "/article/collections",
+    component: "./article/collections",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "collect",
     title: "收藏",
     path: "/collect",

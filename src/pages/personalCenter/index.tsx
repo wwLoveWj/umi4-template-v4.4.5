@@ -50,7 +50,7 @@ const configList = [
     title: "收藏",
     icon: <StarOutline />,
     onClick: () => {
-      history.push("/collect");
+      history.push("/article/collections");
     },
   },
 ];

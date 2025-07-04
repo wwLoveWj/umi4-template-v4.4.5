@@ -1,0 +1,385 @@
+.article-detail-page {
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    padding-bottom: 80px;
+
+    .article-navbar {
+        background-color: #fff;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .article-content {
+        padding: 12px;
+
+        .article-header-card {
+            background: #fff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+
+            .article-title {
+                margin: 0 0 16px 0;
+                font-size: 20px;
+                font-weight: 600;
+                color: #333;
+                line-height: 1.4;
+            }
+
+            .article-meta {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+
+                .author-info {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+
+                    .author-name {
+                        font-size: 14px;
+                        color: #333;
+                        font-weight: 500;
+                    }
+
+                    .publish-time {
+                        font-size: 12px;
+                        color: #999;
+                    }
+                }
+
+                .article-stats {
+                    display: flex;
+                    gap: 16px;
+
+                    .stat-item {
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        font-size: 12px;
+                        color: #666;
+
+                        svg {
+                            font-size: 14px;
+                        }
+                    }
+                }
+            }
+
+            .article-tags {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+
+                :global(.adm-tag) {
+                    font-size: 12px;
+                    padding: 4px 8px;
+                    border-radius: 6px;
+                }
+            }
+        }
+
+        .article-body-card {
+            background: #fff;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+
+            .article-content-html {
+                padding: 16px;
+                line-height: 1.6;
+                color: #333;
+                font-size: 16px;
+
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                    margin: 20px 0 12px 0;
+                    font-weight: 600;
+                    color: #333;
+                }
+
+                h1 {
+                    font-size: 24px;
+                }
+
+                h2 {
+                    font-size: 22px;
+                }
+
+                h3 {
+                    font-size: 20px;
+                }
+
+                h4 {
+                    font-size: 18px;
+                }
+
+                h5 {
+                    font-size: 16px;
+                }
+
+                h6 {
+                    font-size: 14px;
+                }
+
+                p {
+                    margin: 12px 0;
+                    line-height: 1.8;
+                }
+
+                img {
+                    max-width: 100%;
+                    height: auto;
+                    border-radius: 8px;
+                    margin: 12px 0;
+                }
+
+                code {
+                    background-color: #f6f8fa;
+                    padding: 2px 6px;
+                    border-radius: 4px;
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                    font-size: 14px;
+                }
+
+                pre {
+                    background-color: #f6f8fa;
+                    padding: 16px;
+                    border-radius: 8px;
+                    overflow-x: auto;
+                    margin: 16px 0;
+
+                    code {
+                        background: none;
+                        padding: 0;
+                    }
+                }
+
+                blockquote {
+                    border-left: 4px solid #1677ff;
+                    padding-left: 16px;
+                    margin: 16px 0;
+                    color: #666;
+                    font-style: italic;
+                }
+
+                ul,
+                ol {
+                    padding-left: 20px;
+                    margin: 12px 0;
+
+                    li {
+                        margin: 6px 0;
+                    }
+                }
+
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 16px 0;
+
+                    th,
+                    td {
+                        border: 1px solid #ddd;
+                        padding: 8px 12px;
+                        text-align: left;
+                    }
+
+                    th {
+                        background-color: #f6f8fa;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .comments-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+
+            .comments-header {
+                padding: 16px;
+                border-bottom: 1px solid #f0f0f0;
+
+                h3 {
+                    margin: 0;
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #333;
+                }
+            }
+
+            .comments-list {
+                :global(.adm-list-item) {
+                    padding: 16px;
+                    border-bottom: 1px solid #f0f0f0;
+
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                }
+
+                .comment-item {
+                    .comment-content {
+                        .comment-header {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            margin-bottom: 8px;
+
+                            .comment-info {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 2px;
+
+                                .comment-author {
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    color: #333;
+                                }
+
+                                .comment-time {
+                                    font-size: 12px;
+                                    color: #999;
+                                }
+                            }
+                        }
+
+                        .comment-text {
+                            font-size: 14px;
+                            color: #333;
+                            line-height: 1.5;
+                            margin-bottom: 8px;
+                        }
+
+                        .comment-actions {
+                            .comment-like {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+                                font-size: 12px;
+                                color: #666;
+                                cursor: pointer;
+
+                                svg {
+                                    font-size: 14px;
+                                }
+
+                                &:hover {
+                                    color: #1677ff;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            .load-more-comments {
+                padding: 16px;
+                text-align: center;
+                border-top: 1px solid #f0f0f0;
+            }
+        }
+    }
+
+    .article-actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-top: 1px solid #eee;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 100;
+
+        .action-input {
+            flex: 1;
+
+            .comment-input-placeholder {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                background-color: #f5f5f5;
+                border-radius: 20px;
+                color: #999;
+                font-size: 14px;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: #eee;
+                }
+            }
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+
+            .action-btn {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 14px;
+                color: #666;
+                cursor: pointer;
+                transition: color 0.2s;
+
+                &:hover {
+                    color: #1677ff;
+                }
+
+                svg {
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+
+    .comment-input-popup {
+        .comment-input-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+
+            span {
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+            }
+        }
+
+        .comment-input-content {
+            padding: 16px;
+
+            :global(.adm-text-area) {
+                margin-bottom: 16px;
+            }
+        }
+    }
+}
+
+.article-detail-loading,
+.article-detail-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    gap: 12px;
+    color: #999;
+    font-size: 14px;
+}

@@ -118,4 +118,78 @@ declare namespace API {
     status?: "finish" | "error" | "wait" | "process";
     tag: number; //事情重要程度
   }
+
+  // =============================文章系统=================================
+  /**
+   * 文章分类类型
+   */
+  interface ArticleCategoryType {
+    key: string;
+    title: string;
+    icon?: string;
+  }
+
+  /**
+   * 文章列表项类型
+   */
+  interface ArticleItemType {
+    id: string;
+    title: string;
+    summary: string;
+    content: string;
+    coverImage: string;
+    category: string;
+    author: string;
+    authorAvatar: string;
+    publishTime: string;
+    readCount: number;
+    likeCount: number;
+    commentCount: number;
+    isLiked: boolean;
+    isCollected: boolean;
+    tags: string[];
+  }
+
+  /**
+   * 文章详情类型
+   */
+  interface ArticleDetailType extends ArticleItemType {
+    htmlContent: string;
+    markdownContent: string;
+  }
+
+  /**
+   * 评论类型
+   */
+  interface CommentType {
+    id: string;
+    articleId: string;
+    content: string;
+    author: string;
+    authorAvatar: string;
+    createTime: string;
+    likeCount: number;
+    isLiked: boolean;
+    replies?: CommentType[];
+  }
+
+  /**
+   * 文章列表请求参数
+   */
+  interface ArticleListParams {
+    category?: string;
+    page: number;
+    pageSize: number;
+    keyword?: string;
+  }
+
+  /**
+   * 文章列表响应类型
+   */
+  interface ArticleListResponse {
+    list: ArticleItemType[];
+    total: number;
+    page: number;
+    pageSize: number;
+  }
 }

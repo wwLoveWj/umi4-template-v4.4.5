@@ -7,6 +7,7 @@ import {
   UnorderedListOutline,
   UserOutline,
   ScanningOutline,
+  ContentOutline,
 } from "antd-mobile-icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import styles from "./style.less";
@@ -40,6 +41,11 @@ export default () => {
       key: "/person",
       title: "我的",
       icon: <UserOutline />,
+    },
+    {
+      key: "/article",
+      title: "文章",
+      icon: <ContentOutline />,
     },
   ];
 
