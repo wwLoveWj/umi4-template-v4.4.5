@@ -132,4 +132,24 @@ export const articleApi = {
       data: { commentId },
     });
   },
+
+  /**
+   * 新增文章
+   */
+  addArticle: (data: {
+    title: string;
+    summary?: string;
+    content: string;
+    coverImage?: string;
+    category?: string;
+    author?: string;
+    authorAvatar?: string;
+    tags?: string[];
+    articleId: string;
+  }) => {
+    return request<{ id: string }>("/api/article/add", {
+      method: "POST",
+      data,
+    });
+  },
 };

@@ -11,6 +11,8 @@ import {
 } from "antd-mobile";
 import { RightOutline, AddOutline } from "antd-mobile-icons";
 import "./add.less";
+import { articleApi } from "@/service/api/article";
+import { guid } from "@/utils";
 
 const TAGS = ["前端", "后端", "React", "Vue", "算法", "面试", "随笔"];
 const COLUMNS = ["技术专栏", "生活随笔", "学习笔记"];
@@ -54,32 +56,29 @@ const ArticleAddSetting: React.FC = () => {
     }
     setSaving(true);
     try {
-      const res = await fetch("/api/article/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title,
-          summary: content.slice(0, 100), // 可自定义摘要
-          content,
-          coverImage: cover[0]?.url || "",
-          category: column || "",
-          author: "当前用户", // TODO: 替换为真实登录用户
-          authorAvatar: "", // TODO: 替换为真实头像
-          tags: [tag], // 这里假设单标签，若多标签传selectedTags
-        }),
+      const res = await articleApi.addArticle({
+        title,
+        summary: content.slice(0, 100),
+        content,
+        coverImage: cover[0]?.url || "",
+        category: column || "",
+        author: "当前用户", // TODO: 替换为真实登录用户
+        authorAvatar: "", // TODO: 替换为真实头像
+        tags: [tag],
+        articleId: guid(),
       });
-      const data = await res.json();
-      if (data.code === 1) {
+      if (res.code === 1) {
         Toast.show({ icon: "success", content: "发布成功" });
         localStorage.removeItem("article-draft");
         setSaving(false);
         navigate("/article");
       } else {
-        Toast.show({ icon: "fail", content: data.msg || "发布失败" });
+        Toast.show({ icon: "fail", content: res.msg || "发布失败" });
         setSaving(false);
       }
     } catch (e) {
       Toast.show({ icon: "fail", content: "网络异常" });
+      // 错误提示已由request拦截器处理
       setSaving(false);
     }
   };
@@ -87,6 +86,7 @@ const ArticleAddSetting: React.FC = () => {
   // 保存草稿
   const handleSaveDraft = () => {
     Toast.show({ icon: "success", content: "草稿已保存" });
+    // 可扩展为后端保存
   };
 
   return (
