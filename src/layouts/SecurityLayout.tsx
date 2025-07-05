@@ -20,7 +20,7 @@ export default function Layout() {
     // 监听路由变化
     // 判断是否需要隐藏 TabBar
     const currentRouter = menus.find(
-      (route) => route.path === pathname || route?.hideTabBar
+      (route) => route.path === pathname || route?.isDetails
     ) || {
       hideTabBar: false,
     };

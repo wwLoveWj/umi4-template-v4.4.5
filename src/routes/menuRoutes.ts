@@ -126,6 +126,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./article/components/detail",
     hideTabBar: true,
     showBack: true,
+    isDetails: true,
   },
   {
     key: "article-collections",
