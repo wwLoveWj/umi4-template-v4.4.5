@@ -67,15 +67,10 @@ const ArticleAddSetting: React.FC = () => {
         tags: [tag],
         articleId: guid(),
       });
-      if (res.code === 1) {
-        Toast.show({ icon: "success", content: "发布成功" });
-        localStorage.removeItem("article-draft");
-        setSaving(false);
-        navigate("/article");
-      } else {
-        Toast.show({ icon: "fail", content: res.msg || "发布失败" });
-        setSaving(false);
-      }
+      Toast.show({ icon: "success", content: "发布成功" });
+      localStorage.removeItem("article-draft");
+      setSaving(false);
+      navigate("/article");
     } catch (e) {
       Toast.show({ icon: "fail", content: "网络异常" });
       // 错误提示已由request拦截器处理

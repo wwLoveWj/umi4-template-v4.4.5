@@ -322,11 +322,12 @@ const ArticleDetail: React.FC = () => {
         />
         {/* 标签 */}
         <div className="detail-tags">
-          {article.tags.map((tag) => (
-            <Tag key={tag} color="primary" fill="outline">
-              {tag}
-            </Tag>
-          ))}
+          {Array.isArray(article.tags) &&
+            article.tags?.map((tag) => (
+              <Tag key={tag} color="primary" fill="outline">
+                {tag}
+              </Tag>
+            ))}
         </div>
         {/* 操作区 */}
         {/* <div className="detail-actions">

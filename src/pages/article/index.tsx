@@ -69,7 +69,7 @@ const ArticleList: React.FC = () => {
         setArticles(response.list);
         setPage(1);
       } else {
-        setArticles((prev) => [...prev, ...response.list]);
+        setArticles(response.list || []);
         setPage(currentPage + 1);
       }
 
