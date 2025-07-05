@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "umi";
-import { Toast } from "antd-mobile";
+import { Toast, Dialog, Input } from "antd-mobile";
 import {
   AddOutline,
   PictureOutline,
@@ -17,7 +17,14 @@ const ArticleAdd: React.FC = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkDesc, setLinkDesc] = useState("");
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
+  // 撤销/恢复栈
+  const undoStack = useRef<string[]>([]);
+  const redoStack = useRef<string[]>([]);
 
   // 自动保存草稿
   useEffect(() => {
@@ -38,6 +45,86 @@ const ArticleAdd: React.FC = () => {
       setContent(content || "");
     }
   }, []);
+
+  /**
+   * 在光标处插入内容
+   * @param insertText 要插入的内容
+   */
+  const insertAtCursor = (insertText: string) => {
+    const textarea = contentRef.current;
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const newValue =
+      content.substring(0, start) + insertText + content.substring(end);
+    setContent(newValue);
+    // 设置光标到插入内容后
+    setTimeout(() => {
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd =
+        start + insertText.length;
+    }, 0);
+  };
+
+  /**
+   * 处理图片插入
+   */
+  const handleInsertImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    insertAtCursor(
+      `<img src=\"${url}\" alt=\"图片\" style=\"max-width:100%\" />`
+    );
+    e.target.value = ""; // 重置input
+  };
+
+  /**
+   * 处理插入链接
+   */
+  const handleInsertLink = () => {
+    if (!linkUrl.trim()) {
+      Toast.show({ content: "请输入链接地址" });
+      return;
+    }
+    insertAtCursor(
+      `<a href=\"${linkUrl}\" target=\"_blank\">${linkDesc || linkUrl}</a>`
+    );
+    setShowLinkDialog(false);
+    setLinkUrl("");
+    setLinkDesc("");
+  };
+
+  /**
+   * 撤销
+   */
+  const handleUndo = () => {
+    if (undoStack.current.length === 0) return;
+    redoStack.current.push(content);
+    const prev = undoStack.current.pop()!;
+    setContent(prev);
+  };
+
+  /**
+   * 恢复
+   */
+  const handleRedo = () => {
+    if (redoStack.current.length === 0) return;
+    undoStack.current.push(content);
+    const next = redoStack.current.pop()!;
+    setContent(next);
+  };
+
+  // 内容变化时，入栈撤销栈
+  useEffect(() => {
+    if (
+      undoStack.current.length === 0 ||
+      undoStack.current[undoStack.current.length - 1] !== content
+    ) {
+      undoStack.current.push(content);
+      if (undoStack.current.length > 100) undoStack.current.shift();
+    }
+  }, [content]);
 
   return (
     <div className="article-add-page">
@@ -76,16 +163,68 @@ const ArticleAdd: React.FC = () => {
           placeholder="请输入正文"
           value={content}
           onChange={(e) => setContent(e.target.value)}
+          ref={contentRef}
+        />
+        {/* 富文本预览区 */}
+        <div
+          className="add-content-preview"
+          dangerouslySetInnerHTML={{ __html: content }}
         />
       </div>
       <div className="add-toolbar">
-        <PictureOutline />
-        <FileOutline />
-        <FileOutline />
-        <LinkOutline />
-        <UndoOutline />
-        <RedoOutline />
+        {/* 隐藏的图片上传input */}
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          id="add-img-input"
+          onChange={handleInsertImage}
+        />
+        <span
+          className="toolbar-btn"
+          onClick={() => document.getElementById("add-img-input")?.click()}
+        >
+          <PictureOutline />
+        </span>
+        <span className="toolbar-btn">
+          <FileOutline />
+        </span>
+        <span className="toolbar-btn">
+          <FileOutline />
+        </span>
+        <span className="toolbar-btn" onClick={() => setShowLinkDialog(true)}>
+          <LinkOutline />
+        </span>
+        <span className="toolbar-btn" onClick={handleUndo}>
+          <UndoOutline />
+        </span>
+        <span className="toolbar-btn" onClick={handleRedo}>
+          <RedoOutline />
+        </span>
       </div>
+      {/* 插入链接弹窗 */}
+      <Dialog
+        visible={showLinkDialog}
+        title="插入链接"
+        content={
+          <div>
+            <Input
+              placeholder="请输入链接地址"
+              value={linkUrl}
+              onChange={(val) => setLinkUrl(val)}
+              style={{ marginBottom: 8 }}
+            />
+            <Input
+              placeholder="链接描述（可选）"
+              value={linkDesc}
+              onChange={(val) => setLinkDesc(val)}
+            />
+          </div>
+        }
+        onClose={() => setShowLinkDialog(false)}
+        closeOnAction
+        actions={[{ key: "ok", text: "插入", onClick: handleInsertLink }]}
+      />
     </div>
   );
 };
