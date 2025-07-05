@@ -152,4 +152,8 @@ export const articleApi = {
       data,
     });
   },
+  // 头像图片上传
+  imgUploadAPI: (params = {}) => {
+    return request.post<null>("/file/upload", params);
+  },
 };

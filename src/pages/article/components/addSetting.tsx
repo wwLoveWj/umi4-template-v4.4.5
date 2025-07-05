@@ -42,7 +42,10 @@ const ArticleAddSetting: React.FC = () => {
 
   // 图片上传模拟
   const mockUpload = async (file: File) => {
-    return { url: URL.createObjectURL(file) };
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await articleApi.imgUploadAPI(formData);
+    return { url: res?.url };
   };
 
   // 校验必填项
@@ -56,14 +59,14 @@ const ArticleAddSetting: React.FC = () => {
     }
     setSaving(true);
     try {
-      const res = await articleApi.addArticle({
+      await articleApi.addArticle({
         title,
         summary: content.slice(0, 100),
         content,
-        coverImage: cover[0]?.url || "",
         category: column || "",
         author: "当前用户", // TODO: 替换为真实登录用户
-        authorAvatar: "", // TODO: 替换为真实头像
+        authorAvatar: cover[0]?.url || "", // TODO: 替换为真实头像
+        coverImage: "",
         tags: [tag],
         articleId: guid(),
       });
