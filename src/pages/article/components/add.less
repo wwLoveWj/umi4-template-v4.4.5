@@ -1,0 +1,698 @@
+/**
+ * 添加文章页面样式
+ * 包含编辑页和设置页的样式定义
+ */
+
+// 编辑页样式
+.article-add-page {
+    min-height: 100vh;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+
+    // 顶部导航栏
+    .add-navbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 16px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+
+        .add-cancel {
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #f5f5f5;
+            }
+        }
+
+        .add-autosave {
+            display: flex;
+            align-items: center;
+            color: #999;
+            font-size: 12px;
+
+            img {
+                width: 16px;
+                height: 16px;
+                margin-right: 4px;
+            }
+        }
+
+        .add-next {
+            color: #1890ff;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #e6f7ff;
+            }
+
+            &:active {
+                background-color: #bae7ff;
+            }
+        }
+    }
+
+    // 表单区域
+    .add-form {
+        flex: 1;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .add-title {
+            border: none;
+            outline: none;
+            font-size: 20px;
+            font-weight: 600;
+            color: #262626;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            min-height: 32px;
+            resize: none;
+            font-family: inherit;
+
+            &::placeholder {
+                color: #bfbfbf;
+                font-weight: normal;
+            }
+
+            &:focus {
+                border: none;
+                box-shadow: none;
+            }
+        }
+
+        .add-content {
+            border: none;
+            outline: none;
+            font-size: 16px;
+            line-height: 1.6;
+            color: #595959;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            flex: 1;
+            min-height: 300px;
+            resize: none;
+            font-family: inherit;
+
+            &::placeholder {
+                color: #bfbfbf;
+            }
+
+            &:focus {
+                border: none;
+                box-shadow: none;
+            }
+        }
+    }
+
+    // 底部工具栏
+    .add-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        padding: 12px 16px;
+        border-top: 1px solid #f0f0f0;
+        background: #fff;
+
+        .antd-mobile-icon {
+            font-size: 20px;
+            color: #666;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+
+            &:hover {
+                color: #1890ff;
+                background-color: #f0f8ff;
+            }
+
+            &:active {
+                transform: scale(0.95);
+            }
+        }
+    }
+}
+
+// 设置页样式
+.article-add-setting-page {
+    min-height: 100vh;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+
+    // 顶部导航栏
+    .add-navbar {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        background: #fff;
+        border-bottom: 1px solid #f0f0f0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+
+        .add-back {
+            color: #666;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+
+            &:hover {
+                background-color: #f5f5f5;
+            }
+        }
+
+        .add-title {
+            flex: 1;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0 16px;
+        }
+    }
+
+    // 设置表单
+    .add-setting-form {
+        flex: 1;
+        padding: 16px;
+        background: #fff;
+        margin: 12px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        padding-bottom: 64px;
+
+        .setting-row {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f5f5f5;
+
+            &:last-child {
+                border-bottom: none;
+            }
+
+            span {
+                font-size: 16px;
+                font-weight: 500;
+                color: #262626;
+                min-width: 80px;
+                margin-right: 16px;
+            }
+
+            div {
+                flex: 1;
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                gap: 8px;
+
+                .adm-tag {
+                    margin: 0;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    border-radius: 6px;
+                    font-size: 14px;
+                    padding: 6px 12px;
+
+                    &.adm-tag-primary {
+                        background: #e6f7ff;
+                        color: #1890ff;
+                        border: 1px solid #91d5ff;
+                    }
+
+                    &.adm-tag-default {
+                        background: #f5f5f5;
+                        color: #666;
+                        border: 1px solid #d9d9d9;
+
+                        &:hover {
+                            background: #e6f7ff;
+                            color: #1890ff;
+                            border-color: #91d5ff;
+                        }
+                    }
+                }
+
+                // 图片上传器样式
+                .adm-image-uploader {
+                    .adm-image-uploader-cell {
+                        width: 60px;
+                        height: 60px;
+                        border: 1px dashed #d9d9d9;
+                        border-radius: 8px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        background: #fafafa;
+                        cursor: pointer;
+                        transition: all 0.2s;
+
+                        &:hover {
+                            border-color: #1890ff;
+                            background: #f0f8ff;
+                        }
+
+                        .antd-mobile-icon {
+                            font-size: 20px;
+                            color: #999;
+                        }
+
+                        span {
+                            font-size: 12px;
+                            color: #999;
+                            margin-left: 4px;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 封面设置区域优化
+        &.cover-setting-row {
+            align-items: center;
+
+            .setting-label {
+                flex-shrink: 0;
+                min-width: 80px;
+            }
+
+            .cover-type-group {
+                display: flex;
+                gap: 16px;
+                align-items: center;
+
+                .cover-type-btn {
+                    padding: 6px 18px;
+                    border-radius: 18px;
+                    border: 1.5px solid #eee;
+                    background: #fafbfc;
+                    color: #666;
+                    font-size: 15px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+
+                    &.active {
+                        border-color: #1677ff;
+                        background: #e6f7ff;
+                        color: #1677ff;
+                    }
+
+                    &:hover {
+                        border-color: #1677ff;
+                    }
+                }
+            }
+
+            .cover-radio-group {
+                display: flex;
+                gap: 24px;
+                align-items: center;
+                margin-left: 8px;
+
+                :global(.adm-radio) {
+                    display: flex;
+                    align-items: center;
+                    font-size: 15px;
+
+                    .adm-radio-icon {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                        border: 2px solid #d9d9d9;
+                        background: #fff;
+                        margin-right: 6px;
+                        transition: border-color 0.2s;
+                    }
+
+                    &.adm-radio-checked .adm-radio-icon {
+                        border-color: #1677ff;
+                        background: #1677ff;
+                    }
+
+                    &.adm-radio-checked .adm-radio-icon::after {
+                        content: '';
+                        display: block;
+                        width: 10px;
+                        height: 10px;
+                        margin: 4px auto;
+                        border-radius: 50%;
+                        background: #fff;
+                    }
+                }
+            }
+
+            .cover-uploader {
+                margin-left: auto;
+
+                .cover-upload-btn {
+                    width: 72px;
+                    height: 72px;
+                    border: 2px dashed #1677ff;
+                    border-radius: 14px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: #1677ff;
+                    background: #fafbfc;
+                    cursor: pointer;
+                    transition: border 0.2s, background 0.2s;
+                    font-size: 28px;
+
+                    &:hover {
+                        border-color: #1456b8;
+                        background: #f0f8ff;
+                        color: #1456b8;
+                    }
+
+                    svg {
+                        font-size: 32px;
+                    }
+
+                    div {
+                        font-size: 13px;
+                        margin-top: 2px;
+                    }
+                }
+            }
+        }
+
+        .setting-title-cover-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+
+            .setting-title-preview {
+                flex: 1;
+                font-size: 18px;
+                font-weight: 600;
+                color: #222;
+                padding: 8px 0 8px 2px;
+                word-break: break-all;
+            }
+
+            .cover-uploader {
+                margin-left: 16px;
+                display: flex;
+                align-items: center;
+
+                .cover-upload-btn {
+                    width: 72px;
+                    height: 72px;
+                    border: 2px dashed #1677ff;
+                    border-radius: 14px;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    color: #1677ff;
+                    background: #fafbfc;
+                    cursor: pointer;
+                    transition: border 0.2s, background 0.2s;
+                    font-size: 28px;
+
+                    &:hover {
+                        border-color: #1456b8;
+                        background: #f0f8ff;
+                        color: #1456b8;
+                    }
+
+                    svg {
+                        font-size: 32px;
+                    }
+
+                    div {
+                        font-size: 13px;
+                        margin-top: 2px;
+                    }
+                }
+            }
+        }
+
+        .cover-type-row {
+            display: flex;
+            align-items: center;
+            padding: 16px 0 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+
+            .setting-label {
+                flex-shrink: 0;
+                min-width: 80px;
+                font-size: 16px;
+                color: #222;
+                margin-right: 12px;
+            }
+
+            .cover-type-group {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+                flex: 1;
+
+                .cover-type-btn {
+                    padding: 4px 8px;
+                    border-radius: 18px;
+                    border: 1.5px solid #eee;
+                    background: #fff;
+                    color: #666;
+                    font-size: 15px;
+                    cursor: pointer;
+                    transition: all 0.2s;
+
+                    &.active {
+                        border-color: #ff7a45;
+                        background: #fff7f0;
+                        color: #ff7a45;
+                    }
+
+                    &:hover {
+                        border-color: #ff7a45;
+                    }
+                }
+            }
+        }
+    }
+
+    // 底部按钮区域
+    .add-setting-bottom {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 100;
+        background: #fff;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        gap: 12px;
+        padding: 8px 16px 8px 16px;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+
+        .adm-button {
+            flex: 1;
+            border-radius: 8px;
+            font-size: 15px;
+            height: 36px;
+
+            &.adm-button-default {
+                background: #f5f5f5;
+                color: #666;
+                border: 1px solid #d9d9d9;
+            }
+
+            &.adm-button-primary {
+                background: #002fa7;
+                color: #fff;
+                border: 1px solid #002fa7;
+            }
+        }
+    }
+}
+
+// 响应式适配
+@media (max-width: 375px) {
+
+    .article-add-page,
+    .article-add-setting-page {
+        .add-navbar {
+            padding: 10px 12px;
+
+            .add-cancel,
+            .add-next {
+                font-size: 15px;
+            }
+        }
+
+        .add-form {
+            padding: 12px;
+
+            .add-title {
+                font-size: 18px;
+            }
+
+            .add-content {
+                font-size: 15px;
+            }
+        }
+
+        .add-setting-form {
+            margin: 8px;
+            padding: 12px;
+
+            .setting-row {
+                padding: 12px 0;
+
+                span {
+                    font-size: 15px;
+                }
+
+                div .adm-tag {
+                    font-size: 13px;
+                    padding: 5px 10px;
+                }
+            }
+        }
+
+        .add-setting-bottom {
+            padding: 12px;
+
+            .adm-button {
+                height: 40px;
+                font-size: 15px;
+            }
+        }
+    }
+}
+
+// 暗色主题适配（可选）
+@media (prefers-color-scheme: dark) {
+
+    .article-add-page,
+    .article-add-setting-page {
+        background: #1f1f1f;
+        color: #fff;
+
+        .add-navbar {
+            background: #262626;
+            border-bottom-color: #434343;
+
+            .add-cancel {
+                color: #a6a6a6;
+            }
+
+            .add-autosave {
+                color: #8c8c8c;
+            }
+        }
+
+        .add-form {
+            .add-title {
+                color: #fff;
+
+                &::placeholder {
+                    color: #595959;
+                }
+            }
+
+            .add-content {
+                color: #d9d9d9;
+
+                &::placeholder {
+                    color: #595959;
+                }
+            }
+        }
+
+        .add-toolbar {
+            background: #262626;
+            border-top-color: #434343;
+
+            .antd-mobile-icon {
+                color: #a6a6a6;
+
+                &:hover {
+                    color: #1890ff;
+                    background-color: #1f1f1f;
+                }
+            }
+        }
+
+        .add-setting-form {
+            background: #262626;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+            .setting-row {
+                border-bottom-color: #434343;
+
+                span {
+                    color: #fff;
+                }
+
+                div .adm-tag {
+                    &.adm-tag-default {
+                        background: #434343;
+                        color: #a6a6a6;
+                        border-color: #595959;
+
+                        &:hover {
+                            background: #1f1f1f;
+                            color: #1890ff;
+                            border-color: #1890ff;
+                        }
+                    }
+                }
+            }
+        }
+
+        .add-setting-bottom {
+            background: #262626;
+            border-top-color: #434343;
+
+            .adm-button-default {
+                background: #434343;
+                color: #a6a6a6;
+                border-color: #595959;
+
+                &:hover {
+                    background: #595959;
+                }
+            }
+        }
+    }
+}
+
+.setting-label.required::before {
+    content: '*';
+    color: #ff4d4f;
+    margin-right: 3px;
+    font-size: 16px;
+    font-weight: bold;
+    vertical-align: middle;
+}

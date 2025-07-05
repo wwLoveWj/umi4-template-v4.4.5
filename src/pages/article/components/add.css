@@ -1,0 +1,603 @@
+/**
+ * 添加文章页面样式
+ * 包含编辑页和设置页的样式定义
+ */
+.article-add-page {
+  min-height: 100vh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.article-add-page .add-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.article-add-page .add-navbar .add-cancel {
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.article-add-page .add-navbar .add-cancel:hover {
+  background-color: #f5f5f5;
+}
+.article-add-page .add-navbar .add-autosave {
+  display: flex;
+  align-items: center;
+  color: #999;
+  font-size: 12px;
+}
+.article-add-page .add-navbar .add-autosave img {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+}
+.article-add-page .add-navbar .add-next {
+  color: #1890ff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.article-add-page .add-navbar .add-next:hover {
+  background-color: #e6f7ff;
+}
+.article-add-page .add-navbar .add-next:active {
+  background-color: #bae7ff;
+}
+.article-add-page .add-form {
+  flex: 1;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.article-add-page .add-form .add-title {
+  border: none;
+  outline: none;
+  font-size: 20px;
+  font-weight: 600;
+  color: #262626;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  min-height: 32px;
+  resize: none;
+  font-family: inherit;
+}
+.article-add-page .add-form .add-title::placeholder {
+  color: #bfbfbf;
+  font-weight: normal;
+}
+.article-add-page .add-form .add-title:focus {
+  border: none;
+  box-shadow: none;
+}
+.article-add-page .add-form .add-content {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #595959;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  flex: 1;
+  min-height: 300px;
+  resize: none;
+  font-family: inherit;
+}
+.article-add-page .add-form .add-content::placeholder {
+  color: #bfbfbf;
+}
+.article-add-page .add-form .add-content:focus {
+  border: none;
+  box-shadow: none;
+}
+.article-add-page .add-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: #fff;
+}
+.article-add-page .add-toolbar .antd-mobile-icon {
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.article-add-page .add-toolbar .antd-mobile-icon:hover {
+  color: #1890ff;
+  background-color: #f0f8ff;
+}
+.article-add-page .add-toolbar .antd-mobile-icon:active {
+  transform: scale(0.95);
+}
+.article-add-setting-page {
+  min-height: 100vh;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+}
+.article-add-setting-page .add-navbar {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.article-add-setting-page .add-navbar .add-back {
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+.article-add-setting-page .add-navbar .add-back:hover {
+  background-color: #f5f5f5;
+}
+.article-add-setting-page .add-navbar .add-title {
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #262626;
+  margin: 0 16px;
+}
+.article-add-setting-page .add-setting-form {
+  flex: 1;
+  padding: 16px;
+  background: #fff;
+  margin: 12px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding-bottom: 64px;
+}
+.article-add-setting-page .add-setting-form .setting-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.article-add-setting-page .add-setting-form .setting-row:last-child {
+  border-bottom: none;
+}
+.article-add-setting-page .add-setting-form .setting-row span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #262626;
+  min-width: 80px;
+  margin-right: 16px;
+}
+.article-add-setting-page .add-setting-form .setting-row div {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-tag {
+  margin: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 6px;
+  font-size: 14px;
+  padding: 6px 12px;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-tag.adm-tag-primary {
+  background: #e6f7ff;
+  color: #1890ff;
+  border: 1px solid #91d5ff;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-tag.adm-tag-default {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-tag.adm-tag-default:hover {
+  background: #e6f7ff;
+  color: #1890ff;
+  border-color: #91d5ff;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-image-uploader .adm-image-uploader-cell {
+  width: 60px;
+  height: 60px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-image-uploader .adm-image-uploader-cell:hover {
+  border-color: #1890ff;
+  background: #f0f8ff;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-image-uploader .adm-image-uploader-cell .antd-mobile-icon {
+  font-size: 20px;
+  color: #999;
+}
+.article-add-setting-page .add-setting-form .setting-row div .adm-image-uploader .adm-image-uploader-cell span {
+  font-size: 12px;
+  color: #999;
+  margin-left: 4px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row {
+  align-items: center;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .setting-label {
+  flex-shrink: 0;
+  min-width: 80px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-type-group {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-type-group .cover-type-btn {
+  padding: 6px 18px;
+  border-radius: 18px;
+  border: 1.5px solid #eee;
+  background: #fafbfc;
+  color: #666;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-type-group .cover-type-btn.active {
+  border-color: #1677ff;
+  background: #e6f7ff;
+  color: #1677ff;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-type-group .cover-type-btn:hover {
+  border-color: #1677ff;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-radio-group {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-left: 8px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-radio-group :global(.adm-radio) {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-radio-group :global(.adm-radio) .adm-radio-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #d9d9d9;
+  background: #fff;
+  margin-right: 6px;
+  transition: border-color 0.2s;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-radio-group :global(.adm-radio).adm-radio-checked .adm-radio-icon {
+  border-color: #1677ff;
+  background: #1677ff;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-radio-group :global(.adm-radio).adm-radio-checked .adm-radio-icon::after {
+  content: '';
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 4px auto;
+  border-radius: 50%;
+  background: #fff;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-uploader {
+  margin-left: auto;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-uploader .cover-upload-btn {
+  width: 72px;
+  height: 72px;
+  border: 2px dashed #1677ff;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1677ff;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+  font-size: 28px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-uploader .cover-upload-btn:hover {
+  border-color: #1456b8;
+  background: #f0f8ff;
+  color: #1456b8;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-uploader .cover-upload-btn svg {
+  font-size: 32px;
+}
+.article-add-setting-page .add-setting-form.cover-setting-row .cover-uploader .cover-upload-btn div {
+  font-size: 13px;
+  margin-top: 2px;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .setting-title-preview {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 600;
+  color: #222;
+  padding: 8px 0 8px 2px;
+  word-break: break-all;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .cover-uploader {
+  margin-left: 16px;
+  display: flex;
+  align-items: center;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .cover-uploader .cover-upload-btn {
+  width: 72px;
+  height: 72px;
+  border: 2px dashed #1677ff;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #1677ff;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+  font-size: 28px;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .cover-uploader .cover-upload-btn:hover {
+  border-color: #1456b8;
+  background: #f0f8ff;
+  color: #1456b8;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .cover-uploader .cover-upload-btn svg {
+  font-size: 32px;
+}
+.article-add-setting-page .add-setting-form .setting-title-cover-row .cover-uploader .cover-upload-btn div {
+  font-size: 13px;
+  margin-top: 2px;
+}
+.article-add-setting-page .add-setting-form .cover-type-row {
+  display: flex;
+  align-items: center;
+  padding: 16px 0 8px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.article-add-setting-page .add-setting-form .cover-type-row .setting-label {
+  flex-shrink: 0;
+  min-width: 80px;
+  font-size: 16px;
+  color: #222;
+  margin-right: 12px;
+}
+.article-add-setting-page .add-setting-form .cover-type-row .cover-type-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+.article-add-setting-page .add-setting-form .cover-type-row .cover-type-group .cover-type-btn {
+  padding: 4px 8px;
+  border-radius: 18px;
+  border: 1.5px solid #eee;
+  background: #fff;
+  color: #666;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-add-setting-page .add-setting-form .cover-type-row .cover-type-group .cover-type-btn.active {
+  border-color: #ff7a45;
+  background: #fff7f0;
+  color: #ff7a45;
+}
+.article-add-setting-page .add-setting-form .cover-type-row .cover-type-group .cover-type-btn:hover {
+  border-color: #ff7a45;
+}
+.article-add-setting-page .add-setting-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+  background: #fff;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  gap: 12px;
+  padding: 8px 16px 8px 16px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+}
+.article-add-setting-page .add-setting-bottom .adm-button {
+  flex: 1;
+  border-radius: 8px;
+  font-size: 15px;
+  height: 36px;
+}
+.article-add-setting-page .add-setting-bottom .adm-button.adm-button-default {
+  background: #f5f5f5;
+  color: #666;
+  border: 1px solid #d9d9d9;
+}
+.article-add-setting-page .add-setting-bottom .adm-button.adm-button-primary {
+  background: #002fa7;
+  color: #fff;
+  border: 1px solid #002fa7;
+}
+@media (max-width: 375px) {
+  .article-add-page .add-navbar,
+  .article-add-setting-page .add-navbar {
+    padding: 10px 12px;
+  }
+  .article-add-page .add-navbar .add-cancel,
+  .article-add-setting-page .add-navbar .add-cancel,
+  .article-add-page .add-navbar .add-next,
+  .article-add-setting-page .add-navbar .add-next {
+    font-size: 15px;
+  }
+  .article-add-page .add-form,
+  .article-add-setting-page .add-form {
+    padding: 12px;
+  }
+  .article-add-page .add-form .add-title,
+  .article-add-setting-page .add-form .add-title {
+    font-size: 18px;
+  }
+  .article-add-page .add-form .add-content,
+  .article-add-setting-page .add-form .add-content {
+    font-size: 15px;
+  }
+  .article-add-page .add-setting-form,
+  .article-add-setting-page .add-setting-form {
+    margin: 8px;
+    padding: 12px;
+  }
+  .article-add-page .add-setting-form .setting-row,
+  .article-add-setting-page .add-setting-form .setting-row {
+    padding: 12px 0;
+  }
+  .article-add-page .add-setting-form .setting-row span,
+  .article-add-setting-page .add-setting-form .setting-row span {
+    font-size: 15px;
+  }
+  .article-add-page .add-setting-form .setting-row div .adm-tag,
+  .article-add-setting-page .add-setting-form .setting-row div .adm-tag {
+    font-size: 13px;
+    padding: 5px 10px;
+  }
+  .article-add-page .add-setting-bottom,
+  .article-add-setting-page .add-setting-bottom {
+    padding: 12px;
+  }
+  .article-add-page .add-setting-bottom .adm-button,
+  .article-add-setting-page .add-setting-bottom .adm-button {
+    height: 40px;
+    font-size: 15px;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .article-add-page,
+  .article-add-setting-page {
+    background: #1f1f1f;
+    color: #fff;
+  }
+  .article-add-page .add-navbar,
+  .article-add-setting-page .add-navbar {
+    background: #262626;
+    border-bottom-color: #434343;
+  }
+  .article-add-page .add-navbar .add-cancel,
+  .article-add-setting-page .add-navbar .add-cancel {
+    color: #a6a6a6;
+  }
+  .article-add-page .add-navbar .add-autosave,
+  .article-add-setting-page .add-navbar .add-autosave {
+    color: #8c8c8c;
+  }
+  .article-add-page .add-form .add-title,
+  .article-add-setting-page .add-form .add-title {
+    color: #fff;
+  }
+  .article-add-page .add-form .add-title::placeholder,
+  .article-add-setting-page .add-form .add-title::placeholder {
+    color: #595959;
+  }
+  .article-add-page .add-form .add-content,
+  .article-add-setting-page .add-form .add-content {
+    color: #d9d9d9;
+  }
+  .article-add-page .add-form .add-content::placeholder,
+  .article-add-setting-page .add-form .add-content::placeholder {
+    color: #595959;
+  }
+  .article-add-page .add-toolbar,
+  .article-add-setting-page .add-toolbar {
+    background: #262626;
+    border-top-color: #434343;
+  }
+  .article-add-page .add-toolbar .antd-mobile-icon,
+  .article-add-setting-page .add-toolbar .antd-mobile-icon {
+    color: #a6a6a6;
+  }
+  .article-add-page .add-toolbar .antd-mobile-icon:hover,
+  .article-add-setting-page .add-toolbar .antd-mobile-icon:hover {
+    color: #1890ff;
+    background-color: #1f1f1f;
+  }
+  .article-add-page .add-setting-form,
+  .article-add-setting-page .add-setting-form {
+    background: #262626;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .article-add-page .add-setting-form .setting-row,
+  .article-add-setting-page .add-setting-form .setting-row {
+    border-bottom-color: #434343;
+  }
+  .article-add-page .add-setting-form .setting-row span,
+  .article-add-setting-page .add-setting-form .setting-row span {
+    color: #fff;
+  }
+  .article-add-page .add-setting-form .setting-row div .adm-tag.adm-tag-default,
+  .article-add-setting-page .add-setting-form .setting-row div .adm-tag.adm-tag-default {
+    background: #434343;
+    color: #a6a6a6;
+    border-color: #595959;
+  }
+  .article-add-page .add-setting-form .setting-row div .adm-tag.adm-tag-default:hover,
+  .article-add-setting-page .add-setting-form .setting-row div .adm-tag.adm-tag-default:hover {
+    background: #1f1f1f;
+    color: #1890ff;
+    border-color: #1890ff;
+  }
+  .article-add-page .add-setting-bottom,
+  .article-add-setting-page .add-setting-bottom {
+    background: #262626;
+    border-top-color: #434343;
+  }
+  .article-add-page .add-setting-bottom .adm-button-default,
+  .article-add-setting-page .add-setting-bottom .adm-button-default {
+    background: #434343;
+    color: #a6a6a6;
+    border-color: #595959;
+  }
+  .article-add-page .add-setting-bottom .adm-button-default:hover,
+  .article-add-setting-page .add-setting-bottom .adm-button-default:hover {
+    background: #595959;
+  }
+}
+.setting-label.required::before {
+  content: '*';
+  color: #ff4d4f;
+  margin-right: 3px;
+  font-size: 16px;
+  font-weight: bold;
+  vertical-align: middle;
+}

@@ -129,6 +129,21 @@ export const menuRoutes: API.MenuRoutesType[] = [
     isDetails: true,
   },
   {
+    key: "article-add",
+    title: "写文章",
+    path: "/article/add",
+    component: "./article/components/add",
+    hideTabBar: true,
+  },
+  {
+    key: "article-add-setting",
+    title: "文章设置",
+    path: "/article/addSetting",
+    component: "./article/components/addSetting",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "article-collections",
     title: "我的收藏",
     path: "/article/collections",
