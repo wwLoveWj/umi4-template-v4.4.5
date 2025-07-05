@@ -2,15 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "umi";
 import {
   NavBar,
-  Card,
-  Avatar,
-  Tag,
   Button,
+  Tag,
+  Toast,
+  SpinLoading,
+  Popup,
   TextArea,
   List,
-  SpinLoading,
-  Toast,
-  Popup,
+  Empty,
 } from "antd-mobile";
 import {
   HeartOutline,
@@ -293,98 +292,113 @@ const ArticleDetail: React.FC = () => {
         文章详情
       </NavBar>
 
-      {/* 文章内容 */}
-      <div className="article-content">
-        <Card className="article-header-card">
-          <h1 className="article-title">{article.title}</h1>
-          <div className="article-meta">
-            <div className="author-info">
-              <Avatar src={article.authorAvatar} />
-              <span className="author-name">{article.author}</span>
-              <span className="publish-time">
+      <div className="article-detail-content">
+        {/* 作者信息区 */}
+        <div className="article-detail-meta">
+          <img
+            className="detail-avatar"
+            src={article.authorAvatar}
+            alt={article.author}
+          />
+          <div className="detail-author-info">
+            <div className="detail-author-row">
+              <span className="detail-author">{article.author}</span>
+              <span className="detail-publish">
                 {formatTime(article.publishTime)}
               </span>
             </div>
-            <div className="article-stats">
-              <span className="stat-item">
-                <EyeOutline />
-                {article.readCount}
-              </span>
-              <span className="stat-item">
-                {article.isLiked ? (
-                  <HeartFill color="#ff4757" />
-                ) : (
-                  <HeartOutline />
-                )}
-                {article.likeCount}
-              </span>
-              <span className="stat-item">
-                <MessageOutline />
-                {article.commentCount}
-              </span>
-            </div>
+            {/* 可加作者简介 */}
           </div>
-          <div className="article-tags">
-            {article.tags.map((tag) => (
-              <Tag key={tag} color="primary" fill="outline">
-                {tag}
-              </Tag>
-            ))}
-          </div>
-        </Card>
-
-        <Card className="article-body-card">
+          <Button className="detail-follow-btn" size="mini">
+            关注
+          </Button>
+        </div>
+        {/* 标题/摘要/正文 */}
+        <div className="detail-title">{article.title}</div>
+        <div className="detail-summary">{article.summary}</div>
+        <div
+          className="detail-html"
+          dangerouslySetInnerHTML={{ __html: article.htmlContent }}
+        />
+        {/* 标签 */}
+        <div className="detail-tags">
+          {article.tags.map((tag) => (
+            <Tag key={tag} color="primary" fill="outline">
+              {tag}
+            </Tag>
+          ))}
+        </div>
+        {/* 操作区 */}
+        {/* <div className="detail-actions">
+          <span className="action-btn">
+            <EyeOutline />
+            {article.readCount}
+          </span>
+          <span className="action-btn" onClick={handleLikeArticle}>
+            {article.isLiked ? <HeartFill color="#ff4757" /> : <HeartOutline />}
+            {article.likeCount}
+          </span>
+          <span className="action-btn" onClick={handleCollectArticle}>
+            {article.isCollected ? (
+              <StarFill color="#ffa502" />
+            ) : (
+              <StarOutline />
+            )}
+            收藏
+          </span>
+          <span className="action-btn">
+            <MessageOutline />
+            {article.commentCount}
+          </span>
+        </div> */}
+        <div className="detail-divider" />
+        {/* 评论区 */}
+        <div className="detail-comments">
           <div
-            className="article-content-html"
-            dangerouslySetInnerHTML={{ __html: article.htmlContent }}
-          />
-        </Card>
-
-        {/* 评论列表 */}
-        <Card className="comments-card">
-          <div className="comments-header">
-            <h3>评论 ({article.commentCount})</h3>
+            style={{ fontWeight: 600, fontSize: 16, margin: "16px 0 8px 0" }}
+          >
+            评论
           </div>
-          <List className="comments-list">
-            {comments.map((comment) => (
-              <List.Item key={comment.id} className="comment-item">
-                <div className="comment-content">
-                  <div className="comment-header">
-                    <Avatar src={comment.authorAvatar} />
-                    <div className="comment-info">
-                      <span className="comment-author">{comment.author}</span>
-                      <span className="comment-time">
-                        {formatTime(comment.createTime)}
-                      </span>
+          {comments.length === 0 ? (
+            <Empty description="暂无评论" />
+          ) : (
+            <List>
+              {comments.map((comment) => (
+                <List.Item key={comment.id} className="comment-item">
+                  <div className="comment-content">
+                    <div className="comment-header">
+                      <img
+                        className="detail-avatar"
+                        src={comment.authorAvatar}
+                        alt={comment.author}
+                      />
+                      <div className="comment-info">
+                        <span className="comment-author">{comment.author}</span>
+                        <span className="comment-time">
+                          {formatTime(comment.createTime)}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="comment-text">{comment.content}</div>
+                    <div className="comment-actions">
+                      <div
+                        className="comment-like"
+                        onClick={() => handleLikeComment(comment)}
+                      >
+                        {comment.isLiked ? (
+                          <HeartFill color="#ff4757" />
+                        ) : (
+                          <HeartOutline />
+                        )}
+                        <span>{comment.likeCount}</span>
+                      </div>
                     </div>
                   </div>
-                  <div className="comment-text">{comment.content}</div>
-                  <div className="comment-actions">
-                    <div
-                      className="comment-like"
-                      onClick={() => handleLikeComment(comment)}
-                    >
-                      {comment.isLiked ? (
-                        <HeartFill color="#ff4757" />
-                      ) : (
-                        <HeartOutline />
-                      )}
-                      <span>{comment.likeCount}</span>
-                    </div>
-                  </div>
-                </div>
-              </List.Item>
-            ))}
-          </List>
-
-          {hasMoreComments && (
-            <div className="load-more-comments">
-              <Button fill="none" size="small" onClick={() => loadComments()}>
-                加载更多评论
-              </Button>
-            </div>
+                </List.Item>
+              ))}
+            </List>
           )}
-        </Card>
+        </div>
       </div>
 
       {/* 底部操作栏 */}
@@ -401,7 +415,7 @@ const ArticleDetail: React.FC = () => {
         <div className="action-buttons">
           <div className="action-btn" onClick={handleLikeArticle}>
             {article.isLiked ? <HeartFill color="#ff4757" /> : <HeartOutline />}
-            <span>点赞</span>
+            {article.likeCount}
           </div>
           <div className="action-btn" onClick={handleCollectArticle}>
             {article.isCollected ? (

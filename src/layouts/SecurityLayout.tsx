@@ -19,7 +19,9 @@ export default function Layout() {
   const shouldShowTabBar = useMemo(() => {
     // 监听路由变化
     // 判断是否需要隐藏 TabBar
-    const currentRouter = menus.find((route) => route.path === pathname) || {
+    const currentRouter = menus.find(
+      (route) => route.path === pathname || route?.hideTabBar
+    ) || {
       hideTabBar: false,
     };
     setCurrentRoute(currentRouter);
