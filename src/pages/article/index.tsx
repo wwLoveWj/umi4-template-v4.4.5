@@ -73,7 +73,7 @@ const ArticleList: React.FC = () => {
         setPage(currentPage + 1);
       }
 
-      setHasMore(response.list.length === pageSize);
+      setHasMore(response.list?.length === pageSize);
     } catch (error) {
       Toast.show({ icon: "fail", content: "加载文章失败" });
     } finally {

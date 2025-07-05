@@ -148,6 +148,7 @@ declare namespace API {
     isLiked: boolean;
     isCollected: boolean;
     tags: string[];
+    articleId: string;
   }
 
   /**
