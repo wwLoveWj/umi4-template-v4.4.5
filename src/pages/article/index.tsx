@@ -251,7 +251,7 @@ const ArticleList: React.FC = () => {
           {articles.map((article) => (
             <div
               className="article-item"
-              key={article.id}
+              key={article.articleId}
               onClick={() => handleArticleClick(article)}
             >
               <div className="article-meta-row">
@@ -268,11 +268,12 @@ const ArticleList: React.FC = () => {
               <div className="article-title">{article.title}</div>
               <div className="article-summary">{article.summary}</div>
               <div className="article-tags">
-                {article.tags.slice(0, 3).map((tag) => (
-                  <Tag key={tag} color="primary" fill="outline">
-                    {tag}
-                  </Tag>
-                ))}
+                {Array.isArray(article.tags) &&
+                  article.tags?.slice(0, 3).map((tag) => (
+                    <Tag key={tag} color="primary" fill="outline">
+                      {tag}
+                    </Tag>
+                  ))}
               </div>
               <div className="article-bottom-row">
                 {/* 操作按钮 */}

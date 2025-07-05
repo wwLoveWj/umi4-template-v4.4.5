@@ -47,18 +47,41 @@ const ArticleAddSetting: React.FC = () => {
   const isValid = !!(title && content && type && visible && tag && column);
 
   // 发布
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!isValid) {
       Toast.show({ icon: "fail", content: "请填写所有必填项" });
       return;
     }
     setSaving(true);
-    setTimeout(() => {
-      Toast.show({ icon: "success", content: "发布成功" });
-      localStorage.removeItem("article-draft");
+    try {
+      const res = await fetch("/api/article/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          summary: content.slice(0, 100), // 可自定义摘要
+          content,
+          coverImage: cover[0]?.url || "",
+          category: column || "",
+          author: "当前用户", // TODO: 替换为真实登录用户
+          authorAvatar: "", // TODO: 替换为真实头像
+          tags: [tag], // 这里假设单标签，若多标签传selectedTags
+        }),
+      });
+      const data = await res.json();
+      if (data.code === 1) {
+        Toast.show({ icon: "success", content: "发布成功" });
+        localStorage.removeItem("article-draft");
+        setSaving(false);
+        navigate("/article");
+      } else {
+        Toast.show({ icon: "fail", content: data.msg || "发布失败" });
+        setSaving(false);
+      }
+    } catch (e) {
+      Toast.show({ icon: "fail", content: "网络异常" });
       setSaving(false);
-      navigate("/article");
-    }, 1200);
+    }
   };
 
   // 保存草稿
