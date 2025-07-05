@@ -7,6 +7,7 @@ import {
   Tag,
   SpinLoading,
   InfiniteScroll,
+  Toast,
 } from "antd-mobile";
 import { useNavigate } from "umi";
 import { articleApi } from "@/service/api/article";
@@ -17,6 +18,8 @@ import {
   StarFill,
   EyeOutline,
   MessageOutline,
+  SearchOutline,
+  AddOutline,
 } from "antd-mobile-icons";
 import "./style.less";
 import { addMessage } from "@/utils/messageCenter";
@@ -31,6 +34,7 @@ const ArticleList: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [articles, setArticles] = useState<API.ArticleItemType[]>([]);
   const [page, setPage] = useState(1);
+  const [searchValue, setSearchValue] = useState("");
   const pageSize = 10;
 
   // 文章分类配置
@@ -49,7 +53,7 @@ const ArticleList: React.FC = () => {
   /**
    * 加载文章列表
    */
-  const loadArticles = async (isRefresh = false) => {
+  const loadArticles = async (isRefresh = false, search = "") => {
     if (loading) return;
 
     setLoading(true);
@@ -59,6 +63,7 @@ const ArticleList: React.FC = () => {
         category: activeTab === "recommend" ? undefined : activeTab,
         page: currentPage,
         pageSize,
+        keyword: search || searchValue,
       });
       if (isRefresh) {
         setArticles(response.list);
@@ -70,7 +75,7 @@ const ArticleList: React.FC = () => {
 
       setHasMore(response.list.length === pageSize);
     } catch (error) {
-      console.error("加载文章列表失败:", error);
+      Toast.show({ icon: "fail", content: "加载文章失败" });
     } finally {
       setLoading(false);
     }
@@ -84,10 +89,26 @@ const ArticleList: React.FC = () => {
     setArticles([]);
     setPage(1);
     setHasMore(true);
-  };
-  useEffect(() => {
     loadArticles(true);
-  }, [activeTab]);
+  };
+
+  /**
+   * 搜索
+   */
+  const handleSearch = () => {
+    setArticles([]);
+    setPage(1);
+    setHasMore(true);
+    loadArticles(true, searchValue);
+  };
+
+  /**
+   * 跳转到添加文章
+   */
+  const handleAddArticle = () => {
+    navigate("/article/add");
+  };
+
   /**
    * 点赞/取消点赞
    */
@@ -120,7 +141,7 @@ const ArticleList: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error("操作失败:", error);
+      Toast.show({ icon: "fail", content: "操作失败" });
     }
   };
 
@@ -152,7 +173,7 @@ const ArticleList: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error("操作失败:", error);
+      Toast.show({ icon: "fail", content: "操作失败" });
     }
   };
 
@@ -189,6 +210,25 @@ const ArticleList: React.FC = () => {
 
   return (
     <div className="article-list-page">
+      {/* 搜索栏和添加按钮 */}
+      <div className="article-header-bar">
+        <div className="article-search-box">
+          <input
+            className="article-search-input"
+            type="text"
+            placeholder="搜索文章/标签/作者"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+          <span className="search-icon" onClick={handleSearch}>
+            <SearchOutline />
+          </span>
+        </div>
+        <button className="article-add-btn" onClick={handleAddArticle}>
+          <AddOutline />
+        </button>
+      </div>
       {/* 分类Tabs */}
       <div className="article-tabs">
         <Tabs

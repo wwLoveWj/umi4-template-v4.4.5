@@ -150,15 +150,6 @@ const ArticleCollections: React.FC = () => {
 
   return (
     <div className="article-collections-page">
-      {/* 导航栏 */}
-      <NavBar
-        onBack={() => navigate(-1)}
-        backArrow={<LeftOutline />}
-        className="collections-navbar"
-      >
-        我的收藏
-      </NavBar>
-
       {/* 收藏文章列表 */}
       <div className="collections-content">
         {articles.length === 0 && !loading ? (
