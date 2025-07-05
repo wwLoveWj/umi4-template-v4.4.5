@@ -16,6 +16,7 @@ import {
   StarOutline,
   StarFill,
   EyeOutline,
+  MessageOutline,
 } from "antd-mobile-icons";
 import "./style.less";
 import { addMessage } from "@/utils/messageCenter";
@@ -206,88 +207,71 @@ const ArticleList: React.FC = () => {
 
       {/* 文章列表 */}
       <div className="article-content">
-        <List>
+        <div className="article-list">
           {articles.map((article) => (
-            <List.Item
+            <div
+              className="article-item"
               key={article.id}
               onClick={() => handleArticleClick(article)}
             >
-              <Card className="article-card">
-                <div className="article-header">
-                  <div className="article-cover">
-                    <img src={article.coverImage} alt={article.title} />
-                  </div>
-                  <div className="article-info">
-                    <h3 className="article-title">{article.title}</h3>
-                    <p className="article-summary">{article.summary}</p>
-                  </div>
-                </div>
-                <div className="article-meta">
-                  <div className="author-info">
-                    <Avatar src={article.authorAvatar} />
-                    <span className="author-name">{article.author}</span>
-                    <span className="publish-time">
-                      {formatTime(article.publishTime)}
-                    </span>
-                  </div>
-                  <div className="article-stats">
-                    <span className="stat-item">
-                      <EyeOutline />
-                      {article.readCount}
-                    </span>
-                    <span className="stat-item">
-                      {article.isLiked ? (
-                        <HeartFill color="#ff4757" />
-                      ) : (
-                        <HeartOutline />
-                      )}
-                      {article.likeCount}
-                    </span>
-                  </div>
-                </div>
-                <div className="article-tags">
-                  {article.tags.slice(0, 3).map((tag) => (
-                    <Tag key={tag} color="primary" fill="outline">
-                      {tag}
-                    </Tag>
-                  ))}
-                </div>
+              <div className="article-meta-row">
+                <img
+                  className="article-avatar"
+                  src={article.authorAvatar}
+                  alt={article.author}
+                />
+                <span className="article-author">{article.author}</span>
+                <span className="article-time">
+                  {formatTime(article.publishTime)}
+                </span>
+              </div>
+              <div className="article-title">{article.title}</div>
+              <div className="article-summary">{article.summary}</div>
+              <div className="article-tags">
+                {article.tags.slice(0, 3).map((tag) => (
+                  <Tag key={tag} color="primary" fill="outline">
+                    {tag}
+                  </Tag>
+                ))}
+              </div>
+              <div className="article-bottom-row">
                 {/* 操作按钮 */}
-                <div className="article-actions">
-                  <div
-                    className="action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLike(article);
-                    }}
-                  >
-                    {article.isLiked ? (
-                      <HeartFill color="#ff4757" />
-                    ) : (
-                      <HeartOutline />
-                    )}
-                    <span>点赞</span>
-                  </div>
-                  <div
-                    className="action-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCollect(article);
-                    }}
-                  >
-                    {article.isCollected ? (
-                      <StarFill color="#ffa502" />
-                    ) : (
-                      <StarOutline />
-                    )}
-                    <span>收藏</span>
-                  </div>
+                <span className="article-stat">
+                  <EyeOutline />
+                  {article.readCount}
+                </span>
+                <div
+                  className="action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleLike(article);
+                  }}
+                >
+                  {article.isLiked ? (
+                    <HeartFill color="#ff4757" />
+                  ) : (
+                    <HeartOutline />
+                  )}
+                  <span>点赞</span>
                 </div>
-              </Card>
-            </List.Item>
+                <div
+                  className="action-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCollect(article);
+                  }}
+                >
+                  {article.isCollected ? (
+                    <StarFill color="#ffa502" />
+                  ) : (
+                    <StarOutline />
+                  )}
+                  <span>收藏</span>
+                </div>
+              </div>
+            </div>
           ))}
-        </List>
-
+        </div>
         {/* 加载更多 */}
         <InfiniteScroll
           loadMore={() => loadArticles()}
