@@ -23,6 +23,7 @@ import {
 } from "antd-mobile-icons";
 import "./style.less";
 import { addMessage } from "@/utils/messageCenter";
+import { useRequest } from "ahooks";
 
 /**
  * 文章列表页面
@@ -30,9 +31,8 @@ import { addMessage } from "@/utils/messageCenter";
 const ArticleList: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("recommend");
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [articles, setArticles] = useState<API.ArticleItemType[]>([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [articleInfoList, setArticles] = useState<API.ArticleItemType[]>([]);
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const pageSize = 10;
@@ -49,37 +49,46 @@ const ArticleList: React.FC = () => {
     { key: "vite", title: "Vite" },
     { key: "webpack", title: "Webpack" },
   ];
-
   /**
    * 加载文章列表
    */
-  const loadArticles = async (isRefresh = false, search = "") => {
-    if (loading) return;
-
-    setLoading(true);
-    try {
-      const currentPage = isRefresh ? 1 : page;
-      const response = await articleApi.getArticleList({
-        category: activeTab === "recommend" ? undefined : activeTab,
-        page: currentPage,
-        pageSize,
-        keyword: search || searchValue,
-      });
-      if (isRefresh) {
-        setArticles(response.list);
-        setPage(1);
-      } else {
-        setArticles(response.list || []);
-        setPage(currentPage + 1);
-      }
-
-      setHasMore(response.list?.length === pageSize);
-    } catch (error) {
-      Toast.show({ icon: "fail", content: "加载文章失败" });
-    } finally {
-      setLoading(false);
-    }
+  const loadMore = async (
+    search: string,
+    currentPage: number,
+    category: string = activeTab
+  ) => {
+    const res = await articleApi.getArticleList({
+      category: category === "recommend" ? undefined : category,
+      page: currentPage,
+      pageSize,
+      keyword: search || searchValue,
+      isPage: true,
+    });
+    setArticles((prev) => [...prev, ...res.list]);
+    setHasMore(res.list.length === pageSize); // 关键：如果返回数据不足一页，说明没有更多了
+    setPage((prev) => prev + 1);
   };
+
+  // const { runAsync: articleRunAsync } = useRequest(
+  //   async ({ search, page: currentPage }) => {
+  //     const res = await articleApi.getArticleList({
+  //       category: activeTab === "recommend" ? undefined : activeTab,
+  //       page: currentPage,
+  //       pageSize,
+  //       keyword: search || searchValue,
+  //       isPage: true,
+  //     });
+  //     return res?.list;
+  //   },
+  //   {
+  //     onSuccess: (res) => {
+  //       debugger;
+  //       setPage((prev) => prev + 1);
+  //       setArticles((prev) => [...prev, ...res]);
+  //       setHasMore(res?.length === pageSize);
+  //     },
+  //   }
+  // );
 
   /**
    * 切换分类
@@ -89,7 +98,7 @@ const ArticleList: React.FC = () => {
     setArticles([]);
     setPage(1);
     setHasMore(true);
-    loadArticles(true);
+    loadMore("", 1, key);
   };
 
   /**
@@ -99,7 +108,7 @@ const ArticleList: React.FC = () => {
     setArticles([]);
     setPage(1);
     setHasMore(true);
-    loadArticles(true, searchValue);
+    loadMore(searchValue, 1);
   };
 
   /**
@@ -115,27 +124,35 @@ const ArticleList: React.FC = () => {
   const handleLike = async (article: API.ArticleItemType) => {
     try {
       if (article.isLiked) {
-        await articleApi.unlikeArticle(article.id);
+        await articleApi.unlikeArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id
-              ? { ...item, isLiked: false, likeCount: item.likeCount - 1 }
+            item.articleId === article.articleId
+              ? {
+                  ...item,
+                  isLiked: false,
+                  likeCount: item.likeCount - 1,
+                }
               : item
           )
         );
       } else {
-        await articleApi.likeArticle(article.id);
+        await articleApi.likeArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id
-              ? { ...item, isLiked: true, likeCount: item.likeCount + 1 }
+            item.articleId === article.articleId
+              ? {
+                  ...item,
+                  isLiked: true,
+                  likeCount: item.likeCount + 1,
+                }
               : item
           )
         );
         // 推送点赞消息
         addMessage({
           type: "like",
-          articleId: article.id,
+          articleId: article.articleId,
           articleTitle: article.title,
           content: `您的文章《${article.title}》收到一个新的点赞！`,
         });
@@ -151,23 +168,28 @@ const ArticleList: React.FC = () => {
   const handleCollect = async (article: API.ArticleItemType) => {
     try {
       if (article.isCollected) {
-        await articleApi.uncollectArticle(article.id);
+        await articleApi.uncollectArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id ? { ...item, isCollected: false } : item
+            item.articleId === article.articleId
+              ? { ...item, isCollected: false }
+              : item
           )
         );
       } else {
-        await articleApi.collectArticle(article.id);
+        await articleApi.collectArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id ? { ...item, isCollected: true } : item
+            item.articleId === article.articleId
+              ? { ...item, isCollected: true }
+              : item
           )
         );
+
         // 推送收藏消息
         addMessage({
           type: "collect",
-          articleId: article.id,
+          articleId: article.articleId,
           articleTitle: article.title,
           content: `您的文章《${article.title}》被收藏啦！`,
         });
@@ -205,7 +227,7 @@ const ArticleList: React.FC = () => {
   };
 
   useEffect(() => {
-    loadArticles(true);
+    loadMore("", 1);
   }, []);
 
   return (
@@ -248,7 +270,7 @@ const ArticleList: React.FC = () => {
       {/* 文章列表 */}
       <div className="article-content">
         <div className="article-list">
-          {articles.map((article) => (
+          {(articleInfoList || [])?.map((article) => (
             <div
               className="article-item"
               key={article.articleId}
@@ -315,7 +337,7 @@ const ArticleList: React.FC = () => {
         </div>
         {/* 加载更多 */}
         <InfiniteScroll
-          loadMore={() => loadArticles()}
+          loadMore={() => loadMore("", page)}
           hasMore={hasMore}
           threshold={250}
         >
