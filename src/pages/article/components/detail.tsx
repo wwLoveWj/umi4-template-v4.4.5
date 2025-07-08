@@ -374,54 +374,72 @@ const ArticleDetail: React.FC = () => {
               {comments.map((comment) =>
                 comment && comment.authorAvatar ? (
                   <List.Item key={comment.id} className="comment-item">
-                    <div className="comment-content">
-                      <div className="comment-header">
-                        <img
-                          className="detail-avatar"
-                          src={comment.authorAvatar}
-                          alt={comment.author}
-                        />
-                        <div className="comment-info">
-                          <span className="comment-author">
+                    <div
+                      className="comment-content"
+                      style={{ display: "flex", alignItems: "flex-start" }}
+                    >
+                      {/* 头像 */}
+                      <img
+                        className="detail-avatar"
+                        src={comment.authorAvatar}
+                        alt={comment.author}
+                        style={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: "50%",
+                          marginRight: 10,
+                          flexShrink: 0,
+                        }}
+                      />
+                      {/* 右侧信息+内容 */}
+                      <div style={{ flex: 1 }}>
+                        <div
+                          style={{ display: "flex", flexDirection: "column" }}
+                        >
+                          <span style={{ fontWeight: 600, fontSize: 15 }}>
                             {comment.author}
                           </span>
-                          <span className="comment-time">
+                          <span
+                            style={{
+                              color: "#aaa",
+                              fontSize: 12,
+                              margin: "2px 0 0 0",
+                            }}
+                          >
                             {formatTime(comment.createTime)}
                           </span>
                         </div>
-                      </div>
-                      <div className="comment-text">{comment.content}</div>
-                      {/* 如果有画板图片，展示图片 */}
-                      {comment.canvasImage && (
+                        {/* 内容区，与时间左对齐 */}
                         <div style={{ marginTop: 8 }}>
-                          {/*
-                          评论画板图片
-                          @type {string}
-                        */}
-                          <img
-                            src={comment.canvasImage}
-                            alt="画板内容"
-                            style={{
-                              width: "100%",
-                              maxHeight: 120,
-                              borderRadius: 8,
-                              objectFit: "contain",
-                              background: "#f6f6f6",
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div className="comment-actions">
-                        <div
-                          className="comment-like"
-                          onClick={() => handleLikeComment(comment)}
-                        >
-                          {comment.isLiked ? (
-                            <HeartFill color="#ff4757" />
-                          ) : (
-                            <HeartOutline />
+                          <div className="comment-text">{comment.content}</div>
+                          {comment.canvasImage && (
+                            <div style={{ marginTop: 8 }}>
+                              <img
+                                src={comment.canvasImage}
+                                alt="画板内容"
+                                style={{
+                                  width: "100%",
+                                  maxHeight: 120,
+                                  borderRadius: 8,
+                                  objectFit: "contain",
+                                  background: "#f6f6f6",
+                                }}
+                              />
+                            </div>
                           )}
-                          <span>{comment.likeCount}</span>
+                        </div>
+                        <div className="comment-actions">
+                          <div
+                            className="comment-like"
+                            onClick={() => handleLikeComment(comment)}
+                          >
+                            {comment.isLiked ? (
+                              <HeartFill color="#ff4757" />
+                            ) : (
+                              <HeartOutline />
+                            )}
+                            <span>{comment.likeCount}</span>
+                          </div>
                         </div>
                       </div>
                     </div>
