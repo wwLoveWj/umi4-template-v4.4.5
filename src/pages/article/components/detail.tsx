@@ -23,6 +23,7 @@ import {
 import { articleApi } from "@/service/api/article";
 import { addMessage } from "@/utils/messageCenter";
 import "./detail.less";
+import CanvasBoard from "@/components/CanvasBoard";
 
 /**
  * 文章详情页面
@@ -38,6 +39,8 @@ const ArticleDetail: React.FC = () => {
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [hasMoreComments, setHasMoreComments] = useState(true);
   const [commentPage, setCommentPage] = useState(1);
+  const [commentCanvas, setCommentCanvas] = useState<string>("");
+  const [showCanvas, setShowCanvas] = useState(false);
 
   /**
    * 加载文章详情
@@ -98,13 +101,16 @@ const ArticleDetail: React.FC = () => {
 
     setCommentLoading(true);
     try {
+      // 发送评论内容和画板图片（如有）
       const newComment = await articleApi.addComment({
         articleId: id,
         content: commentText.trim(),
+        canvasImage: commentCanvas || undefined,
       });
 
       setComments((prev) => [newComment, ...prev]);
       setCommentText("");
+      setCommentCanvas("");
       setShowCommentInput(false);
 
       // 更新文章评论数
@@ -118,6 +124,7 @@ const ArticleDetail: React.FC = () => {
         icon: "success",
         content: "评论发表成功",
       });
+      loadComments(true);
     } catch (error) {
       console.error("发表评论失败:", error);
       Toast.show({
@@ -364,39 +371,63 @@ const ArticleDetail: React.FC = () => {
             <Empty description="暂无评论" />
           ) : (
             <List>
-              {comments.map((comment) => (
-                <List.Item key={comment.id} className="comment-item">
-                  <div className="comment-content">
-                    <div className="comment-header">
-                      <img
-                        className="detail-avatar"
-                        src={comment.authorAvatar}
-                        alt={comment.author}
-                      />
-                      <div className="comment-info">
-                        <span className="comment-author">{comment.author}</span>
-                        <span className="comment-time">
-                          {formatTime(comment.createTime)}
-                        </span>
+              {comments.map((comment) =>
+                comment && comment.authorAvatar ? (
+                  <List.Item key={comment.id} className="comment-item">
+                    <div className="comment-content">
+                      <div className="comment-header">
+                        <img
+                          className="detail-avatar"
+                          src={comment.authorAvatar}
+                          alt={comment.author}
+                        />
+                        <div className="comment-info">
+                          <span className="comment-author">
+                            {comment.author}
+                          </span>
+                          <span className="comment-time">
+                            {formatTime(comment.createTime)}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="comment-text">{comment.content}</div>
+                      {/* 如果有画板图片，展示图片 */}
+                      {comment.canvasImage && (
+                        <div style={{ marginTop: 8 }}>
+                          {/*
+                          评论画板图片
+                          @type {string}
+                        */}
+                          <img
+                            src={comment.canvasImage}
+                            alt="画板内容"
+                            style={{
+                              width: "100%",
+                              maxHeight: 120,
+                              borderRadius: 8,
+                              objectFit: "contain",
+                              background: "#f6f6f6",
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div className="comment-actions">
+                        <div
+                          className="comment-like"
+                          onClick={() => handleLikeComment(comment)}
+                        >
+                          {comment.isLiked ? (
+                            <HeartFill color="#ff4757" />
+                          ) : (
+                            <HeartOutline />
+                          )}
+                          <span>{comment.likeCount}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="comment-text">{comment.content}</div>
-                    <div className="comment-actions">
-                      <div
-                        className="comment-like"
-                        onClick={() => handleLikeComment(comment)}
-                      >
-                        {comment.isLiked ? (
-                          <HeartFill color="#ff4757" />
-                        ) : (
-                          <HeartOutline />
-                        )}
-                        <span>{comment.likeCount}</span>
-                      </div>
-                    </div>
-                  </div>
-                </List.Item>
-              ))}
+                  </List.Item>
+                ) : null
+              )}
             </List>
           )}
         </div>
@@ -434,9 +465,12 @@ const ArticleDetail: React.FC = () => {
         visible={showCommentInput}
         onMaskClick={() => setShowCommentInput(false)}
         position="bottom"
-        bodyStyle={{ height: "40vh" }}
+        bodyStyle={{ height: "50vh", padding: 0 }}
       >
-        <div className="comment-input-popup">
+        <div
+          className="comment-input-popup"
+          style={{ display: "flex", flexDirection: "column", height: "100%" }}
+        >
           <div className="comment-input-header">
             <span>发表评论</span>
             <Button
@@ -447,7 +481,7 @@ const ArticleDetail: React.FC = () => {
               取消
             </Button>
           </div>
-          <div className="comment-input-content">
+          <div style={{ flex: 1, overflowY: "auto", padding: "0 12px" }}>
             <TextArea
               placeholder="请输入评论内容..."
               value={commentText}
@@ -456,12 +490,36 @@ const ArticleDetail: React.FC = () => {
               maxLength={500}
               showCount
             />
+            {/* 打开画板按钮 */}
+            {!showCanvas && (
+              <Button
+                style={{ margin: "12px 0" }}
+                size="small"
+                onClick={() => setShowCanvas(true)}
+              >
+                打开画板
+              </Button>
+            )}
+            {/* 画板功能区 */}
+            {showCanvas && (
+              <div style={{ margin: "12px 0" }}>
+                <CanvasBoard onChange={setCommentCanvas} height={220} />
+              </div>
+            )}
+          </div>
+          <div
+            style={{
+              padding: "12px",
+              background: "#fff",
+              borderTop: "1px solid #f0f0f0",
+            }}
+          >
             <Button
               block
               color="primary"
               loading={commentLoading}
               onClick={handleSubmitComment}
-              disabled={!commentText.trim()}
+              disabled={!commentText.trim() && !commentCanvas}
             >
               发表评论
             </Button>

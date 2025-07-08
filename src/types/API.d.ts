@@ -172,6 +172,7 @@ declare namespace API {
     likeCount: number;
     isLiked: boolean;
     replies?: CommentType[];
+    canvasImage?: string;
   }
 
   /**

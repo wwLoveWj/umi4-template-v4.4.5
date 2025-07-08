@@ -56,6 +56,7 @@ export const articleApi = {
     articleId: string;
     content: string;
     parentId?: string;
+    canvasImage?: string;
   }) => {
     return request<API.CommentType>("/api/article/comment", {
       method: "POST",
