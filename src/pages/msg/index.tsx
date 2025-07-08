@@ -37,6 +37,13 @@ const MsgPage: React.FC = () => {
   return (
     <div>
       <NavBar
+        style={{
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
+          background: "#002FA7",
+          color: "#fff",
+        }}
         right={
           <Button size="mini" onClick={handleMarkAllRead}>
             全部已读

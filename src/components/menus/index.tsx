@@ -31,6 +31,11 @@ export default () => {
     //   icon: <ScanningOutline />,
     // },
     {
+      key: "/article",
+      title: "文章",
+      icon: <ContentOutline />,
+    },
+    {
       key: "/msg",
       title: "消息",
       icon: (active: boolean) =>
@@ -41,11 +46,6 @@ export default () => {
       key: "/person",
       title: "我的",
       icon: <UserOutline />,
-    },
-    {
-      key: "/article",
-      title: "文章",
-      icon: <ContentOutline />,
     },
   ];
 

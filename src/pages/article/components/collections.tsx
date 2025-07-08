@@ -196,11 +196,12 @@ const ArticleCollections: React.FC = () => {
                         </div>
                       </div>
                       <div className="article-tags">
-                        {article.tags.slice(0, 3).map((tag) => (
-                          <Tag key={tag} color="primary" fill="outline">
-                            {tag}
-                          </Tag>
-                        ))}
+                        {Array.isArray(article.tags) &&
+                          article.tags?.slice(0, 3).map((tag) => (
+                            <Tag key={tag} color="primary" fill="outline">
+                              {tag}
+                            </Tag>
+                          ))}
                       </div>
                     </div>
                   </div>
