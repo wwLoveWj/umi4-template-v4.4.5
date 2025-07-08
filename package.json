@@ -1,12 +1,17 @@
 {
   "private": true,
   "author": "wwLoveWj <blww885@163.com>",
+  "engines": {
+    "node": "18.x",
+    "npm": ">=8.0.0"
+  },
   "scripts": {
     "dev": "cross-env HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem umi dev",
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev",
+    "glitch-start": "npm run build && serve -s dist -l 3000",
     "optimize-images": "node scripts/optimize-images.js",
     "optimize-bg": "imagemin src/assets/lake.jpg --out-dir=src/assets --plugin.mozjpeg.quality=85"
   },
@@ -25,6 +30,7 @@
     "postcss-px-to-viewport": "^1.1.1",
     "postcss-px2rem-exclude": "^0.0.6",
     "push.js": "^1.0.12",
+    "serve": "^14.2.1",
     "umi": "^4.4.5",
     "umi-plugin-keep-alive": "^0.0.1-beta.35",
     "vstores": "^0.0.17"

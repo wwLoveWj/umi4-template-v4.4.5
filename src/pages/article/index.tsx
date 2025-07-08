@@ -24,6 +24,7 @@ import {
 import "./style.less";
 import { addMessage } from "@/utils/messageCenter";
 import { useRequest } from "ahooks";
+import { sendSimpleNotification } from "@/utils/pushExample";
 
 /**
  * 文章列表页面
@@ -97,7 +98,7 @@ const ArticleList: React.FC = () => {
     setActiveTab(key);
     setArticles([]);
     setPage(1);
-    setHasMore(true);
+    // setHasMore(true);
     loadMore("", 1, key);
   };
 
@@ -107,7 +108,7 @@ const ArticleList: React.FC = () => {
   const handleSearch = () => {
     setArticles([]);
     setPage(1);
-    setHasMore(true);
+    // setHasMore(true);
     loadMore(searchValue, 1);
   };
 
@@ -156,6 +157,11 @@ const ArticleList: React.FC = () => {
           articleTitle: article.title,
           content: `您的文章《${article.title}》收到一个新的点赞！`,
         });
+        // 新增：点赞成功后通知
+        sendSimpleNotification(
+          "点赞成功",
+          `你为《${article.title}》点了个赞！`
+        );
       }
     } catch (error) {
       Toast.show({ icon: "fail", content: "操作失败" });
