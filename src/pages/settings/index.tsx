@@ -46,6 +46,7 @@ function getCacheSizeMB() {
 }
 
 const Settings: React.FC = () => {
+  const loginInfo = storage.get("login-info") as any;
   const [user, setUser] = useState(mockUser);
   // 绑定弹窗
   const [bindType, setBindType] = useState<"phone" | "email" | null>(null);
@@ -185,7 +186,13 @@ const Settings: React.FC = () => {
         </List.Item>
         {/* 用户名 */}
         <List.Item
-          extra={user.username ? <span>{user.username}</span> : ""}
+          extra={
+            loginInfo && (loginInfo.username || loginInfo.loginName) ? (
+              <span>{loginInfo.username || loginInfo.loginName}</span>
+            ) : (
+              ""
+            )
+          }
           onClick={() => history.push("/settings/edit-username")}
         >
           用户名

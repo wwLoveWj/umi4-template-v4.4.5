@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavBar, Button, Input, Toast } from "antd-mobile";
 import { useNavigate } from "umi";
+import { storage } from "@/utils/storage";
 
 /**
  * 用户名修改页面
@@ -8,19 +9,30 @@ import { useNavigate } from "umi";
  */
 const EditUsername: React.FC = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState(""); // 可根据实际情况初始化
+  const [username, setUsername] = useState("");
   const [saving, setSaving] = useState(false);
+
+  // 初始化用户名
+  useEffect(() => {
+    const info = storage.get("login-info") as any;
+    if (info && (info.username || info.loginName)) {
+      setUsername(info.username || info.loginName || "");
+    }
+  }, []);
 
   // 保存用户名
   const handleSave = async () => {
     if (!username.trim()) return;
     setSaving(true);
-    // TODO: 调用后端接口保存
+    // 更新本地 storage
+    const info = (storage.get("login-info") || {}) as any;
+    info.username = username.trim();
+    storage.set("login-info", info);
     setTimeout(() => {
       setSaving(false);
       Toast.show({ icon: "success", content: "保存成功" });
-      navigate(-1); // 返回上一页
-    }, 800);
+      navigate(-1);
+    }, 500);
   };
 
   return (
