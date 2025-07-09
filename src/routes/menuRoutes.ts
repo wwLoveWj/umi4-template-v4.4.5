@@ -102,6 +102,8 @@ export const menuRoutes: API.MenuRoutesType[] = [
     title: "宝宝相册",
     path: "/baby/album",
     component: "./baby/album/index",
+    hideTabBar: true,
+    showBack: true,
   },
   {
     key: "todo",

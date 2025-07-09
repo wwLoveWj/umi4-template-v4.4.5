@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { ImageViewer, ImageUploader, Toast } from "antd-mobile";
+import React, { useRef, useState, useEffect } from "react";
+import { ImageViewer, Toast } from "antd-mobile";
 import { imgInfoUploadAPI, imgInfoListAPI } from "@/service/api/album";
 
 type Photo = {
@@ -10,6 +10,7 @@ type Photo = {
 const BabyAlbum: React.FC = () => {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // 获取图片列表
   const fetchPhotos = async () => {
@@ -21,40 +22,56 @@ const BabyAlbum: React.FC = () => {
     fetchPhotos();
   }, []);
 
-  // 上传图片
-  const handleUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    await imgInfoUploadAPI(formData);
+  // 上传多张图片
+  const handleFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData();
+      formData.append("file", files[i]);
+      await imgInfoUploadAPI(formData);
+    }
     Toast.show("上传成功");
-    fetchPhotos(); // 上传后刷新图片列表
+    fetchPhotos();
+    // 清空input值，避免同一文件无法重复上传
+    if (inputRef.current) inputRef.current.value = "";
+  };
+
+  // 触发input点击
+  const handleUploadClick = () => {
+    inputRef.current?.click();
   };
 
   return (
     <div style={{ padding: 12 }}>
-      <ImageUploader
-        upload={async (file: File) => {
-          await handleUpload(file);
-          return { url: "" };
+      {/* 自定义上传按钮 */}
+      <input
+        ref={inputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={handleFilesChange}
+      />
+      <div
+        onClick={handleUploadClick}
+        style={{
+          width: 80,
+          height: 80,
+          border: "1px dashed #ccc",
+          borderRadius: 8,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: 12,
+          color: "#999",
+          cursor: "pointer",
+          userSelect: "none",
         }}
-        preview={false}
       >
-        <div
-          style={{
-            width: 80,
-            height: 80,
-            border: "1px dashed #ccc",
-            borderRadius: 8,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            marginBottom: 12,
-            color: "#999",
-          }}
-        >
-          上传照片
-        </div>
-      </ImageUploader>
+        上传照片
+      </div>
+      {/* 瀑布流布局 */}
       <div
         style={{
           columnCount: 2,
