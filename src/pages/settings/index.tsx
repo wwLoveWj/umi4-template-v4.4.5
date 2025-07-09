@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   List,
   Button,
@@ -28,6 +28,23 @@ const genderOptions = [
   { label: "保密", value: "保密" },
 ];
 
+// 计算本地缓存大小（localStorage + sessionStorage）
+function getCacheSizeMB() {
+  let total = 0;
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      total += (localStorage.getItem(key) || "").length;
+    }
+  }
+  for (let key in sessionStorage) {
+    if (sessionStorage.hasOwnProperty(key)) {
+      total += (sessionStorage.getItem(key) || "").length;
+    }
+  }
+  // 1 字节 = 1/1024/1024 MB
+  return (total / 1024 / 1024).toFixed(2);
+}
+
 const Settings: React.FC = () => {
   const [user, setUser] = useState(mockUser);
   // 绑定弹窗
@@ -40,6 +57,34 @@ const Settings: React.FC = () => {
   const [genderVisible, setGenderVisible] = useState(false);
   // 生日选择弹窗
   const [birthdayVisible, setBirthdayVisible] = useState(false);
+  // 缓存大小
+  const [cacheSize, setCacheSize] = useState(getCacheSizeMB());
+  // 关于弹窗
+  const [aboutVisible, setAboutVisible] = useState(false);
+
+  // 刷新缓存大小
+  const refreshCacheSize = () => setCacheSize(getCacheSizeMB());
+
+  // 清除缓存
+  const handleClearCache = () => {
+    Dialog.confirm({
+      content: `确定要清除缓存吗？（当前缓存：${cacheSize} MB）`,
+      onConfirm: () => {
+        localStorage.clear();
+        sessionStorage.clear();
+        setToken("");
+        storage.del("login-info");
+        storage.del("loginChecked");
+        Toast.show({ icon: "success", content: "缓存已清除" });
+        setTimeout(refreshCacheSize, 300);
+      },
+    });
+  };
+
+  // 页面加载时刷新缓存大小
+  useEffect(() => {
+    refreshCacheSize();
+  }, []);
 
   // 头像 input ref
   const avatarInputRef = useRef<HTMLInputElement>(null);
@@ -92,11 +137,6 @@ const Settings: React.FC = () => {
     }
   };
 
-  // 保存资料
-  const handleSave = () => {
-    Toast.show({ icon: "success", content: "资料已保存" });
-  };
-
   // 退出登录
   const handleLogout = () => {
     Dialog.confirm({
@@ -145,14 +185,8 @@ const Settings: React.FC = () => {
         </List.Item>
         {/* 用户名 */}
         <List.Item
-          extra={
-            <Input
-              value={user.username}
-              onChange={(val) => handleChange("username", val)}
-              clearable
-              style={{ minWidth: 100 }}
-            />
-          }
+          extra={user.username ? <span>{user.username}</span> : ""}
+          onClick={() => history.push("/settings/edit-username")}
         >
           用户名
         </List.Item>
@@ -217,20 +251,41 @@ const Settings: React.FC = () => {
         </List.Item>
         {/* 修改密码 */}
         <List.Item onClick={handleChangePwd}>修改密码</List.Item>
+        {/* 清除缓存 */}
+        <List.Item onClick={handleClearCache}>
+          一键清除缓存（{cacheSize} MB）
+        </List.Item>
+        {/* 关于 */}
+        <List.Item onClick={() => setAboutVisible(true)}>关于</List.Item>
       </List>
-      <div style={{ padding: 16 }}>
-        <Button block color="primary" onClick={handleSave}>
-          保存资料
-        </Button>
-        <Button
-          block
-          color="danger"
-          style={{ marginTop: 12 }}
-          onClick={handleLogout}
-        >
-          退出登录
-        </Button>
-      </div>
+      <Button
+        block
+        color="danger"
+        style={{ margin: "20px 12px", width: "calc(100% - 24px)" }}
+        onClick={handleLogout}
+      >
+        退出登录
+      </Button>
+      {/* 关于弹窗 */}
+      <Dialog
+        visible={aboutVisible}
+        content={
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontWeight: 600, fontSize: 18, marginBottom: 8 }}>
+              宝宝成长社区
+            </div>
+            <div>版本：1.0.0</div>
+            <div>基于 Umi + Ant Design Mobile</div>
+            <div style={{ marginTop: 8, color: "#888", fontSize: 13 }}>
+              © 2024 宝宝成长社区团队
+            </div>
+          </div>
+        }
+        onAction={() => {
+          setAboutVisible(false);
+        }}
+        actions={[{ key: "close", text: "关闭" }]}
+      />
       {/* 绑定手机号/邮箱弹窗 */}
       <Dialog
         visible={!!bindType}

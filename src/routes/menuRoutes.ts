@@ -182,4 +182,11 @@ export const menuRoutes: API.MenuRoutesType[] = [
     hideTabBar: true,
     showBack: true,
   },
+  {
+    key: "edit-username",
+    title: "用户名修改",
+    path: "/settings/edit-username",
+    component: "./settings/EditUsername",
+    hideTabBar: true,
+  },
 ];
