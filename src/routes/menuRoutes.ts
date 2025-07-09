@@ -98,6 +98,12 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./personalCenter/components/WwGoal",
   },
   {
+    key: "album",
+    title: "宝宝相册",
+    path: "/baby/album",
+    component: "./baby/album/index",
+  },
+  {
     key: "todo",
     title: "我的待办",
     path: "/todo",

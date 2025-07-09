@@ -135,7 +135,9 @@ export default function Index() {
     {
       title: "宝宝相册",
       icon: <PayCircleOutline />,
-      onClick: () => {},
+      onClick: () => {
+        history.push("/baby/album");
+      },
     },
   ];
   // 自定义上传按钮
