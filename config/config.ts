@@ -43,9 +43,9 @@ export default defineConfig({
   routes,
   proxy: {
     "/api": {
-      target: "需要代理的地址",
+      target: "http://localhost:3007", // 这里要写你的后端服务地址
       changeOrigin: true,
-      pathRewrite: { "^": "" },
+      pathRewrite: { "^/api": "" },
     },
   },
   // 配置别名，对引用路径进行映射。
