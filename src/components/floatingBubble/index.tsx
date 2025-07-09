@@ -24,6 +24,7 @@ export default function Index({
         "--initial-position-bottom": "122px",
         "--initial-position-right": "0",
       }}
+      magnetic="x"
       onOffsetChange={(offset) => {
         setOffset(offset);
       }}

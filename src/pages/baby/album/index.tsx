@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
 import { ImageViewer, Toast } from "antd-mobile";
 import { imgInfoUploadAPI, imgInfoListAPI } from "@/service/api/album";
+import { AddCircleOutline, PicturesOutline } from "antd-mobile-icons";
+import AddFloatingBubble from "@/components/floatingBubble";
 
 type Photo = {
   thumbUrl: string;
@@ -44,7 +46,7 @@ const BabyAlbum: React.FC = () => {
 
   return (
     <div style={{ padding: 12 }}>
-      {/* 自定义上传按钮 */}
+      {/* 隐藏的文件选择框 */}
       <input
         ref={inputRef}
         type="file"
@@ -53,24 +55,6 @@ const BabyAlbum: React.FC = () => {
         style={{ display: "none" }}
         onChange={handleFilesChange}
       />
-      <div
-        onClick={handleUploadClick}
-        style={{
-          width: 80,
-          height: 80,
-          border: "1px dashed #ccc",
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          marginBottom: 12,
-          color: "#999",
-          cursor: "pointer",
-          userSelect: "none",
-        }}
-      >
-        上传照片
-      </div>
       {/* 瀑布流布局 */}
       <div
         style={{
@@ -108,6 +92,35 @@ const BabyAlbum: React.FC = () => {
           onClose={() => setPreviewIndex(null)}
         />
       )}
+      {/* 悬浮上传按钮 */}
+      {/* <div
+        onClick={handleUploadClick}
+        style={{
+          position: "fixed",
+          right: 20,
+          bottom: 32,
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "#1677ff",
+          color: "#fff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.15)",
+          fontSize: 32,
+          zIndex: 100,
+          cursor: "pointer",
+        }}
+      >
+        <AddCircleOutline />
+      </div> */}
+      <AddFloatingBubble
+        iconRender={
+          <PicturesOutline fontSize={26} onClick={handleUploadClick} />
+        }
+        isShowIcon={false}
+      />
     </div>
   );
 };
