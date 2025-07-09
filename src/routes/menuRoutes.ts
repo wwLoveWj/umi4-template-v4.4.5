@@ -174,4 +174,12 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./personalCenter/components/WwCollect/WwTag",
     hideTabBar: true,
   },
+  {
+    key: "settings",
+    title: "我的设置",
+    path: "/settings",
+    component: "./settings",
+    hideTabBar: true,
+    showBack: true,
+  },
 ];
