@@ -1,0 +1,13 @@
+{
+  "install": "npm install",
+  "start": "npm run build && serve -s dist -l 3000",
+  "watch": {
+    "install": {
+      "include": ["^package\\.json$"]
+    },
+    "restart": {
+      "include": ["\\.js$", "\\.ts$", "\\.tsx$", "\\.json$"]
+    },
+    "throttle": 1000
+  }
+}

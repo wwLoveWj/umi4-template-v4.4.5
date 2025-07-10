@@ -16,6 +16,7 @@ import {
 } from "antd-mobile-icons";
 import { history } from "umi";
 import styles from "./style.less";
+import "./style.less";
 import { createNotification } from "@/utils/index";
 import Push from "push.js";
 import { storage } from "@/utils/storage";
@@ -178,7 +179,11 @@ export default function Index() {
             />
             <div className={styles.authorInfo}>
               <h3>{loginInfo?.username}</h3>
-              <span>关注量</span>
+              <div className="article-follow-info">
+                <span>关注 {loginInfo?.authorFollowCount ?? 0}</span>
+                <span className="follow-divider">|</span>
+                <span>粉丝 {loginInfo?.authorFollowerCount ?? 0}</span>
+              </div>
             </div>
           </div>
         </div>
