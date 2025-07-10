@@ -293,51 +293,109 @@ const ArticleList: React.FC = () => {
                   {formatTime(article.publishTime)}
                 </span>
               </div>
-              <div className="article-title">{article.title}</div>
-              <div className="article-summary">{article.summary}</div>
-              <div className="article-tags">
-                {Array.isArray(article.tags) &&
-                  article.tags?.slice(0, 3).map((tag) => (
-                    <Tag key={tag} color="primary" fill="outline">
-                      {tag}
-                    </Tag>
-                  ))}
-              </div>
-              <div className="article-bottom-row">
-                {/* 操作按钮 */}
-                <span className="article-stat">
-                  <EyeOutline />
-                  {article.readCount}
-                </span>
-                <div
-                  className="action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleLike(article);
-                  }}
-                >
-                  {article.isLiked ? (
-                    <HeartFill color="#ff4757" />
-                  ) : (
-                    <HeartOutline />
-                  )}
-                  <span>点赞</span>
+              {/* 新增：有封面图时右侧展示图片 */}
+              {article.coverImage ? (
+                <div className="article-item-row">
+                  <div className="article-item-main">
+                    <div className="article-title">{article.title}</div>
+                    <div className="article-summary">{article.summary}</div>
+                    <div className="article-tags">
+                      {Array.isArray(article.tags) &&
+                        article.tags?.slice(0, 3).map((tag) => (
+                          <Tag key={tag} color="primary" fill="outline">
+                            {tag}
+                          </Tag>
+                        ))}
+                    </div>
+                    <div className="article-bottom-row">
+                      <span className="article-stat">
+                        <EyeOutline />
+                        {article.readCount}
+                      </span>
+                      <div
+                        className="action-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLike(article);
+                        }}
+                      >
+                        {article.isLiked ? (
+                          <HeartFill color="#ff4757" />
+                        ) : (
+                          <HeartOutline />
+                        )}
+                        <span>点赞</span>
+                      </div>
+                      <div
+                        className="action-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCollect(article);
+                        }}
+                      >
+                        {article.isCollected ? (
+                          <StarFill color="#ffa502" />
+                        ) : (
+                          <StarOutline />
+                        )}
+                        <span>收藏</span>
+                      </div>
+                    </div>
+                  </div>
+                  <img
+                    className="article-cover"
+                    src={article.coverImage}
+                    alt="封面"
+                  />
                 </div>
-                <div
-                  className="action-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCollect(article);
-                  }}
-                >
-                  {article.isCollected ? (
-                    <StarFill color="#ffa502" />
-                  ) : (
-                    <StarOutline />
-                  )}
-                  <span>收藏</span>
-                </div>
-              </div>
+              ) : (
+                <>
+                  <div className="article-title">{article.title}</div>
+                  <div className="article-summary">{article.summary}</div>
+                  <div className="article-tags">
+                    {Array.isArray(article.tags) &&
+                      article.tags?.slice(0, 3).map((tag) => (
+                        <Tag key={tag} color="primary" fill="outline">
+                          {tag}
+                        </Tag>
+                      ))}
+                  </div>
+                  <div className="article-bottom-row">
+                    <span className="article-stat">
+                      <EyeOutline />
+                      {article.readCount}
+                    </span>
+                    <div
+                      className="action-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleLike(article);
+                      }}
+                    >
+                      {article.isLiked ? (
+                        <HeartFill color="#ff4757" />
+                      ) : (
+                        <HeartOutline />
+                      )}
+                      <span>点赞</span>
+                    </div>
+                    <div
+                      className="action-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCollect(article);
+                      }}
+                    >
+                      {article.isCollected ? (
+                        <StarFill color="#ffa502" />
+                      ) : (
+                        <StarOutline />
+                      )}
+                      <span>收藏</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

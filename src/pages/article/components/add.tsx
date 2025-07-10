@@ -154,9 +154,16 @@ const ArticleAdd: React.FC = () => {
       <div className="add-form">
         <input
           className="add-title"
-          placeholder="请输入标题"
+          placeholder="请输入标题（最多20个字）"
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          maxLength={20}
+          onChange={(e) => {
+            if (e.target.value.length > 20) {
+              Toast.show({ content: "标题最多20个字" });
+              return;
+            }
+            setTitle(e.target.value);
+          }}
         />
         <textarea
           className="add-content"

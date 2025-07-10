@@ -13,6 +13,7 @@ import { RightOutline, AddOutline } from "antd-mobile-icons";
 import "./add.less";
 import { articleApi } from "@/service/api/article";
 import { guid } from "@/utils";
+import { storage } from "@/utils/storage";
 
 const TAGS = ["前端", "后端", "React", "Vue", "算法", "面试", "随笔"];
 const COLUMNS = ["技术专栏", "生活随笔", "学习笔记"];
@@ -24,6 +25,7 @@ const VISIBLES = ["全部可见", "仅我可见", "粉丝可见", "VIP可见"];
  * @returns {JSX.Element}
  */
 const ArticleAddSetting: React.FC = () => {
+  const loginInfo = storage.get("login-info");
   const navigate = useNavigate();
   const location = useLocation();
   const { title, content } = (location.state as any) || {};
@@ -64,9 +66,9 @@ const ArticleAddSetting: React.FC = () => {
         summary: content.slice(0, 100),
         content,
         category: column || "",
-        author: "当前用户", // TODO: 替换为真实登录用户
-        authorAvatar: cover[0]?.url || "", // TODO: 替换为真实头像
-        coverImage: "",
+        author: loginInfo?.loginName, // TODO: 替换为真实登录用户
+        authorAvatar: loginInfo?.avatar || "", // TODO: 替换为真实头像
+        coverImage: cover[0]?.url || "",
         tags: [tag],
         articleId: guid(),
       });
