@@ -143,7 +143,7 @@ const ArticleDetail: React.FC = () => {
     if (!article) return;
     try {
       if (article.isLiked) {
-        await articleApi.unlikeArticle(article.id);
+        await articleApi.unlikeArticle(article.articleId);
         setArticle((prev) =>
           prev
             ? { ...prev, isLiked: false, likeCount: prev.likeCount - 1 }
@@ -152,12 +152,12 @@ const ArticleDetail: React.FC = () => {
         // 推送点赞消息
         addMessage({
           type: "like",
-          articleId: article.id,
+          articleId: article.articleId,
           articleTitle: article.title,
           content: `您的文章《${article.title}》收到一个新的点赞！`,
         });
       } else {
-        await articleApi.likeArticle(article.id);
+        await articleApi.likeArticle(article.articleId);
         setArticle((prev) =>
           prev
             ? { ...prev, isLiked: true, likeCount: prev.likeCount + 1 }
@@ -166,7 +166,7 @@ const ArticleDetail: React.FC = () => {
         // 推送点赞消息
         addMessage({
           type: "like",
-          articleId: article.id,
+          articleId: article.articleId,
           articleTitle: article.title,
           content: `您的文章《${article.title}》收到一个新的点赞！`,
         });
@@ -187,14 +187,14 @@ const ArticleDetail: React.FC = () => {
     if (!article) return;
     try {
       if (article.isCollected) {
-        await articleApi.uncollectArticle(article.id);
+        await articleApi.uncollectArticle(article.articleId);
         setArticle((prev) => (prev ? { ...prev, isCollected: false } : null));
         Toast.show({
           icon: "success",
           content: "已取消收藏",
         });
       } else {
-        await articleApi.collectArticle(article.id);
+        await articleApi.collectArticle(article.articleId);
         setArticle((prev) => (prev ? { ...prev, isCollected: true } : null));
         Toast.show({
           icon: "success",
@@ -203,7 +203,7 @@ const ArticleDetail: React.FC = () => {
         // 推送收藏消息
         addMessage({
           type: "collect",
-          articleId: article.id,
+          articleId: article.articleId,
           articleTitle: article.title,
           content: `您的文章《${article.title}》被收藏啦！`,
         });
