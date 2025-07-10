@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { NavBar, Button, Input, Toast } from "antd-mobile";
 import { useNavigate } from "umi";
 import { storage } from "@/utils/storage";
+import { UserInfoUpdateAPI } from "@/service/api/user";
 
 /**
  * 用户名修改页面
@@ -28,6 +29,15 @@ const EditUsername: React.FC = () => {
     const info = (storage.get("login-info") || {}) as any;
     info.username = username.trim();
     storage.set("login-info", info);
+    // 同步数据库
+    const userId = (storage.get("login-info") as any)?.userId;
+    if (userId) {
+      try {
+        await UserInfoUpdateAPI({ userId, username: username.trim() } as any);
+      } catch (e) {
+        Toast.show({ icon: "fail", content: "数据库同步失败" });
+      }
+    }
     setTimeout(() => {
       setSaving(false);
       Toast.show({ icon: "success", content: "保存成功" });

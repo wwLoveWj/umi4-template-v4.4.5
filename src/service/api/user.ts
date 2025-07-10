@@ -18,15 +18,7 @@ export const verify = (params = {}): Promise<any> => {
 export const UserInfoQueryAPI = (params = {}): Promise<any> => {
   return request.get<API.UseInfoType>("/userInfo/query", params);
 };
-// 创建用户信息
-export const UserInfoCreateAPI = (params: any): Promise<any> => {
-  return request.post("/userInfo/create", params);
-};
-// 更新用户信息
-export const UserInfoUpdateAPI = (params: any): Promise<any> => {
-  return request.post("/userInfo/edit", params);
-};
-// 删除用户信息
-export const UserInfoDelAPI = (params: { userId: string }) => {
-  return request.post("/userInfo/delete", params);
+// 更新app部分的用户信息
+export const UserInfoUpdateAPI = (params: { userId: string }) => {
+  return request.post("/userInfo/update", params);
 };

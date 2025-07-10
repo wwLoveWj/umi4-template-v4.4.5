@@ -11,6 +11,7 @@ import {
 import { history } from "umi";
 import { setToken } from "@/utils/localToken";
 import { storage } from "@/utils/storage";
+import { UserInfoUpdateAPI } from "@/service/api/user";
 
 const mockUser = {
   avatar: "",
@@ -108,8 +109,17 @@ const Settings: React.FC = () => {
   }
 
   // 资料变更
-  const handleChange = (key: string, value: string) => {
+  const handleChange = async (key: string, value: string) => {
     setUser((u) => ({ ...u, [key]: value }));
+    const userId = storage.get("login-info")?.userId;
+    if (userId) {
+      try {
+        await UserInfoUpdateAPI({ userId, [key]: value });
+        Toast.show({ icon: "success", content: "修改成功" });
+      } catch (e) {
+        Toast.show({ icon: "fail", content: "修改失败" });
+      }
+    }
   };
 
   // 手机号/邮箱绑定弹窗
@@ -117,10 +127,18 @@ const Settings: React.FC = () => {
     setBindType(type);
     setBindValue("");
   };
-  const handleBindConfirm = () => {
+  const handleBindConfirm = async () => {
     if (bindType && bindValue) {
-      setUser((u) => ({ ...u, [bindType]: bindValue }));
-      Toast.show(`${bindType === "phone" ? "手机号" : "邮箱"}已绑定`);
+      await handleChange(bindType, bindValue);
+      Toast.show(
+        `${
+          bindType === "phone"
+            ? "手机号"
+            : bindType === "email"
+            ? "邮箱"
+            : "用户名"
+        }已绑定`
+      );
     }
     setBindType(null);
   };
@@ -130,11 +148,18 @@ const Settings: React.FC = () => {
     setPwdVisible(true);
     setPwdValue("");
   };
-  const handlePwdConfirm = () => {
+  const handlePwdConfirm = async () => {
     setPwdVisible(false);
     if (pwdValue) {
-      Toast.show("密码已修改");
-      // 这里可以提交到后端
+      const userId = storage.get("login-info")?.userId;
+      if (userId) {
+        try {
+          await UserInfoUpdateAPI({ userId, password: pwdValue });
+          Toast.show({ icon: "success", content: "密码已修改" });
+        } catch (e) {
+          Toast.show({ icon: "fail", content: "密码修改失败" });
+        }
+      }
     }
   };
 
@@ -198,7 +223,7 @@ const Settings: React.FC = () => {
           用户名
         </List.Item>
         {/* 昵称 */}
-        <List.Item
+        {/* <List.Item
           extra={
             <Input
               value={user.nickname}
@@ -209,7 +234,7 @@ const Settings: React.FC = () => {
           }
         >
           昵称
-        </List.Item>
+        </List.Item> */}
         {/* 性别 */}
         <List.Item extra={user.gender} onClick={() => setGenderVisible(true)}>
           性别
