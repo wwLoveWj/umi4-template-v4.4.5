@@ -268,6 +268,17 @@ const ArticleDetail: React.FC = () => {
 
   useEffect(() => {
     loadArticleDetail();
+    // 防重复统计浏览量
+    if (id) {
+      const key = `article_viewed_${id}`;
+      const lastView = localStorage.getItem(key);
+      const now = Date.now();
+      const interval = 1000 * 60 * 30; // 30分钟内只计一次
+      if (!lastView || now - Number(lastView) > interval) {
+        articleApi.addView(id);
+        localStorage.setItem(key, String(now));
+      }
+    }
     loadComments(true);
   }, [id]);
 

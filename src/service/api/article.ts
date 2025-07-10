@@ -157,4 +157,13 @@ export const articleApi = {
   imgUploadAPI: (params = {}) => {
     return request.post<null>("/file/upload", params);
   },
+
+  /**
+   * 统计文章浏览量（防重复）
+   */
+  addView: (articleId: string) => {
+    return request<{ readCount: number }>(`/api/article/view/${articleId}`, {
+      method: "POST",
+    });
+  },
 };
