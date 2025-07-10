@@ -9,9 +9,10 @@ import {
   Picker,
 } from "antd-mobile";
 import { history } from "umi";
+import md5 from "md5";
 import { setToken } from "@/utils/localToken";
 import { storage } from "@/utils/storage";
-import { UserInfoUpdateAPI } from "@/service/api/user";
+import { UserInfoUpdateAPI, AvatarUploadAPI } from "@/service/api/user";
 
 const mockUser = {
   avatar: "",
@@ -63,6 +64,8 @@ const Settings: React.FC = () => {
   const [cacheSize, setCacheSize] = useState(getCacheSizeMB());
   // 关于弹窗
   const [aboutVisible, setAboutVisible] = useState(false);
+  // 头像上传loading
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   // 刷新缓存大小
   const refreshCacheSize = () => setCacheSize(getCacheSizeMB());
@@ -91,27 +94,75 @@ const Settings: React.FC = () => {
   // 头像 input ref
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
-  // 头像上传
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * 头像上传处理函数
+   * @param e 文件输入事件
+   */
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setUser((u) => ({ ...u, avatar: url }));
-      Toast.show("头像已更换");
+    if (!file) return;
+
+    // 文件大小限制（5MB）
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      Toast.show({ icon: "fail", content: "文件大小不能超过5MB" });
+      return;
     }
-    // 清空 input，便于重复选择同一图片
-    if (avatarInputRef.current) avatarInputRef.current.value = "";
+
+    // 文件类型检查
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+    if (!allowedTypes.includes(file.type)) {
+      Toast.show({ icon: "fail", content: "只支持JPG、PNG、GIF格式的图片" });
+      return;
+    }
+
+    setAvatarUploading(true);
+
+    try {
+      // 创建FormData对象
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      // 上传头像到服务器
+      const response = await AvatarUploadAPI(formData);
+
+      // 更新本地用户信息
+      setUser((u) => ({ ...u, avatar: response.avatarUrl }));
+
+      // 更新用户信息到数据库
+      const userId = loginInfo?.userId || loginInfo?.id;
+      if (userId) {
+        await UserInfoUpdateAPI({ userId, avatar: response.avatarUrl });
+      }
+
+      Toast.show({ icon: "success", content: "头像上传成功" });
+    } catch (error) {
+      console.error("头像上传失败:", error);
+      Toast.show({ icon: "fail", content: "头像上传失败，请重试" });
+    } finally {
+      setAvatarUploading(false);
+      // 清空 input，便于重复选择同一图片
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+    }
   };
 
   // 点击头像触发 input
   function handleAvatarClick() {
+    if (avatarUploading) {
+      Toast.show({ icon: "fail", content: "头像上传中，请稍候" });
+      return;
+    }
     avatarInputRef.current?.click();
   }
 
-  // 资料变更
+  /**
+   * 资料变更处理函数
+   * @param key 字段名
+   * @param value 字段值
+   */
   const handleChange = async (key: string, value: string) => {
     setUser((u) => ({ ...u, [key]: value }));
-    const userId = storage.get("login-info")?.userId;
+    const userId = loginInfo?.userId || loginInfo?.id;
     if (userId) {
       try {
         await UserInfoUpdateAPI({ userId, [key]: value });
@@ -143,18 +194,24 @@ const Settings: React.FC = () => {
     setBindType(null);
   };
 
-  // 密码修改弹窗
+  /**
+   * 密码修改弹窗
+   */
   const handleChangePwd = () => {
     setPwdVisible(true);
     setPwdValue("");
   };
+
+  /**
+   * 密码修改确认
+   */
   const handlePwdConfirm = async () => {
     setPwdVisible(false);
     if (pwdValue) {
-      const userId = storage.get("login-info")?.userId;
+      const userId = loginInfo?.userId || loginInfo?.id;
       if (userId) {
         try {
-          await UserInfoUpdateAPI({ userId, password: pwdValue });
+          await UserInfoUpdateAPI({ userId, password: md5(pwdValue) });
           Toast.show({ icon: "success", content: "密码已修改" });
         } catch (e) {
           Toast.show({ icon: "fail", content: "密码修改失败" });
@@ -194,16 +251,33 @@ const Settings: React.FC = () => {
                 style={{ display: "none" }}
                 onChange={handleAvatarUpload}
               />
-              <img
-                src={user.avatar || require("@/assets/avatar/avatar.png")}
-                alt="头像"
-                style={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: "50%",
-                  cursor: "pointer",
-                }}
-              />
+              <div style={{ position: "relative" }}>
+                <img
+                  src={user.avatar || require("@/assets/avatar/avatar.png")}
+                  alt="头像"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: "50%",
+                    cursor: avatarUploading ? "not-allowed" : "pointer",
+                    opacity: avatarUploading ? 0.6 : 1,
+                  }}
+                />
+                {avatarUploading && (
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      fontSize: 12,
+                      color: "#666",
+                    }}
+                  >
+                    上传中...
+                  </div>
+                )}
+              </div>
             </>
           }
         >

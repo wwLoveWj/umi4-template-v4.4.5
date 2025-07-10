@@ -1,14 +1,5 @@
 import React, { useState } from "react";
-import {
-  List,
-  ImageUploader,
-  Popup,
-  NavBar,
-  Dialog,
-  Button,
-  Toast,
-} from "antd-mobile";
-import type { ImageUploadItem } from "antd-mobile";
+import { List, Popup, NavBar, Dialog, Button, Toast, Image } from "antd-mobile";
 import {
   UnorderedListOutline,
   PayCircleOutline,
@@ -27,9 +18,7 @@ import { history } from "umi";
 import styles from "./style.less";
 import { createNotification } from "@/utils/index";
 import Push from "push.js";
-
-export const demoSrc =
-  "https://images.unsplash.com/photo-1567945716310-4745a6b7844b?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=60";
+import { storage } from "@/utils/storage";
 
 const configList = [
   {
@@ -54,6 +43,7 @@ const configList = [
 ];
 
 export default function Index() {
+  const loginInfo = storage.get("login-info") as any;
   const [visible1, setVisible1] = useState(false);
   const canChgList = [
     {
@@ -145,18 +135,6 @@ export default function Index() {
       },
     },
   ];
-  // 自定义上传按钮
-  const [fileList, setFileList] = useState<ImageUploadItem[]>([
-    {
-      url: demoSrc,
-    },
-  ]);
-
-  async function mockUpload(file: File) {
-    return {
-      url: URL.createObjectURL(file),
-    };
-  }
 
   return (
     <>
@@ -191,28 +169,13 @@ export default function Index() {
           <SetOutline />
         </div> */}
           <div className={styles?.avatarShow}>
-            <ImageUploader
-              value={fileList}
-              onChange={setFileList}
-              upload={mockUpload}
-              maxCount={1}
-              deletable={false}
-            >
-              <div
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 40,
-                  backgroundColor: "#f5f5f5",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  color: "#999999",
-                }}
-              >
-                <PictureOutline style={{ fontSize: 32 }} />
-              </div>
-            </ImageUploader>
+            <Image
+              src={loginInfo?.avatar || require("@/assets/avatar/avatar.png")}
+              width={64}
+              height={64}
+              fit="cover"
+              style={{ borderRadius: 32 }}
+            />
             <div className={styles.authorInfo}>
               <h3>我的名字</h3>
               <span>关注量</span>
