@@ -1,12 +1,7 @@
 import vstores from "vstores";
 
 type StorageType = {
-  "login-info": {
-    email: string;
-    loginName: string;
-    loginPath: string;
-    menuList: string[];
-  };
+  "login-info": API.LoginInfoType;
   collect: any[];
   loginChecked: string;
   menuList: string[];

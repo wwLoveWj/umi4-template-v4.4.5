@@ -52,6 +52,87 @@ declare namespace API {
     avatar?: string;
     [propsname: string]: any;
   }
+
+  /**
+   * 登录信息类型 - 完整的用户登录信息
+   */
+  interface LoginInfoType {
+    /** 用户ID */
+    userId?: string;
+    /** 用户ID（备用字段） */
+    id?: string;
+    /** 用户名 */
+    username?: string;
+    /** 登录名 */
+    loginName?: string;
+    /** 邮箱 */
+    email?: string;
+    /** 头像URL */
+    avatar?: string;
+    /** 昵称 */
+    nickname?: string;
+    /** 性别 */
+    gender?: "男" | "女" | "保密";
+    /** 生日 */
+    birthday?: string;
+    /** 手机号 */
+    phone?: string;
+    /** 密码（加密后） */
+    password?: string;
+    /** 访问令牌 */
+    token?: string;
+    /** 登录路径 */
+    loginPath?: string;
+    /** 菜单列表 */
+    menuList?: string[];
+    /** 用户角色 */
+    role?: string;
+    /** 用户状态 */
+    status?: "active" | "inactive" | "banned";
+    /** 创建时间 */
+    createTime?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 最后登录时间 */
+    lastLoginTime?: string;
+    /** 登录次数 */
+    loginCount?: number;
+    /** 用户类型 */
+    userType?: "admin" | "user" | "guest";
+    /** 是否在线 */
+    isOnline?: boolean;
+    /** 用户等级 */
+    level?: number;
+    /** 积分 */
+    points?: number;
+    /** 个人简介 */
+    bio?: string;
+    /** 地址 */
+    address?: string;
+    /** 公司 */
+    company?: string;
+    /** 职位 */
+    position?: string;
+    /** 网站 */
+    website?: string;
+    /** 社交媒体链接 */
+    socialLinks?: {
+      wechat?: string;
+      weibo?: string;
+      qq?: string;
+      github?: string;
+    };
+    /** 偏好设置 */
+    preferences?: {
+      theme?: "light" | "dark" | "auto";
+      language?: string;
+      timezone?: string;
+      notifications?: boolean;
+    };
+    /** 扩展字段 */
+    [key: string]: any;
+  }
+
   // 头像上传响应类型
   interface AvatarUploadResponse {
     avatarUrl: string;

@@ -12,12 +12,11 @@ const EditUsername: React.FC = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [saving, setSaving] = useState(false);
-
+  const loginInfo = storage.get("login-info");
   // 初始化用户名
   useEffect(() => {
-    const info = storage.get("login-info") as any;
-    if (info && (info.username || info.loginName)) {
-      setUsername(info.username || info.loginName || "");
+    if (loginInfo && (loginInfo.username || loginInfo.loginName)) {
+      setUsername(loginInfo.username || loginInfo.loginName || "");
     }
   }, []);
 
@@ -26,11 +25,9 @@ const EditUsername: React.FC = () => {
     if (!username.trim()) return;
     setSaving(true);
     // 更新本地 storage
-    const info = (storage.get("login-info") || {}) as any;
-    info.username = username.trim();
-    storage.set("login-info", info);
+
     // 同步数据库
-    const userId = (storage.get("login-info") as any)?.userId;
+    const userId = loginInfo?.userId;
     if (userId) {
       try {
         await UserInfoUpdateAPI({ userId, username: username.trim() } as any);

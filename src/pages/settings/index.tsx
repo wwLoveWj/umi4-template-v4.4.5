@@ -14,16 +14,6 @@ import { setToken } from "@/utils/localToken";
 import { storage } from "@/utils/storage";
 import { UserInfoUpdateAPI, AvatarUploadAPI } from "@/service/api/user";
 
-const mockUser = {
-  avatar: "",
-  username: "测试用户",
-  nickname: "小宝",
-  gender: "男",
-  birthday: "2020-01-01",
-  phone: "",
-  email: "",
-};
-
 const genderOptions = [
   { label: "男", value: "男" },
   { label: "女", value: "女" },
@@ -48,8 +38,8 @@ function getCacheSizeMB() {
 }
 
 const Settings: React.FC = () => {
-  const loginInfo = storage.get("login-info") as any;
-  const [user, setUser] = useState(mockUser);
+  const loginInfo = storage.get("login-info");
+  const [user, setUser] = useState(loginInfo || {});
   // 绑定弹窗
   const [bindType, setBindType] = useState<"phone" | "email" | null>(null);
   const [bindValue, setBindValue] = useState("");

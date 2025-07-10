@@ -43,7 +43,7 @@ const configList = [
 ];
 
 export default function Index() {
-  const loginInfo = storage.get("login-info") as any;
+  const loginInfo = storage.get("login-info");
   const [visible1, setVisible1] = useState(false);
   const canChgList = [
     {
@@ -177,7 +177,7 @@ export default function Index() {
               style={{ borderRadius: 32 }}
             />
             <div className={styles.authorInfo}>
-              <h3>我的名字</h3>
+              <h3>{loginInfo?.username}</h3>
               <span>关注量</span>
             </div>
           </div>
