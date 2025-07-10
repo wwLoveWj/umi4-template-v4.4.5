@@ -189,4 +189,11 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./settings/EditUsername",
     hideTabBar: true,
   },
+  {
+    key: "change-password",
+    title: "修改密码",
+    path: "/settings/change-password",
+    component: "@/pages/settings/ChangePassword",
+    layout: false,
+  },
 ];

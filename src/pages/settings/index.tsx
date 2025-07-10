@@ -43,9 +43,6 @@ const Settings: React.FC = () => {
   // 绑定弹窗
   const [bindType, setBindType] = useState<"phone" | "email" | null>(null);
   const [bindValue, setBindValue] = useState("");
-  // 修改密码弹窗
-  const [pwdVisible, setPwdVisible] = useState(false);
-  const [pwdValue, setPwdValue] = useState("");
   // 性别选择弹窗
   const [genderVisible, setGenderVisible] = useState(false);
   // 生日选择弹窗
@@ -185,29 +182,10 @@ const Settings: React.FC = () => {
   };
 
   /**
-   * 密码修改弹窗
+   * 跳转到修改密码页面
    */
   const handleChangePwd = () => {
-    setPwdVisible(true);
-    setPwdValue("");
-  };
-
-  /**
-   * 密码修改确认
-   */
-  const handlePwdConfirm = async () => {
-    setPwdVisible(false);
-    if (pwdValue) {
-      const userId = loginInfo?.userId || loginInfo?.id;
-      if (userId) {
-        try {
-          await UserInfoUpdateAPI({ userId, password: md5(pwdValue) });
-          Toast.show({ icon: "success", content: "密码已修改" });
-        } catch (e) {
-          Toast.show({ icon: "fail", content: "密码修改失败" });
-        }
-      }
-    }
+    history.push("/settings/change-password");
   };
 
   // 退出登录
@@ -306,7 +284,7 @@ const Settings: React.FC = () => {
         <Picker
           columns={[genderOptions]}
           visible={genderVisible}
-          value={[user.gender]}
+          value={user.gender ? [user.gender] : ["保密"]}
           onClose={() => setGenderVisible(false)}
           onConfirm={(val) => {
             if (val && val[0]) {
@@ -324,7 +302,7 @@ const Settings: React.FC = () => {
         </List.Item>
         <DatePicker
           visible={birthdayVisible}
-          value={new Date(user.birthday)}
+          value={user.birthday ? new Date(user.birthday) : undefined}
           onClose={() => setBirthdayVisible(false)}
           onConfirm={(date) => {
             handleChange("birthday", date.toISOString().slice(0, 10));
@@ -397,28 +375,6 @@ const Settings: React.FC = () => {
         onAction={(action) => {
           if (action.key === "confirm") handleBindConfirm();
           else setBindType(null);
-        }}
-        actions={[
-          { key: "cancel", text: "取消" },
-          { key: "confirm", text: "确定" },
-        ]}
-      />
-      {/* 修改密码弹窗 */}
-      <Dialog
-        visible={pwdVisible}
-        content={
-          <Input
-            type="password"
-            placeholder="请输入新密码"
-            value={pwdValue}
-            onChange={setPwdValue}
-            clearable
-            style={{ width: "100%", padding: 8, fontSize: 16 }}
-          />
-        }
-        onAction={(action) => {
-          if (action.key === "confirm") handlePwdConfirm();
-          else setPwdVisible(false);
         }}
         actions={[
           { key: "cancel", text: "取消" },
