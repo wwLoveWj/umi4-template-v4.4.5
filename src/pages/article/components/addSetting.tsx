@@ -71,6 +71,7 @@ const ArticleAddSetting: React.FC = () => {
         coverImage: cover[0]?.url || "",
         tags: [tag],
         articleId: guid(),
+        authorId: loginInfo?.userId || "",
       });
       Toast.show({ icon: "success", content: "发布成功" });
       localStorage.removeItem("article-draft");

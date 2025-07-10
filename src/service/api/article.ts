@@ -147,6 +147,7 @@ export const articleApi = {
     authorAvatar?: string;
     tags?: string[];
     articleId: string;
+    authorId: string;
   }) => {
     return request<{ id: string }>("/api/article/add", {
       method: "POST",

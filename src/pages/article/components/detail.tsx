@@ -22,6 +22,12 @@ import {
 } from "antd-mobile-icons";
 import { articleApi } from "@/service/api/article";
 import { addMessage } from "@/utils/messageCenter";
+import {
+  followUserAPI,
+  unfollowUserAPI,
+  isFollowUserAPI,
+} from "@/service/api/user";
+import { storage } from "@/utils/storage";
 import "./detail.less";
 import CanvasBoard from "@/components/CanvasBoard";
 
@@ -41,6 +47,11 @@ const ArticleDetail: React.FC = () => {
   const [commentPage, setCommentPage] = useState(1);
   const [commentCanvas, setCommentCanvas] = useState<string>("");
   const [showCanvas, setShowCanvas] = useState(false);
+  const [isFollowed, setIsFollowed] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
+  const loginInfo = storage.get("login-info");
+  const myUserId = loginInfo?.userId;
+  const authorId = article?.authorId;
 
   /**
    * 加载文章详情
@@ -282,6 +293,35 @@ const ArticleDetail: React.FC = () => {
     loadComments(true);
   }, [id]);
 
+  // 查询关注状态
+  useEffect(() => {
+    if (myUserId && authorId && myUserId !== authorId) {
+      isFollowUserAPI(myUserId, authorId).then((res) => {
+        setIsFollowed(res.isFollowed);
+      });
+    }
+  }, [myUserId, authorId]);
+
+  const handleFollow = async () => {
+    if (!myUserId || !authorId) return;
+    setFollowLoading(true);
+    try {
+      if (isFollowed) {
+        await unfollowUserAPI(myUserId, authorId);
+        setIsFollowed(false);
+        Toast.show({ icon: "success", content: "已取消关注" });
+      } else {
+        await followUserAPI(myUserId, authorId);
+        setIsFollowed(true);
+        Toast.show({ icon: "success", content: "关注成功" });
+      }
+    } catch (e) {
+      Toast.show({ icon: "fail", content: "操作失败" });
+    } finally {
+      setFollowLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="article-detail-loading">
@@ -310,27 +350,39 @@ const ArticleDetail: React.FC = () => {
         文章详情
       </NavBar>
 
-      <div className="article-detail-content">
-        {/* 作者信息区 */}
-        <div className="article-detail-meta">
-          <img
-            className="detail-avatar"
-            src={article.authorAvatar}
-            alt={article.author}
-          />
-          <div className="detail-author-info">
-            <div className="detail-author-row">
-              <span className="detail-author">{article.author}</span>
-              <span className="detail-publish">
-                {formatTime(article.publishTime)}
-              </span>
-            </div>
-            {/* 可加作者简介 */}
+      {/* 作者信息区 */}
+      <div className="article-header">
+        <img
+          className="article-avatar"
+          src={article?.authorAvatar}
+          alt={article?.author}
+        />
+        <div className="article-author-main">
+          <div className="article-author-row">
+            <span className="article-author">{article?.author}</span>
+            <span className="article-details-time">
+              {formatTime(article?.publishTime || "")}
+            </span>
           </div>
-          <Button className="detail-follow-btn" size="mini">
-            关注
-          </Button>
+          {myUserId && authorId && myUserId !== authorId && (
+            <Button
+              size="small"
+              color={isFollowed ? "default" : "primary"}
+              loading={followLoading}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleFollow();
+              }}
+              style={{ marginLeft: 8, borderRadius: 16 }}
+            >
+              {isFollowed ? "已关注" : "+ 关注"}
+            </Button>
+          )}
         </div>
+      </div>
+
+      {/* 内容区 */}
+      <div className="article-detail-content">
         {/* 标题/摘要/正文 */}
         <div className="detail-title">{article.title}</div>
         <div className="detail-summary">{article.summary}</div>

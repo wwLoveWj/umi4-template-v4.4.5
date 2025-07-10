@@ -36,3 +36,23 @@ export const AvatarUploadAPI = (
 ): Promise<API.AvatarUploadResponse> => {
   return request.post("/userInfo/uploadAvatar", formData);
 };
+
+/**
+ * 关注作者
+ */
+export const followUserAPI = (userId: string, followUserId: string) =>
+  request.post("/api/article/follow", { userId, followUserId });
+
+/**
+ * 取消关注
+ */
+export const unfollowUserAPI = (userId: string, followUserId: string) =>
+  request.post("/api/article/unfollow", { userId, followUserId });
+
+/**
+ * 查询是否已关注
+ */
+export const isFollowUserAPI = (userId: string, followUserId: string) =>
+  request.get<{ isFollowed: boolean }>("/api/article/isFollow", {
+    params: { userId, followUserId },
+  });
