@@ -49,7 +49,13 @@ declare namespace API {
   interface UseInfoType {
     username: string;
     userId: string;
+    avatar?: string;
     [propsname: string]: any;
+  }
+  // 头像上传响应类型
+  interface AvatarUploadResponse {
+    avatarUrl: string;
+    message: string;
   }
   // =======================文章列表类型==============================
   interface ArticleTableDataType {

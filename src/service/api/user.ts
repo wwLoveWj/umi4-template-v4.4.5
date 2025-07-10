@@ -19,6 +19,20 @@ export const UserInfoQueryAPI = (params = {}): Promise<any> => {
   return request.get<API.UseInfoType>("/userInfo/query", params);
 };
 // 更新app部分的用户信息
-export const UserInfoUpdateAPI = (params: { userId: string }) => {
+export const UserInfoUpdateAPI = (params: {
+  userId: string;
+  [key: string]: any;
+}) => {
   return request.post("/userInfo/update", params);
+};
+
+/**
+ * 头像上传API
+ * @param formData 包含头像文件的FormData对象
+ * @returns Promise<API.AvatarUploadResponse>
+ */
+export const AvatarUploadAPI = (
+  formData: FormData
+): Promise<API.AvatarUploadResponse> => {
+  return request.post("/userInfo/uploadAvatar", formData);
 };
