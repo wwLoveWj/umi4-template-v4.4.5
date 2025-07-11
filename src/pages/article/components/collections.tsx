@@ -4,7 +4,7 @@ import {
   NavBar,
   List,
   Card,
-  Avatar,
+  Image,
   Tag,
   SpinLoading,
   InfiniteScroll,
@@ -70,19 +70,19 @@ const ArticleCollections: React.FC = () => {
   const handleLike = async (article: API.ArticleItemType) => {
     try {
       if (article.isLiked) {
-        await articleApi.unlikeArticle(article.id);
+        await articleApi.unlikeArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id
+            item.articleId === article.articleId
               ? { ...item, isLiked: false, likeCount: item.likeCount - 1 }
               : item
           )
         );
       } else {
-        await articleApi.likeArticle(article.id);
+        await articleApi.likeArticle(article.articleId);
         setArticles((prev) =>
           prev.map((item) =>
-            item.id === article.id
+            item.articleId === article.articleId
               ? { ...item, isLiked: true, likeCount: item.likeCount + 1 }
               : item
           )
@@ -102,8 +102,10 @@ const ArticleCollections: React.FC = () => {
    */
   const handleUncollect = async (article: API.ArticleItemType) => {
     try {
-      await articleApi.uncollectArticle(article.id);
-      setArticles((prev) => prev.filter((item) => item.id !== article.id));
+      await articleApi.uncollectArticle(article?.articleId);
+      setArticles((prev) =>
+        prev.filter((item) => item.articleId !== article.articleId)
+      );
       Toast.show({
         icon: "success",
         content: "已取消收藏",
@@ -158,13 +160,29 @@ const ArticleCollections: React.FC = () => {
             image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
           />
         ) : (
-          <List>
+          <ul>
             {articles.map((article) => (
-              <List.Item
+              <li
                 key={article.id}
                 onClick={() => handleArticleClick(article)}
+                style={{ marginBottom: "12px" }}
               >
                 <Card className="collection-card">
+                  <div className="author-info">
+                    {article.authorAvatar && (
+                      <Image
+                        src={article.authorAvatar}
+                        width={32}
+                        height={32}
+                        fit="cover"
+                        style={{ borderRadius: 16 }}
+                      />
+                    )}
+                    <span className="author-name">{article.author}</span>
+                    {/* <span className="publish-time">
+                            {formatTime(article.publishTime)}
+                          </span> */}
+                  </div>
                   <div className="article-header">
                     <div className="article-cover">
                       <img src={article.coverImage} alt={article.title} />
@@ -172,29 +190,6 @@ const ArticleCollections: React.FC = () => {
                     <div className="article-info">
                       <h3 className="article-title">{article.title}</h3>
                       <p className="article-summary">{article.summary}</p>
-                      <div className="article-meta">
-                        <div className="author-info">
-                          <Avatar src={article.authorAvatar} />
-                          <span className="author-name">{article.author}</span>
-                          <span className="publish-time">
-                            {formatTime(article.publishTime)}
-                          </span>
-                        </div>
-                        <div className="article-stats">
-                          <span className="stat-item">
-                            <EyeOutline />
-                            {article.readCount}
-                          </span>
-                          <span className="stat-item">
-                            {article.isLiked ? (
-                              <HeartFill color="#ff4757" />
-                            ) : (
-                              <HeartOutline />
-                            )}
-                            {article.likeCount}
-                          </span>
-                        </div>
-                      </div>
                       <div className="article-tags">
                         {Array.isArray(article.tags) &&
                           article.tags?.slice(0, 3).map((tag) => (
@@ -205,22 +200,25 @@ const ArticleCollections: React.FC = () => {
                       </div>
                     </div>
                   </div>
-
                   {/* 操作按钮 */}
                   <div className="article-actions">
+                    <div className="action-btn">
+                      <EyeOutline />
+                      {article.readCount}
+                    </div>
                     <div
                       className="action-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleLike(article);
-                      }}
+                      // onClick={(e) => {
+                      //   e.stopPropagation();
+                      //   handleLike(article);
+                      // }}
                     >
                       {article.isLiked ? (
                         <HeartFill color="#ff4757" />
                       ) : (
                         <HeartOutline />
                       )}
-                      <span>点赞</span>
+                      {article.likeCount}
                     </div>
                     <div
                       className="action-btn danger"
@@ -234,9 +232,9 @@ const ArticleCollections: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </List.Item>
+              </li>
             ))}
-          </List>
+          </ul>
         )}
 
         {/* 加载更多 */}

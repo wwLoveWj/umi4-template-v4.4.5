@@ -155,7 +155,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     key: "article-collections",
     title: "我的收藏",
     path: "/article/collections",
-    component: "./article/components/collections",
+    component: "./article/collections",
     hideTabBar: true,
     showBack: true,
   },

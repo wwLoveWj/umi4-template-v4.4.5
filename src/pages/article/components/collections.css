@@ -9,9 +9,6 @@
   top: 0;
   z-index: 100;
 }
-.article-collections-page .collections-content {
-  padding: 12px;
-}
 .article-collections-page .collections-content :global(.adm-list) {
   background: transparent;
 }
@@ -21,15 +18,28 @@
   background: transparent;
 }
 .article-collections-page .collections-content .collection-card {
-  background: #fff;
-  border-radius: 12px;
-  overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+.article-collections-page .collections-content .collection-card .author-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-bottom: 1px solid #f0f0f0;
+  padding-bottom: 12px;
+}
+.article-collections-page .collections-content .collection-card .author-info .author-name {
+  font-size: 12px;
+  color: #999;
+}
+.article-collections-page .collections-content .collection-card .author-info .publish-time {
+  font-size: 12px;
+  color: #999;
 }
 .article-collections-page .collections-content .collection-card .article-header {
   display: flex;
-  padding: 16px;
+  padding: 12px 0;
   gap: 12px;
+  align-items: flex-start;
 }
 .article-collections-page .collections-content .collection-card .article-header .article-cover {
   flex-shrink: 0;
@@ -73,19 +83,6 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
-}
-.article-collections-page .collections-content .collection-card .article-header .article-info .article-meta .author-info {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.article-collections-page .collections-content .collection-card .article-header .article-info .article-meta .author-info .author-name {
-  font-size: 12px;
-  color: #999;
-}
-.article-collections-page .collections-content .collection-card .article-header .article-info .article-meta .author-info .publish-time {
-  font-size: 12px;
-  color: #999;
 }
 .article-collections-page .collections-content .collection-card .article-header .article-info .article-meta .article-stats {
   display: flex;
