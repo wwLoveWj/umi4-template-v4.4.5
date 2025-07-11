@@ -54,3 +54,18 @@ VALUES (
     )
 ON DUPLICATE KEY UPDATE
     updateTime = CURRENT_TIMESTAMP;
+
+-- 目标管理表
+CREATE TABLE IF NOT EXISTS goals (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    userId VARCHAR(50) NOT NULL COMMENT '用户ID',
+    title VARCHAR(255) NOT NULL COMMENT '目标内容',
+    type VARCHAR(50) COMMENT '目标类型',
+    deadline DATETIME COMMENT '截止时间',
+    reward VARCHAR(255) COMMENT '奖励内容',
+    remindTimes TEXT COMMENT '提醒时间(JSON数组)',
+    completed TINYINT(1) DEFAULT 0 COMMENT '是否已完成',
+    createTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    updateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_userId (userId)
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '目标管理表';

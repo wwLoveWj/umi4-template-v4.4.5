@@ -97,7 +97,6 @@ export const menuRoutes: API.MenuRoutesType[] = [
     path: "/goal",
     component: "./personalCenter/components/WwGoal",
     hideTabBar: true,
-    showBack: true,
   },
   {
     key: "album",

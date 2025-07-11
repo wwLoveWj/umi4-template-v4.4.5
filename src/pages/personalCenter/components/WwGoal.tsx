@@ -1,43 +1,35 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  List,
-  Checkbox,
-  Input,
-  Toast,
-  Tag,
-  Dialog,
-  DatePicker,
-} from "antd-mobile";
+import { Button, Checkbox, Input, Toast, Tag, Dialog } from "antd-mobile";
 import dayjs from "dayjs";
 import {
   getGoals,
-  addGoal,
   completeGoal,
   setGoalRemind,
   deleteGoal,
 } from "@/service/api/goal";
 import { useNavigate } from "umi";
 import { storage } from "@/utils/storage";
+import {
+  MailOutline,
+  DeleteOutline,
+  AddCircleOutline,
+} from "antd-mobile-icons";
 
 const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
 
-/**
- * 我的目标主页面
- */
+const typeColor: Record<string, string> = {
+  学习: "#1677ff",
+  运动: "#00b578",
+  阅读: "#722ed1",
+  健康: "#eb2f96",
+  理财: "#faad14",
+  其他: "#bfbfbf",
+};
+
 const WwGoal: React.FC = () => {
   const loginInfo = storage.get("login-info");
   const [goals, setGoals] = useState<any[]>([]);
   const navigate = useNavigate();
-  // 添加目标弹窗相关state
-  const [addDialogVisible, setAddDialogVisible] = useState(false);
-  const [addForm, setAddForm] = useState({
-    title: "",
-    type: "",
-    deadline: "",
-    reward: "",
-  });
-  const [pickerValue, setPickerValue] = useState<Date | undefined>(undefined);
   // 邮箱提醒弹窗相关state
   const [remindDialogVisible, setRemindDialogVisible] = useState(false);
   const [remindInput, setRemindInput] = useState("");
@@ -53,22 +45,19 @@ const WwGoal: React.FC = () => {
     loadGoals();
   }, []);
 
-  // 添加目标弹窗
-  const handleAddGoal = async () => {
-    if (!addForm.title || !addForm.type || !addForm.deadline) {
-      Toast.show({ content: "请填写完整信息" });
-      return;
-    }
-    await addGoal(addForm);
-    setAddDialogVisible(false);
-    setAddForm({ title: "", type: "", deadline: "", reward: "" });
-    setPickerValue(undefined);
-    loadGoals();
-  };
-
   // 打开邮箱提醒弹窗
   const handleSetRemind = (goal: any) => {
-    setRemindInput((goal.remindTimes || []).join(", "));
+    let remindArr: string[] = [];
+    if (Array.isArray(goal.remindTimes)) {
+      remindArr = goal.remindTimes;
+    } else if (typeof goal.remindTimes === "string" && goal.remindTimes) {
+      try {
+        remindArr = JSON.parse(goal.remindTimes);
+      } catch {
+        remindArr = [];
+      }
+    }
+    setRemindInput(remindArr.join(", "));
     setRemindGoalId(goal.id);
     setRemindDialogVisible(true);
   };
@@ -99,121 +88,143 @@ const WwGoal: React.FC = () => {
   };
 
   return (
-    <div>
-      <Button
-        color="primary"
-        onClick={() => navigate("/personalCenter/add-goal")}
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(180deg, #f7faff 0%, #f0f4ff 100%)",
+        padding: 0,
+      }}
+    >
+      <div
+        style={{
+          background: "#1677ff",
+          color: "#fff",
+          padding: "0 0 12px 0",
+          borderBottomLeftRadius: 18,
+          borderBottomRightRadius: 18,
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
+        }}
       >
-        添加目标
-      </Button>
-      <List>
-        {goals.map((goal) => (
-          <List.Item
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "8px 16px 0 16px",
+          }}
+        >
+          <Button
+            color="primary"
+            fill="solid"
+            style={{
+              fontSize: 16,
+              width: "60px",
+            }}
+            onClick={() => navigate(-1)}
+          >
+            返回
+          </Button>
+          <span style={{ fontSize: 18, fontWeight: 600 }}>我的目标</span>
+          <AddCircleOutline
+            style={{ fontSize: 24, width: "50px" }}
+            onClick={() => navigate("/personalCenter/add-goal")}
+          />
+        </div>
+      </div>
+      <div style={{ maxWidth: 420, margin: "0 12px", padding: "18px 0" }}>
+        {goals.length === 0 && (
+          <div style={{ color: "#bbb", textAlign: "center", marginTop: 48 }}>
+            暂无目标，快去添加吧！
+          </div>
+        )}
+        {goals.map((goal, idx) => (
+          <div
             key={goal.id}
-            prefix={
-              <Checkbox
-                checked={!!goal.completed}
-                onChange={() => handleComplete(goal.id)}
-              />
-            }
-            description={
-              <>
-                <Tag color="primary">{goal.type}</Tag>
-                <span style={{ marginLeft: 8 }}>
+            style={{
+              background: "#fff",
+              borderRadius: 16,
+              boxShadow: "0 2px 8px rgba(22,119,255,0.06)",
+              marginBottom: 18,
+              padding: "18px 16px",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              position: "relative",
+              borderLeft: `5px solid ${typeColor[goal.type] || "#1677ff"}`,
+            }}
+          >
+            <Checkbox
+              disabled={goal.completed}
+              checked={!!goal.completed}
+              onChange={() => handleComplete(goal.id)}
+              style={{ marginTop: 4 }}
+            />
+            <div style={{ flex: 1 }}>
+              <div
+                style={{
+                  fontWeight: 600,
+                  fontSize: 17,
+                  marginBottom: 4,
+                  color: goal.completed ? "#bbb" : "#222",
+                }}
+              >
+                {goal.title}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 4,
+                }}
+              >
+                <Tag
+                  color={goal.completed ? "default" : "primary"}
+                  style={{ borderRadius: 12, fontSize: 13 }}
+                >
+                  {goal.type}
+                </Tag>
+                <span style={{ color: "#888", fontSize: 13 }}>
                   截止：{dayjs(goal.deadline).format("YYYY-MM-DD HH:mm")}
                 </span>
-                {goal.reward && (
-                  <span style={{ marginLeft: 8, color: "#faad14" }}>
-                    奖励：{goal.reward}
-                  </span>
-                )}
-                {goal.completed && (
-                  <span style={{ marginLeft: 8, color: "#52c41a" }}>yyds</span>
-                )}
-              </>
-            }
-            extra={
-              !goal.completed && (
-                <>
-                  <Button size="mini" onClick={() => handleSetRemind(goal)}>
-                    邮箱提醒
-                  </Button>
-                  <Button
-                    size="mini"
-                    color="danger"
-                    onClick={() => handleDelete(goal.id)}
-                  >
-                    删除
-                  </Button>
-                </>
-              )
-            }
-          >
-            {goal.title}
-          </List.Item>
-        ))}
-      </List>
-      {/* 添加目标弹窗 */}
-      <Dialog
-        visible={addDialogVisible}
-        title="添加目标"
-        content={
-          <div>
-            <Input
-              placeholder="目标内容"
-              value={addForm.title}
-              onChange={(v) => setAddForm((f) => ({ ...f, title: v }))}
-            />
-            <div style={{ margin: "8px 0" }}>
-              {goalTypes.map((type) => (
-                <Tag
-                  key={type}
-                  color={addForm.type === type ? "primary" : "default"}
-                  onClick={() => setAddForm((f) => ({ ...f, type }))}
-                  style={{ marginRight: 8 }}
+              </div>
+              {goal.reward && (
+                <span
+                  style={{ color: "#faad14", fontSize: 14, marginRight: 8 }}
                 >
-                  {type}
-                </Tag>
-              ))}
-            </div>
-            <DatePicker
-              title="截止时间"
-              value={pickerValue}
-              onConfirm={(date) => {
-                setAddForm((f) => ({
-                  ...f,
-                  deadline: dayjs(date).format("YYYY-MM-DD HH:mm"),
-                }));
-                setPickerValue(date);
-              }}
-              precision="minute"
-            >
-              {(val) => (
-                <Button block>
-                  {pickerValue
-                    ? dayjs(pickerValue).format("YYYY-MM-DD HH:mm")
-                    : "选择截止时间"}
-                </Button>
+                  奖励：{goal.reward}
+                </span>
               )}
-            </DatePicker>
-            <Input
-              placeholder="奖励（可选）"
-              value={addForm.reward}
-              onChange={(v) => setAddForm((f) => ({ ...f, reward: v }))}
-            />
+              {goal.completed ? (
+                <span
+                  style={{
+                    color: "#00b578",
+                    fontWeight: 600,
+                    fontSize: 15,
+                    marginLeft: 8,
+                  }}
+                >
+                  yyds
+                </span>
+              ) : null}
+            </div>
+            {!goal.completed && (
+              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                <MailOutline
+                  style={{ borderRadius: 16, fontSize: 24, color: "#1677ff" }}
+                  onClick={() => handleSetRemind(goal)}
+                />
+                <DeleteOutline
+                  style={{ borderRadius: 16, fontSize: 24, color: "red" }}
+                  onClick={() => handleDelete(goal.id)}
+                />
+              </div>
+            )}
           </div>
-        }
-        actions={[
-          [
-            {
-              key: "cancel",
-              text: "取消",
-              onClick: () => setAddDialogVisible(false),
-            },
-            { key: "ok", text: "添加", bold: true, onClick: handleAddGoal },
-          ],
-        ]}
-      />
+        ))}
+      </div>
       {/* 邮箱提醒弹窗 */}
       <Dialog
         visible={remindDialogVisible}
