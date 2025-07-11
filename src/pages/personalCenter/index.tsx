@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { List, Popup, NavBar, Dialog, Button, Toast, Image } from "antd-mobile";
+import React from "react";
+import { List, Dialog, Button, Toast, Image } from "antd-mobile";
 import {
   UnorderedListOutline,
   PayCircleOutline,
@@ -43,9 +43,8 @@ const configList = [
   },
 ];
 
-export default function Index() {
+export default function PersonalCenter() {
   const loginInfo = storage.get("login-info");
-  const [visible1, setVisible1] = useState(false);
   const canChgList = [
     {
       title: "通知",
@@ -106,7 +105,7 @@ export default function Index() {
       title: "我的目标",
       icon: <FlagOutline />,
       onClick: () => {
-        setVisible1(true);
+        history.push("/goal");
       },
     },
     {
@@ -203,40 +202,6 @@ export default function Index() {
           </List.Item>
         ))}
       </List>
-      <Popup
-        visible={visible1}
-        onMaskClick={() => {
-          setVisible1(false);
-        }}
-        onClose={() => {
-          setVisible1(false);
-        }}
-        bodyStyle={{ height: "100vh" }}
-      >
-        <NavBar
-          back="取消"
-          onBack={() => {
-            setVisible1(false);
-          }}
-          backIcon={false}
-          right={
-            <a
-              onClick={() => {
-                setVisible1(false);
-              }}
-            >
-              完成
-            </a>
-          }
-        >
-          标题
-        </NavBar>
-        <h1>今年目标：为明年买车和结婚奋斗</h1>
-        <h1>明年目标：为明年买车和结婚奋斗</h1>
-        <h1>三年目标：为明年买车和结婚奋斗</h1>
-        <h1>五年目标：为明年买车和结婚奋斗</h1>
-        <h1>十年目标：为明年买车和结婚奋斗</h1>
-      </Popup>
     </>
   );
 }

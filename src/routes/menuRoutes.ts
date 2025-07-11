@@ -91,12 +91,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     path: "/person",
     component: "./personalCenter/index",
   },
-  // {
-  //   key: "goal",
-  //   title: "我的目标",
-  //   path: "/goal",
-  //   component: "./personalCenter/components/WwGoal",
-  // },
+  {
+    key: "goal",
+    title: "我的目标",
+    path: "/goal",
+    component: "./personalCenter/components/WwGoal",
+    hideTabBar: true,
+    showBack: true,
+  },
   {
     key: "album",
     title: "宝宝相册",
@@ -195,5 +197,13 @@ export const menuRoutes: API.MenuRoutesType[] = [
     path: "/settings/change-password",
     component: "@/pages/settings/ChangePassword",
     layout: false,
+  },
+  {
+    key: "add-goal",
+    title: "添加目标",
+    path: "/personalCenter/add-goal",
+    component: "./personalCenter/components/AddGoal",
+    hideTabBar: true,
+    showBack: true,
   },
 ];
