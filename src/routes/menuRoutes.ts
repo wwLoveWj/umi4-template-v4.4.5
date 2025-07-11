@@ -91,12 +91,12 @@ export const menuRoutes: API.MenuRoutesType[] = [
     path: "/person",
     component: "./personalCenter/index",
   },
-  {
-    key: "goal",
-    title: "我的目标",
-    path: "/goal",
-    component: "./personalCenter/components/WwGoal",
-  },
+  // {
+  //   key: "goal",
+  //   title: "我的目标",
+  //   path: "/goal",
+  //   component: "./personalCenter/components/WwGoal",
+  // },
   {
     key: "album",
     title: "宝宝相册",
