@@ -4,10 +4,12 @@ import { useNavigate } from "umi";
 import { CalendarOutline, GiftOutline } from "antd-mobile-icons";
 import dayjs from "dayjs";
 import { addGoal } from "@/service/api/goal";
+import { storage } from "@/utils/storage";
 
 const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
 
 const AddGoal: React.FC = () => {
+  const loginInfo = storage.get("login-info");
   const [visible, setVisible] = useState(false);
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -25,7 +27,7 @@ const AddGoal: React.FC = () => {
       return;
     }
     setLoading(true);
-    await addGoal(form);
+    await addGoal({ ...form, userId: loginInfo?.userId || "" });
     setLoading(false);
     Toast.show({ content: "添加成功" });
     navigate(-1);

@@ -1,9 +1,8 @@
 import request from "../request";
 
-export const getGoals = () =>
-  request.get("/goals?userId=" + localStorage.getItem("userId"));
-export const addGoal = (data: any) =>
-  request.post("/goals", { ...data, userId: localStorage.getItem("userId") });
+export const getGoals = (userId: string) =>
+  request.get("/goals?userId=" + userId);
+export const addGoal = (data: any) => request.post("/goals", data);
 export const completeGoal = (id: number) =>
   request.post(`/goals/${id}/complete`);
 export const setGoalRemind = (id: number, remindTimes: string[]) =>

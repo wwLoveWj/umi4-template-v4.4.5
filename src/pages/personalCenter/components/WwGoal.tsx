@@ -18,6 +18,7 @@ import {
   deleteGoal,
 } from "@/service/api/goal";
 import { useNavigate } from "umi";
+import { storage } from "@/utils/storage";
 
 const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
 
@@ -25,6 +26,7 @@ const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
  * 我的目标主页面
  */
 const WwGoal: React.FC = () => {
+  const loginInfo = storage.get("login-info");
   const [goals, setGoals] = useState<any[]>([]);
   const navigate = useNavigate();
   // 添加目标弹窗相关state
@@ -43,8 +45,8 @@ const WwGoal: React.FC = () => {
 
   // 加载目标
   const loadGoals = async () => {
-    const res = await getGoals();
-    if (res.data) setGoals(res.data);
+    const res = await getGoals(loginInfo?.userId || "");
+    if (res) setGoals(res);
   };
 
   useEffect(() => {
