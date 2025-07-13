@@ -8,10 +8,13 @@ import { storage } from "@/utils/storage";
 
 const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
 
-const AddGoal: React.FC = () => {
+interface AddGoalProps {
+  onSuccess?: () => void;
+}
+
+const AddGoal: React.FC<AddGoalProps> = ({ onSuccess }) => {
   const loginInfo = storage.get("login-info");
   const [visible, setVisible] = useState(false);
-  const navigate = useNavigate();
   const [form, setForm] = useState({
     title: "",
     type: "",
@@ -30,15 +33,17 @@ const AddGoal: React.FC = () => {
     await addGoal({ ...form, userId: loginInfo?.userId || "" });
     setLoading(false);
     Toast.show({ content: "添加成功" });
-    navigate(-1);
+    if (onSuccess) onSuccess();
   };
 
   return (
     <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(180deg, #f7faff 0%, #f0f4ff 100%)",
-      }}
+      style={
+        {
+          // minHeight: "100vh",
+          // background: "linear-gradient(180deg, #f7faff 0%, #f0f4ff 100%)",
+        }
+      }
     >
       {/* <NavBar
         onBack={() => navigate(-1)}
@@ -48,7 +53,7 @@ const AddGoal: React.FC = () => {
       </NavBar> */}
       <div
         style={{
-          maxWidth: 400,
+          maxWidth: 500,
           margin: "24px auto",
           background: "#fff",
           borderRadius: 18,
@@ -131,18 +136,31 @@ const AddGoal: React.FC = () => {
           </DatePicker>
         </div>
         <div style={{ marginBottom: 24 }}>
-          <Input
-            prefix={
-              <GiftOutline
-                style={{ color: "#faad14", fontSize: 18, marginRight: 4 }}
-              />
-            }
-            placeholder="奖励（可选）"
-            value={form.reward}
-            onChange={(v) => setForm((f) => ({ ...f, reward: v }))}
-            clearable
-            style={{ background: "#f7f8fa", borderRadius: 8, padding: 8 }}
-          />
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              background: "#f7f8fa",
+              borderRadius: 8,
+              padding: 8,
+            }}
+          >
+            <GiftOutline
+              style={{ color: "#faad14", fontSize: 18, marginRight: 4 }}
+            />
+            <Input
+              style={{
+                flex: 1,
+                background: "transparent",
+                border: "none",
+                boxShadow: "none",
+              }}
+              placeholder="奖励（可选）"
+              value={form.reward}
+              onChange={(v) => setForm((f) => ({ ...f, reward: v }))}
+              clearable
+            />
+          </div>
         </div>
         <Button
           block

@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Input, Toast, Tag, Dialog } from "antd-mobile";
+import {
+  Button,
+  Checkbox,
+  Input,
+  Toast,
+  Tag,
+  Dialog,
+  Modal,
+} from "antd-mobile";
 import dayjs from "dayjs";
 import {
   getGoals,
@@ -14,6 +22,7 @@ import {
   DeleteOutline,
   AddCircleOutline,
 } from "antd-mobile-icons";
+import AddGoal from "./AddGoal";
 
 const goalTypes = ["学习", "运动", "阅读", "健康", "理财", "其他"];
 
@@ -34,6 +43,8 @@ const WwGoal: React.FC = () => {
   const [remindDialogVisible, setRemindDialogVisible] = useState(false);
   const [remindInput, setRemindInput] = useState("");
   const [remindGoalId, setRemindGoalId] = useState<number | null>(null);
+  // 添加目标弹窗
+  const [addGoalModal, setAddGoalModal] = useState(false);
 
   // 加载目标
   const loadGoals = async () => {
@@ -118,18 +129,15 @@ const WwGoal: React.FC = () => {
           <Button
             color="primary"
             fill="solid"
-            style={{
-              fontSize: 16,
-              width: "60px",
-            }}
+            style={{ fontSize: 16, width: "60px" }}
             onClick={() => navigate(-1)}
           >
             返回
           </Button>
           <span style={{ fontSize: 18, fontWeight: 600 }}>我的目标</span>
           <AddCircleOutline
-            style={{ fontSize: 24, width: "50px" }}
-            onClick={() => navigate("/personalCenter/add-goal")}
+            style={{ fontSize: 24, width: "50px", cursor: "pointer" }}
+            onClick={() => setAddGoalModal(true)}
           />
         </div>
       </div>
@@ -225,6 +233,21 @@ const WwGoal: React.FC = () => {
           </div>
         ))}
       </div>
+      {/* 添加目标弹窗 */}
+      <Modal
+        visible={addGoalModal}
+        showCloseButton
+        onClose={() => setAddGoalModal(false)}
+        bodyStyle={{ borderRadius: 18, padding: 0, minHeight: 480 }}
+        content={
+          <AddGoal
+            onSuccess={() => {
+              setAddGoalModal(false);
+              loadGoals();
+            }}
+          />
+        }
+      />
       {/* 邮箱提醒弹窗 */}
       <Dialog
         visible={remindDialogVisible}
