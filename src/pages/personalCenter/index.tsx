@@ -1,5 +1,5 @@
-import React from "react";
-import { List, Dialog, Button, Toast, Image } from "antd-mobile";
+import React, { useEffect, useState } from "react";
+import { List, Dialog, Button, Toast, Image, Badge } from "antd-mobile";
 import {
   UnorderedListOutline,
   PayCircleOutline,
@@ -20,6 +20,7 @@ import "./style.less";
 import { createNotification } from "@/utils/index";
 import Push from "push.js";
 import { storage } from "@/utils/storage";
+import { getMessages, onMessageChange } from "@/utils/messageCenter";
 
 const configList = [
   {
@@ -43,6 +44,19 @@ const configList = [
   },
 ];
 
+/**
+ * 获取未读消息数量
+ * @returns {number} 未读消息数量
+ */
+function getUnreadMsgCount() {
+  try {
+    const msgs = getMessages();
+    return msgs.filter((m) => !m.read).length;
+  } catch {
+    return 0;
+  }
+}
+
 export default function PersonalCenter() {
   const loginInfo = storage.get("login-info");
   const canChgList = [
@@ -59,14 +73,12 @@ export default function PersonalCenter() {
           timeout: 60000,
         });
         setTimeout(() => {
-          navigator.vibrate =
-            navigator.vibrate ||
-            navigator.webkitVibrate ||
-            navigator.mozVibrate ||
-            navigator.msVibrate;
-          if (navigator.vibrate) {
+          const nav: any = navigator;
+          nav.vibrate =
+            nav.vibrate || nav.webkitVibrate || nav.mozVibrate || nav.msVibrate;
+          if (nav.vibrate) {
             console.log("支持设备震动！");
-            navigator.vibrate(2000);
+            nav.vibrate(2000);
           }
         }, 1000);
       },
@@ -136,10 +148,56 @@ export default function PersonalCenter() {
     },
   ];
 
+  // 动态获取未读消息数
+  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
+
+  /**
+   * 更新未读消息数量
+   */
+  const updateUnreadCount = () => {
+    const count = getUnreadMsgCount();
+    setUnreadMsgCount(count);
+  };
+
+  // 监听消息变化，实时更新角标
+  useEffect(() => {
+    updateUnreadCount();
+
+    // 监听消息变化事件
+    const removeListener = onMessageChange(updateUnreadCount);
+
+    return () => {
+      removeListener();
+    };
+  }, []);
+
   return (
     <>
       <div className={styles?.bgAvtar}>
         <div className={styles?.avatarInfo}>
+          {/* 通知图标 */}
+          <div
+            style={{
+              position: "absolute",
+              right: 60,
+              top: 20,
+              zIndex: 10,
+              cursor: "pointer",
+            }}
+            onClick={() => history.push("/notice/article")}
+          >
+            <Badge
+              content={
+                unreadMsgCount > 0
+                  ? unreadMsgCount > 99
+                    ? "99+"
+                    : unreadMsgCount
+                  : undefined
+              }
+            >
+              <BellOutline style={{ fontSize: 28, color: "#fff" }} />
+            </Badge>
+          </div>
           <div
             className={styles?.qrcodeIcon}
             onClick={() =>

@@ -1,112 +1,232 @@
-let websocket: any;
-let timer: any = null;
-let timerHeartbeat: any = null;
-let timerWait: any = null;
-let lockReconnect = false;
-// 记录心跳包
-let heartbeatStatus = "waiting";
-
-function startHeartbeat() {
-  timerHeartbeat = setTimeout(() => {
-    // 将状态改为等待应答，并发送心跳包
-    heartbeatStatus = "waiting";
-    websocket.send("heartbeat");
-    // 启动定时任务来检测刚才服务器有没有应答
-    waitHeartbeat();
-  }, 15000);
-}
-
-function waitHeartbeat() {
-  timerWait = setTimeout(() => {
-    console.log("检测服务器有没有应答过心跳包，当前状态", heartbeatStatus);
-    if (heartbeatStatus === "waiting") {
-      debugger;
-      // 心跳应答超时
-      websocket.close();
-    } else {
-      // 启动下一轮心跳检测
-      startHeartbeat();
-    }
-  }, 1500);
-}
-// 重连请求
-const reconnect = (url: string) => {
-  if (lockReconnect) return; //没连接上会一直重连，设置延迟避免请求过多
-  lockReconnect = true;
-  setTimeout(function () {
-    createWebSocket(url);
-    lockReconnect = false;
-  }, 4000);
-};
-
-// 监听心跳机制
-const heartCheck = {
-  timeout: 60000, //60秒
-  timeoutObj: null,
-  reset: function () {
-    clearInterval(timer);
-    return this;
-  },
-  start: function () {
-    timer = setInterval(function () {
-      //这里发送一个心跳，后端收到后，返回一个心跳消息，
-      //onmessage拿到返回的心跳就说明连接正常
-      // 设置心跳间隔和超时时间
-      if (websocket.readyState === WebSocket.OPEN) {
-        websocket.ping(null, false, 30000); // 30秒心跳间隔，不发送数据
-      } else {
-        console.error("websocket 心跳机制断开了......");
-      }
-    }, this.timeout);
-  },
-};
-
-// 1. 创建websocket连接
-const createWebSocket = (url: string) => {
-  websocket = new WebSocket(url);
-  websocket.onopen = function () {
-    // heartCheck.reset().start();
-    // 启动成功后开启心跳检测
-    startHeartbeat();
-  };
-  websocket.onerror = function () {};
-  websocket.onclose = function (e: any) {
-    clearTimeout(timerHeartbeat);
-    clearTimeout(timerWait);
-    reconnect(url);
-    // websocket = null;
-    lockReconnect = true;
-    debugger;
-    console.log(
-      "websocket 断开: " + e.code + " " + e.reason + " " + e.wasClean
-    );
-  };
-  // 这里会接收到后端发送的数据
-  websocket.onmessage = function (event: any) {
-    const { data } = event;
-    console.log("心跳应答了，要把状态改为已收到应答", data);
-    if (data === "heartbeat") {
-      heartbeatStatus = "received";
-    }
-    lockReconnect = true; //event 为服务端传输的消息，在这里可以处理
-  };
-};
-
-//关闭连接
-const closeWebSocket = () => {
-  websocket && websocket.close();
-};
-
 /**
- * websocket消息处理函数
- * @param msg websocket消息内容
+ * WebSocket工具类
+ * 负责与后端通知服务建立连接、认证、消息处理
  */
-const websocketMsgHandler = (msg: string) => {
-  if (websocket.readyState === WebSocket.OPEN) {
-    websocket && websocket?.send(msg);
-  } else {
-    console.error("websocket 断开了......");
-  }
-};
 
-export { websocket, createWebSocket, closeWebSocket, websocketMsgHandler };
+export interface WebSocketMessage {
+  type: string;
+  [key: string]: any;
+}
+
+export interface NotificationData {
+  id: number;
+  type: "system" | "article_update" | "like" | "collect" | "follow" | "comment";
+  title: string;
+  content: string;
+  relatedId?: number;
+  relatedType?: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
+export interface WebSocketConfig {
+  url: string;
+  userId: string | number;
+  onNotification?: (notification: NotificationData) => void;
+  onUnreadCountUpdate?: (count: number) => void;
+  onConnectionEstablished?: (connectionId: string) => void;
+  onAuthenticated?: (userId: string | number) => void;
+  onError?: (error: string) => void;
+  onClose?: () => void;
+}
+
+class WebSocketManager {
+  private ws: WebSocket | null = null;
+  private config: WebSocketConfig | null = null;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectInterval = 3000;
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+  private connectionId: string | null = null;
+  private isAuthenticated = false;
+
+  /**
+   * 连接WebSocket
+   * @param config WebSocket配置
+   */
+  connect(config: WebSocketConfig): Promise<void> {
+    return new Promise((resolve, reject) => {
+      try {
+        this.config = config;
+        this.ws = new WebSocket(config.url);
+
+        this.ws.onopen = () => {
+          console.log("WebSocket连接已建立");
+          this.reconnectAttempts = 0;
+          this.startHeartbeat();
+          resolve();
+        };
+
+        this.ws.onmessage = (event) => {
+          this.handleMessage(event.data);
+        };
+
+        this.ws.onerror = (error) => {
+          console.error("WebSocket错误:", error);
+          this.config?.onError?.("连接错误");
+          reject(error);
+        };
+
+        this.ws.onclose = () => {
+          console.log("WebSocket连接已关闭");
+          this.stopHeartbeat();
+          this.isAuthenticated = false;
+          this.config?.onClose?.();
+
+          // 自动重连
+          if (this.reconnectAttempts < this.maxReconnectAttempts) {
+            setTimeout(() => {
+              this.reconnectAttempts++;
+              console.log(
+                `尝试重连 (${this.reconnectAttempts}/${this.maxReconnectAttempts})`
+              );
+              this.connect(config);
+            }, this.reconnectInterval);
+          }
+        };
+      } catch (error) {
+        console.error("WebSocket连接失败:", error);
+        reject(error);
+      }
+    });
+  }
+
+  /**
+   * 处理接收到的消息
+   * @param data 消息数据
+   */
+  private handleMessage(data: string) {
+    try {
+      const message: WebSocketMessage = JSON.parse(data);
+
+      switch (message.type) {
+        case "connection_established":
+          this.connectionId = message.connectionId;
+          this.config?.onConnectionEstablished?.(message.connectionId);
+          console.log("连接已建立，ID:", message.connectionId);
+          break;
+
+        case "authenticated":
+          this.isAuthenticated = true;
+          this.config?.onAuthenticated?.(message.userId);
+          console.log("用户认证成功:", message.userId);
+          break;
+
+        case "auth_error":
+          console.error("认证失败:", message.message);
+          this.config?.onError?.(message.message);
+          break;
+
+        case "notification":
+          const notification = message.data as NotificationData;
+          this.config?.onNotification?.(notification);
+          console.log("收到新通知:", notification);
+          break;
+
+        case "unread_count":
+        case "unread_count_update":
+          this.config?.onUnreadCountUpdate?.(message.count);
+          console.log("未读数量更新:", message.count);
+          break;
+
+        case "pong":
+          console.log("收到心跳响应");
+          break;
+
+        case "error":
+          console.error("服务器错误:", message.message);
+          this.config?.onError?.(message.message);
+          break;
+
+        default:
+          console.log("未知消息类型:", message.type);
+      }
+    } catch (error) {
+      console.error("解析消息失败:", error);
+    }
+  }
+
+  /**
+   * 发送消息
+   * @param message 消息对象
+   */
+  send(message: WebSocketMessage): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(message));
+    } else {
+      console.warn("WebSocket未连接，无法发送消息");
+    }
+  }
+
+  /**
+   * 用户认证
+   * @param userId 用户ID
+   */
+  authenticate(userId: string | number): void {
+    this.send({
+      type: "authenticate",
+      userId,
+    });
+  }
+
+  /**
+   * 发送心跳
+   */
+  private startHeartbeat(): void {
+    this.heartbeatInterval = setInterval(() => {
+      this.send({ type: "ping" });
+    }, 30000); // 30秒发送一次心跳
+  }
+
+  /**
+   * 停止心跳
+   */
+  private stopHeartbeat(): void {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+  }
+
+  /**
+   * 关闭连接
+   */
+  disconnect(): void {
+    this.stopHeartbeat();
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+    this.isAuthenticated = false;
+    this.connectionId = null;
+  }
+
+  /**
+   * 获取连接状态
+   */
+  getConnectionState(): number {
+    return this.ws?.readyState || WebSocket.CLOSED;
+  }
+
+  /**
+   * 是否已认证
+   */
+  isUserAuthenticated(): boolean {
+    return this.isAuthenticated;
+  }
+
+  /**
+   * 获取连接ID
+   */
+  getConnectionId(): string | null {
+    return this.connectionId;
+  }
+}
+
+// 创建全局实例
+const websocketManager = new WebSocketManager();
+
+// 兼容性导出
+export const closeWebSocket = () => websocketManager.disconnect();
+
+export default websocketManager;

@@ -10,45 +10,13 @@ import {
   ContentOutline,
 } from "antd-mobile-icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useNotification } from "@/hooks/useNotification";
 import styles from "./style.less";
-import { getMessages, onMessageChange } from "@/utils/messageCenter";
-
-/**
- * 获取未读消息数量
- * @returns {number} 未读消息数量
- */
-function getUnreadMsgCount() {
-  try {
-    const msgs = getMessages();
-    return msgs.filter((m) => !m.read).length;
-  } catch {
-    return 0;
-  }
-}
 
 export default () => {
-  // 动态获取未读消息数
-  const [unreadMsgCount, setUnreadMsgCount] = useState(0);
-
-  /**
-   * 更新未读消息数量
-   */
-  const updateUnreadCount = () => {
-    const count = getUnreadMsgCount();
-    setUnreadMsgCount(count);
-  };
-
-  // 监听消息变化，实时更新角标
-  useEffect(() => {
-    updateUnreadCount();
-
-    // 监听消息变化事件
-    const removeListener = onMessageChange(updateUnreadCount);
-
-    return () => {
-      removeListener();
-    };
-  }, []);
+  const { unreadCount } = useNotification();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const tabs = [
     {
@@ -63,10 +31,6 @@ export default () => {
       icon: <UnorderedListOutline />,
       badge: "5",
     },
-    // {
-    //   key: "/scan",
-    //   icon: <ScanningOutline />,
-    // },
     {
       key: "/article",
       title: "文章",
@@ -78,11 +42,7 @@ export default () => {
       icon: (active: boolean) =>
         active ? <MessageFill /> : <MessageOutline />,
       badge:
-        unreadMsgCount > 0
-          ? unreadMsgCount > 99
-            ? "99+"
-            : unreadMsgCount
-          : undefined,
+        unreadCount > 0 ? (unreadCount > 99 ? "99+" : unreadCount) : undefined,
     },
     {
       key: "/person",
@@ -91,9 +51,6 @@ export default () => {
     },
   ];
 
-  const [activeKey, setActiveKey] = useState("todo");
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   return (
     <div className={styles.tabBar}>
       <TabBar activeKey={pathname} onChange={(value) => navigate(value)}>

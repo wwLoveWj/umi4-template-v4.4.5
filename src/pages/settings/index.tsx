@@ -13,6 +13,7 @@ import md5 from "md5";
 import { setToken } from "@/utils/localToken";
 import { storage } from "@/utils/storage";
 import { UserInfoUpdateAPI, AvatarUploadAPI } from "@/service/api/user";
+import { BellOutline } from "antd-mobile-icons";
 
 const genderOptions = [
   { label: "男", value: "男" },
@@ -325,6 +326,20 @@ const Settings: React.FC = () => {
         </List.Item>
         {/* 修改密码 */}
         <List.Item onClick={handleChangePwd}>修改密码</List.Item>
+      </List>
+
+      <List header="通知设置">
+        <List.Item
+          onClick={() => history.push("/settings/notification")}
+          arrow
+          prefix={<BellOutline />}
+        >
+          推送通知
+          <div style={{ fontSize: 12, color: "#999" }}>管理接收的通知类型</div>
+        </List.Item>
+      </List>
+
+      <List header="其他">
         {/* 清除缓存 */}
         <List.Item onClick={handleClearCache}>
           一键清除缓存（{cacheSize} MB）

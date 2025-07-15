@@ -15,12 +15,7 @@ import { MailSendAPI } from "@/service/api/mail";
 import { useRequest } from "ahooks";
 import SearchHead from "./components/SearchHead";
 import img1 from "@/assets/articleBg.jpg";
-import {
-  createWebSocket,
-  closeWebSocket,
-  // websocket,
-  websocketMsgHandler,
-} from "@/utils/websocket";
+import websocketManager from "@/utils/websocket";
 // import ScanWeb from "./components/scan/index";
 import MajorEvents from "./components/majorTabs/index";
 import styles from "./style.less";
@@ -131,7 +126,7 @@ export default function Index() {
             >
               扫描二维码
             </button>
-            <button onClick={() => closeWebSocket()}>888</button>
+            <button onClick={() => websocketManager.disconnect()}>888</button>
             <button
               // onClick={() => {
               //   websocketMsgHandler(

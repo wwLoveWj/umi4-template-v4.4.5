@@ -134,3 +134,6 @@ instance.interceptors.response.use(
 );
 
 export default instance;
+
+// 兼容性导出
+export const request = instance;
