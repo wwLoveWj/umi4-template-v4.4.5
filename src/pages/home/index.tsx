@@ -26,12 +26,17 @@ export const demoImages = [
   "https://img2.baidu.com/it/u=815774148,3892081775&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=a34940ab279a5306e0e51da75fd4f72a",
   "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=fca949e753c4f127a6c67a1560b73368",
 ];
-const swiperImages = [
-  "https://img1.baidu.com/it/u=788315313,2675512338&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=d7ef9e580911b86b75eb1cbd9687d9eb",
-  "https://img2.baidu.com/it/u=3423686319,3061697869&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=bcbf5e63683bf34f6737c7316fba973a",
-  "https://img2.baidu.com/it/u=815774148,3892081775&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=a34940ab279a5306e0e51da75fd4f72a",
-  "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=fca949e753c4f127a6c67a1560b73368",
-];
+// 读取用户自定义轮播图
+const userCarousel = JSON.parse(localStorage.getItem("carouselImages") || "[]");
+const swiperImages =
+  userCarousel.length > 0
+    ? userCarousel
+    : [
+        "https://img1.baidu.com/it/u=788315313,2675512338&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=d7ef9e580911b86b75eb1cbd9687d9eb",
+        "https://img2.baidu.com/it/u=3423686319,3061697869&fm=253&app=120&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=bcbf5e63683bf34f6737c7316fba973a",
+        "https://img2.baidu.com/it/u=815774148,3892081775&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=a34940ab279a5306e0e51da75fd4f72a",
+        "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto?sec=1741107600&t=fca949e753c4f127a6c67a1560b73368",
+      ];
 export default function Index() {
   const { html5QrCode, stop } = useModel("useScan");
   const searchRef = useRef<SearchBarRef>(null);

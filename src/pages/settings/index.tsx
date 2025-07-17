@@ -339,6 +339,23 @@ const Settings: React.FC = () => {
         </List.Item>
       </List>
 
+      <List header="个性化设置">
+        <List.Item
+          onClick={() => history.push("/settings/personalize")}
+          arrow
+          prefix={
+            <span role="img" aria-label="paint">
+              🎨
+            </span>
+          }
+        >
+          个性化设置
+          <div style={{ fontSize: 12, color: "#999" }}>
+            自定义首页轮播和背景
+          </div>
+        </List.Item>
+      </List>
+
       <List header="其他">
         {/* 清除缓存 */}
         <List.Item onClick={handleClearCache}>

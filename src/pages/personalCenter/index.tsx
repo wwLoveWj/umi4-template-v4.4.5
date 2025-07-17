@@ -171,10 +171,19 @@ export default function PersonalCenter() {
     };
   }, []);
 
+  const bgImage = localStorage.getItem("personalBg");
+
   return (
     <>
       <div className={styles?.bgAvtar}>
-        <div className={styles?.avatarInfo}>
+        <div
+          className={styles?.avatarInfo}
+          style={
+            bgImage
+              ? { backgroundImage: `url(${bgImage})`, backgroundSize: "cover" }
+              : {}
+          }
+        >
           {/* 通知图标 */}
           <div
             style={{

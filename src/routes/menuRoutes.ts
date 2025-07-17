@@ -99,6 +99,12 @@ export const menuRoutes: API.MenuRoutesType[] = [
     component: "./personalCenter/index",
   },
   {
+    path: "/settings/personalize",
+    component: "@/pages/settings/Personalize",
+    title: "个性化设置",
+    hideTabBar: true,
+  },
+  {
     key: "goal",
     title: "我的目标",
     path: "/goal",

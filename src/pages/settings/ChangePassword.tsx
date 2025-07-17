@@ -56,7 +56,6 @@ const ChangePassword: React.FC = () => {
 
   return (
     <div style={{ padding: 16 }}>
-      <NavBar onBack={() => navigate(-1)}>修改密码</NavBar>
       <div style={{ marginTop: 32 }}>
         <Input
           clearable
