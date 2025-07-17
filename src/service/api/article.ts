@@ -67,10 +67,10 @@ export const articleApi = {
   /**
    * 点赞文章
    */
-  likeArticle: (articleId: string) => {
+  likeArticle: (data: { fromUserId: number; article: API.ArticleItemType }) => {
     return request<{ success: boolean }>("/api/article/like", {
       method: "POST",
-      data: { articleId },
+      data,
     });
   },
 
@@ -87,10 +87,13 @@ export const articleApi = {
   /**
    * 收藏文章
    */
-  collectArticle: (articleId: string) => {
+  collectArticle: (data: {
+    fromUserId: number;
+    article: API.ArticleItemType;
+  }) => {
     return request<{ success: boolean }>("/api/article/collect", {
       method: "POST",
-      data: { articleId },
+      data,
     });
   },
 
@@ -147,7 +150,7 @@ export const articleApi = {
     authorAvatar?: string;
     tags?: string[];
     articleId: string;
-    authorId: string;
+    authorId: number;
   }) => {
     return request<{ id: string }>("/api/article/add", {
       method: "POST",

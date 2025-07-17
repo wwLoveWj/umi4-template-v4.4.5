@@ -74,7 +74,6 @@ const MsgPage: React.FC = () => {
     markAllAsRead,
     loadNotifications,
   } = useNotification();
-
   /**
    * 处理标记已读
    */
@@ -120,7 +119,10 @@ const MsgPage: React.FC = () => {
    * 格式化时间
    */
   const formatTime = (timeStr: string) => {
+    if (!timeStr) return "-";
     const date = new Date(timeStr);
+    if (isNaN(date.getTime())) return "-"; // 新增：无效时间处理
+
     const now = new Date();
     const diff = now.getTime() - date.getTime();
 

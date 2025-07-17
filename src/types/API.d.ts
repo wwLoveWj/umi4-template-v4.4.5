@@ -60,7 +60,7 @@ declare namespace API {
     /** 用户ID */
     userId?: string;
     /** 用户ID（备用字段） */
-    id?: string;
+    id?: number;
     /** 用户名 */
     username?: string;
     /** 登录名 */
@@ -236,6 +236,7 @@ declare namespace API {
     isCollected: boolean;
     tags: string[];
     articleId: string;
+    authorId: number;
   }
 
   /**
