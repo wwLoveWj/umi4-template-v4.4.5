@@ -25,7 +25,7 @@ import "./style.less";
 import { addMessage } from "@/utils/messageCenter";
 import { useRequest } from "ahooks";
 import { sendSimpleNotification } from "@/utils/pushExample";
-
+import { storage } from "@/utils/storage";
 /**
  * 文章列表页面
  */
@@ -37,6 +37,8 @@ const ArticleList: React.FC = () => {
   const [page, setPage] = useState(1);
   const [searchValue, setSearchValue] = useState("");
   const pageSize = 10;
+  const loginInfo = storage.get("login-info");
+  const myUserId = loginInfo?.id;
 
   // 文章分类配置
   const categories: API.ArticleCategoryType[] = [
@@ -138,7 +140,7 @@ const ArticleList: React.FC = () => {
           )
         );
       } else {
-        await articleApi.likeArticle(article.articleId);
+        await articleApi.likeArticle({ fromUserId: myUserId || 0, article });
         setArticles((prev) =>
           prev.map((item) =>
             item.articleId === article.articleId
@@ -183,7 +185,7 @@ const ArticleList: React.FC = () => {
           )
         );
       } else {
-        await articleApi.collectArticle(article.articleId);
+        await articleApi.collectArticle({ fromUserId: myUserId || 0, article });
         setArticles((prev) =>
           prev.map((item) =>
             item.articleId === article.articleId
@@ -191,7 +193,6 @@ const ArticleList: React.FC = () => {
               : item
           )
         );
-
         // 推送收藏消息
         addMessage({
           type: "collect",

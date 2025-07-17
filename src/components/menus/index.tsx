@@ -10,11 +10,11 @@ import {
   ContentOutline,
 } from "antd-mobile-icons";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useNotification } from "@/hooks/useNotification";
+import { useNotificationContext } from "@/context/NotificationContext";
 import styles from "./style.less";
 
 export default () => {
-  const { unreadCount } = useNotification();
+  const { unreadCount } = useNotificationContext();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 

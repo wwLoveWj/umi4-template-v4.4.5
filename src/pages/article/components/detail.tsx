@@ -50,7 +50,7 @@ const ArticleDetail: React.FC = () => {
   const [isFollowed, setIsFollowed] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
   const loginInfo = storage.get("login-info");
-  const myUserId = loginInfo?.userId;
+  const myUserId = loginInfo?.id;
   const authorId = article?.authorId;
 
   /**
@@ -160,7 +160,6 @@ const ArticleDetail: React.FC = () => {
             ? { ...prev, isLiked: false, likeCount: prev.likeCount - 1 }
             : null
         );
-        // 推送点赞消息
         addMessage({
           type: "like",
           articleId: article.articleId,
@@ -168,7 +167,7 @@ const ArticleDetail: React.FC = () => {
           content: `您的文章《${article.title}》收到一个新的点赞！`,
         });
       } else {
-        await articleApi.likeArticle(article.articleId);
+        await articleApi.likeArticle({ fromUserId: myUserId || 0, article });
         setArticle((prev) =>
           prev
             ? { ...prev, isLiked: true, likeCount: prev.likeCount + 1 }
@@ -205,7 +204,7 @@ const ArticleDetail: React.FC = () => {
           content: "已取消收藏",
         });
       } else {
-        await articleApi.collectArticle(article.articleId);
+        await articleApi.collectArticle({ fromUserId: myUserId || 0, article });
         setArticle((prev) => (prev ? { ...prev, isCollected: true } : null));
         Toast.show({
           icon: "success",

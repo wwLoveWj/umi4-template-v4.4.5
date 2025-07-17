@@ -67,12 +67,10 @@ export const useNotification = (): UseNotificationReturn => {
           websocketManager.authenticate(userId);
         },
         onAuthenticated: (userId) => {
-          debugger;
           console.log("用户认证成功:", userId);
           setIsConnected(true);
         },
         onNotification: (notification) => {
-          debugger;
           // 收到新通知
           setNotifications((prev) => [
             notification as NotificationItem,
@@ -190,7 +188,6 @@ export const useNotification = (): UseNotificationReturn => {
         const response = await getNotificationsAPI(userId, page, 20);
 
         if (response && Array.isArray(response) && response.length > 0) {
-          debugger;
           if (page === 1) {
             setNotifications(response);
           } else {

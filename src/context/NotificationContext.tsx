@@ -65,6 +65,14 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
   const currentPage = useRef(1);
   const hasMore = useRef(true);
 
+  // 用ref持有最新的setNotifications和setUnreadCount，防止闭包问题
+  const setNotificationsRef = useRef(setNotifications);
+  const setUnreadCountRef = useRef(setUnreadCount);
+  useEffect(() => {
+    setNotificationsRef.current = setNotifications;
+    setUnreadCountRef.current = setUnreadCount;
+  }, [setNotifications, setUnreadCount]);
+
   // WebSocket连接
   const connect = useCallback(async () => {
     if (!userId) {
@@ -82,11 +90,11 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           setIsConnected(true);
         },
         onNotification: (notification) => {
-          setNotifications((prev) => [
+          setNotificationsRef.current((prev) => [
             notification as NotificationItem,
             ...prev,
           ]);
-          setUnreadCount((prev) => prev + 1);
+          setUnreadCountRef.current((prev) => prev + 1);
           Toast.show({
             content: notification.title,
             duration: 3000,
@@ -94,7 +102,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
           });
         },
         onUnreadCountUpdate: (count) => {
-          setUnreadCount(count);
+          setUnreadCountRef.current(count);
         },
         onError: (error) => {
           Toast.show({ content: `连接错误: ${error}`, icon: "fail" });

@@ -1,6 +1,6 @@
 import React from "react";
 import { List, Switch, NavBar, Toast } from "antd-mobile";
-import { useNotification } from "@/hooks/useNotification";
+import { useNotificationContext } from "@/context/NotificationContext";
 import { history } from "umi";
 
 /**
@@ -8,7 +8,7 @@ import { history } from "umi";
  */
 const NotificationSettings: React.FC = () => {
   const { subscriptionSettings, updateSettings, isConnected } =
-    useNotification();
+    useNotificationContext();
 
   /**
    * 处理开关切换

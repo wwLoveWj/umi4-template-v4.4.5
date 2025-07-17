@@ -18,8 +18,14 @@ dayjs.locale("zh-cn");
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
+import { NotificationProvider } from "@/context/NotificationContext";
+
 export function rootContainer(container: React.ReactNode) {
-  return <ConfigProvider locale={zhCN}>{container}</ConfigProvider>;
+  return (
+    <NotificationProvider>
+      <ConfigProvider locale={zhCN}>{container}</ConfigProvider>
+    </NotificationProvider>
+  );
 }
 
 export async function render(oldRender: any) {

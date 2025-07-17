@@ -17,9 +17,9 @@ import {
   FileOutline,
   HeartOutline,
 } from "antd-mobile-icons";
-import { useNotification } from "@/hooks/useNotification";
 import { NotificationItem } from "@/service/api/notification";
 import { history } from "umi";
+import { useNotificationContext } from "@/context/NotificationContext";
 
 /**
  * 获取通知图标
@@ -73,7 +73,7 @@ const MsgPage: React.FC = () => {
     markAsRead,
     markAllAsRead,
     loadNotifications,
-  } = useNotification();
+  } = useNotificationContext();
   /**
    * 处理标记已读
    */
