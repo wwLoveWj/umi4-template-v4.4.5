@@ -14,6 +14,7 @@ export interface NotificationItem {
   relatedType?: string;
   isRead: boolean;
   createdAt: string;
+  avatar: string;
 }
 
 export interface SubscriptionSettings {
