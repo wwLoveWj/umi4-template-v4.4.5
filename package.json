@@ -20,6 +20,7 @@
     "ahooks": "^3.8.4",
     "antd-mobile": "^5.38.1",
     "axios": "^1.7.9",
+    "browser-image-compression": "^2.0.2",
     "cross-env": "^7.0.3",
     "html5-qrcode": "^2.3.8",
     "jsencrypt": "^3.3.2",
