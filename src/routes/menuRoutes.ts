@@ -84,7 +84,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     hideTabBar: true,
   },
   {
-    path: "/msg/chat/:id",
+    path: "/msg/chat/:userId",
     component: "@/pages/msg/Chat",
     title: "对话",
     hideTabBar: true,

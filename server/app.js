@@ -4,6 +4,8 @@ const cors = require("cors");
 const path = require("path");
 const fs = require("fs-extra");
 const mysql = require("mysql2/promise");
+const chatRouter = require("./routers/chat");
+const WebSocketServer = require("./websocket");
 require("dotenv").config();
 
 const app = express();
@@ -287,10 +289,17 @@ app.use("*", (req, res) => {
 const goalsRouter = require("./routers/goals");
 app.use("/goals", goalsRouter);
 
-// 启动服务器
-app.listen(PORT, () => {
+// 注册聊天路由
+app.use("/api/chat", chatRouter);
+
+// 启动HTTP服务器
+const server = app.listen(PORT, () => {
   console.log(`服务器运行在 http://localhost:${PORT}`);
   console.log(`上传目录: ${uploadDir}`);
 });
+
+// 启动WebSocket服务器
+const wss = new WebSocketServer(server);
+console.log("WebSocket服务器已启动");
 
 module.exports = app;
