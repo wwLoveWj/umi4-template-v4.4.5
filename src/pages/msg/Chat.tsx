@@ -123,7 +123,7 @@ export default function ChatPage() {
         time: new Date(msg.createdAt).toTimeString().slice(0, 5),
         self: msg.fromUserId === currentUserId,
         unread: !msg.isRead && msg.fromUserId !== currentUserId,
-        type: msg.messageType,
+        type: msg.messageType as "text" | "emoji" | "system",
       }));
 
       setMessages(formattedMessages);
@@ -150,7 +150,6 @@ export default function ChatPage() {
 
   // 发送消息
   const sendMsg = useCallback(async () => {
-    debugger;
     if (!input.trim() || !params.userId) return;
 
     const newMessage: ChatMessage = {

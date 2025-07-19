@@ -165,7 +165,7 @@ class WebSocketManager {
   authenticate(userId: string | number): void {
     this.send({
       type: "authenticate",
-      userId,
+      data: { userId },
     });
   }
 

@@ -9,3 +9,5 @@
 .swc
 .history
 yarn-error.log
+**/uploads/
+**/upload/

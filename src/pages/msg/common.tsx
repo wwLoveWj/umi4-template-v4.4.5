@@ -122,7 +122,9 @@ export default function CommonMsgPage() {
                   </span>
                 }
                 onClick={() =>
-                  history.push(`/msg/chat/${item.fromUserId || item.id}`)
+                  history.push(
+                    `/msg/chat/${item.fromUserId || item.sendFormUserId}`
+                  )
                 }
               >
                 <span style={{ fontWeight: 600 }}>

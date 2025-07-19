@@ -60,7 +60,7 @@ export const useNotification = (): UseNotificationReturn => {
 
     try {
       await websocketManager.connect({
-        url: "ws://localhost:3007/ws", // WebSocket连接地址
+        url: "ws://localhost:3007", // WebSocket连接地址
         userId,
         onConnectionEstablished: (connectionId) => {
           console.log("WebSocket连接已建立:", connectionId);
