@@ -9,6 +9,20 @@ import {
 import { useNotificationContext } from "@/context/NotificationContext";
 import { history } from "umi";
 
+function formatTime(timeStr: string) {
+  if (!timeStr) return "-";
+  const date = new Date(timeStr);
+  if (isNaN(date.getTime())) return "-";
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  if (days === 0) return "今天";
+  if (days === 1) return "昨天";
+  if (days < 7) return `${days}天前`;
+  if (days < 365) return `${Math.floor(days / 30)}月前`;
+  return `${Math.floor(days / 365)}年前`;
+}
+
 const categories = [
   {
     icon: <LikeOutline style={{ color: "#ff4d4f", fontSize: 28 }} />,
@@ -33,21 +47,20 @@ const categories = [
   },
 ];
 
-export default function MsgPage() {
+export default function CommonMsgPage() {
   const { notifications } = useNotificationContext();
-
-  // 假如有头像、昵称、标签、内容、时间等字段
-  // 这里只做简单映射，实际可根据你的通知结构调整
-  const messages = notifications.map((msg) => ({
-    id: msg.id,
-    avatar:
-      msg.avatar ||
-      "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto", // 可替换为真实头像
-    nickname: msg.nickname || msg.title || "系统消息",
-    tag: msg.type === "system" ? "官方" : undefined,
-    content: msg.content,
-    time: msg.createdAt ? msg.createdAt.slice(11, 16) : "",
-  }));
+  // 按fromUserId分组，只显示每个对话的最后一条消息
+  const dialogMap = new Map();
+  notifications.forEach((item) => {
+    const key = item.fromUserId || item.id;
+    if (
+      !dialogMap.has(key) ||
+      new Date(item.createdAt) > new Date(dialogMap.get(key).createdAt)
+    ) {
+      dialogMap.set(key, item);
+    }
+  });
+  const dialogList = Array.from(dialogMap.values());
 
   return (
     <div style={{ background: "#f7f8fa", minHeight: "100vh" }}>
@@ -79,48 +92,56 @@ export default function MsgPage() {
       </div>
       <div style={{ marginTop: 8 }}>
         <List>
-          {messages.length === 0 ? (
+          {dialogList.length === 0 ? (
             <List.Item>
               <div style={{ textAlign: "center", color: "#bbb", padding: 32 }}>
                 暂无消息
               </div>
             </List.Item>
           ) : (
-            messages.map((msg) => (
+            dialogList.map((item) => (
               <List.Item
-                key={msg.id}
+                key={item.fromUserId || item.id}
                 prefix={
                   <img
-                    src={msg.avatar}
+                    src={
+                      item.avatar ||
+                      "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto"
+                    }
                     style={{ width: 44, height: 44, borderRadius: 22 }}
                   />
                 }
                 description={
-                  <span>
-                    {msg.tag && (
-                      <span
-                        style={{
-                          color: "#1677ff",
-                          fontSize: 12,
-                          border: "1px solid #1677ff",
-                          borderRadius: 4,
-                          padding: "0 4px",
-                          marginRight: 4,
-                        }}
-                      >
-                        官方
-                      </span>
-                    )}
-                    <span style={{ color: "#888" }}>{msg.content}</span>
+                  <span style={{ color: "#888" }}>
+                    {item.content || item.title || "消息摘要"}
                   </span>
                 }
                 extra={
-                  <span style={{ color: "#999", fontSize: 13 }}>
-                    {msg.time}
+                  <span style={{ color: "#bbb", fontSize: 13 }}>
+                    {formatTime(item.createdAt)}
                   </span>
                 }
+                onClick={() =>
+                  history.push(`/msg/chat/${item.fromUserId || item.id}`)
+                }
               >
-                <span style={{ fontWeight: 600 }}>{msg.nickname}</span>
+                <span style={{ fontWeight: 600 }}>
+                  {item.nickname || item.title || "用户"}
+                </span>
+                {item.isOfficial && (
+                  <span
+                    style={{
+                      color: "#1677ff",
+                      fontSize: 12,
+                      border: "1px solid #1677ff",
+                      borderRadius: 4,
+                      padding: "0 4px",
+                      marginLeft: 6,
+                    }}
+                  >
+                    官方
+                  </span>
+                )}
               </List.Item>
             ))
           )}

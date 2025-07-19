@@ -75,7 +75,19 @@ export const menuRoutes: API.MenuRoutesType[] = [
     key: "msg",
     title: "消息",
     path: "/msg",
-    component: "./msg/index",
+    component: "./msg/common",
+  },
+  {
+    path: "/msg/like-collect",
+    component: "@/pages/msg/LikeCollect",
+    title: "赞和收藏",
+    hideTabBar: true,
+  },
+  {
+    path: "/msg/chat/:id",
+    component: "@/pages/msg/Chat",
+    title: "对话",
+    hideTabBar: true,
   },
   {
     key: "notice",

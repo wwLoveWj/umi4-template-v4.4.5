@@ -23,7 +23,6 @@ export default function LikeCollectPage() {
   const likeCollect = notifications.filter(
     (n) => n.type === "like" || n.type === "collect"
   );
-
   return (
     <div>
       <NavBar back="返回" onBack={() => history.back()}>
@@ -51,46 +50,25 @@ export default function LikeCollectPage() {
               }
               description={
                 <div>
-                  <span style={{ fontWeight: 600, marginRight: 4 }}>
-                    {item.nickname || item.title || "用户"}
-                  </span>
-                  {item.type === "like" ? "赞了你的" : "收藏了你的"}
-                  {item.relatedType === "article"
-                    ? "文章"
-                    : item.relatedType === "comment"
-                    ? "评论"
-                    : ""}
-                  {item.articleTitle && (
-                    <span style={{ color: "#1677ff", marginLeft: 4 }}>
-                      《{item.articleTitle}》
-                    </span>
-                  )}
-                  {item.commentContent && (
-                    <div style={{ color: "#888", marginTop: 2 }}>
-                      {item.commentContent}
-                    </div>
-                  )}
+                  {/* <span style={{ color: "#888" }}>
+                    {item.fromUser || item.title || "用户"}
+                    {item.type === "like" ? "点赞了你的文章" : "收藏了你的文章"}
+                  </span> */}
+                  <div style={{ color: "#888", fontSize: 13, marginTop: 2 }}>
+                    {item.content || ""}
+                  </div>
                 </div>
               }
               extra={
-                <div style={{ textAlign: "right" }}>
-                  <div style={{ color: "#bbb", fontSize: 13 }}>
-                    {formatTime(item.createdAt)}
-                  </div>
-                  {item.cover && (
-                    <img
-                      src={item.cover}
-                      style={{
-                        width: 48,
-                        height: 48,
-                        borderRadius: 6,
-                        marginTop: 4,
-                      }}
-                    />
-                  )}
-                </div>
+                <span style={{ color: "#bbb", fontSize: 13 }}>
+                  {formatTime(item.createdAt)}
+                </span>
               }
-            />
+            >
+              <span style={{ fontWeight: 600 }}>
+                {item.type === "like" ? "收到新的点赞" : "文章被收藏"}
+              </span>
+            </List.Item>
           ))
         )}
       </List>
