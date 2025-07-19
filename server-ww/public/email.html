@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="email code" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>定时提醒邮件</title>
+  </head>
+  <!--定时提醒邮件模板-->
+  <body>
+    <div style="background-color: #ececec; padding: 35px">
+      <table
+        cellpadding="0"
+        style="
+          width: 800px;
+          height: 100%;
+          margin: 0px auto;
+          text-align: left;
+          position: relative;
+          border-radius: 5px;
+          font-size: 14px;
+          font-family: 微软雅黑, 黑体;
+          line-height: 1.5;
+          box-shadow: rgb(153, 153, 153) 0px 0px 5px;
+          border-collapse: collapse;
+          background: #fff;
+          background-position: initial initial;
+          background-repeat: initial initial;
+        "
+      >
+        <tbody>
+          <tr>
+            <th
+              style="
+                height: 25px;
+                line-height: 25px;
+                padding: 15px 35px;
+                border-bottom: 1px solid rgb(148, 0, 211);
+                background-color: RGB(148, 0, 211);
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 0px;
+                border-bottom-left-radius: 0px;
+              "
+            >
+              <span style="font-size: 24px; color: rgb(255, 255, 255)"
+                >定时提醒邮件</span
+              >
+            </th>
+          </tr>
+          <tr>
+            <td style="word-break: break-all">
+              <div
+                style="
+                  padding: 25px 35px 40px;
+                  background-color: #fff;
+                  opacity: 0.8;
+                "
+              >
+                <h2 style="margin: 5px 0px">
+                  <span style="color: #333333; line-height: 20px">
+                    <span style="line-height: 22px; font-size: 18px">
+                      <%= nickname %>：</span
+                    >
+                  </span>
+                </h2>
+                <p style="text-indent: 2em">
+                  您好！请记得按时补充<span style="color: #ff8c00"
+                    ><%= importantReminder %></span
+                  >，不要忘记哦，这是为了均衡您的营养所定制的，千万不要忘记吃哦！
+                </p>
+                <p>
+                  科普链接：<a
+                    href="https://m.baidu.com/bh/m/detail/ar_4715248454193209075"
+                    >维生素和铁的补充</a
+                  >
+                </p>
+                <br />
+
+                <div style="width: 100%; margin: 0 auto">
+                  <div
+                    style="
+                      padding: 10px 10px 0;
+                      border-top: 1px solid #ccc;
+                      color: #747474;
+                      margin-bottom: 20px;
+                      line-height: 1.3em;
+                      font-size: 12px;
+                      text-align: right;
+                    "
+                  >
+                    <p>──<%= name %></p>
+                    <br />
+                    <p>
+                      此为系统邮件，请勿回复<br />
+                      Please do not reply to this system email
+                    </p>
+                    <p>©<%= name %></p>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

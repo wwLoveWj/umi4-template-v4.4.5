@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>聊天测试</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      .container {
+        display: flex;
+        gap: 20px;
+      }
+      .auth-section {
+        flex: 1;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      .chat-section {
+        flex: 2;
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 5px;
+      }
+      .message-area {
+        height: 300px;
+        border: 1px solid #ddd;
+        padding: 10px;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+      }
+      .input-area {
+        display: flex;
+        gap: 10px;
+      }
+      input,
+      button {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .status {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 3px;
+      }
+      .status.connected {
+        background-color: #d4edda;
+        color: #155724;
+      }
+      .status.disconnected {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+      .message {
+        margin: 5px 0;
+        padding: 5px;
+        border-radius: 3px;
+      }
+      .message.sent {
+        background-color: #d1ecf1;
+        text-align: right;
+      }
+      .message.received {
+        background-color: #d4edda;
+      }
+      .message.system {
+        background-color: #fff3cd;
+        text-align: center;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>WebSocket聊天测试</h1>
+
+    <div class="container">
+      <div class="auth-section">
+        <h3>连接设置</h3>
+        <div id="status" class="status disconnected">未连接</div>
+
+        <div>
+          <label>用户ID:</label>
+          <input type="text" id="userId" placeholder="输入用户ID" value="1" />
+        </div>
+        <br />
+        <button onclick="connect()">连接WebSocket</button>
+        <button onclick="disconnect()">断开连接</button>
+        <br /><br />
+        <button onclick="authenticate()">认证</button>
+        <button onclick="sendPing()">发送心跳</button>
+      </div>
+
+      <div class="chat-section">
+        <h3>聊天</h3>
+        <div id="messageArea" class="message-area"></div>
+        <div class="input-area">
+          <input
+            type="text"
+            id="targetUserId"
+            placeholder="目标用户ID"
+            value="2"
+          />
+          <input
+            type="text"
+            id="messageInput"
+            placeholder="输入消息"
+            style="flex: 1"
+          />
+          <button onclick="sendMessage()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let ws = null;
+      let isConnected = false;
+
+      function updateStatus(message, isConnected) {
+        const status = document.getElementById("status");
+        status.textContent = message;
+        status.className = `status ${isConnected ? "connected" : "disconnected"}`;
+      }
+
+      function addMessage(content, type = "system") {
+        const messageArea = document.getElementById("messageArea");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${type}`;
+        messageDiv.textContent = `${new Date().toLocaleTimeString()}: ${content}`;
+        messageArea.appendChild(messageDiv);
+        messageArea.scrollTop = messageArea.scrollHeight;
+      }
+
+      function connect() {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+          addMessage("已经连接了", "system");
+          return;
+        }
+
+        const wsUrl = `ws://localhost:3007`;
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = function (event) {
+          isConnected = true;
+          updateStatus("WebSocket已连接", true);
+          addMessage("WebSocket连接已建立", "system");
+        };
+
+        ws.onmessage = function (event) {
+          try {
+            const data = JSON.parse(event.data);
+            console.log("收到消息:", data);
+
+            switch (data.type) {
+              case "connection_established":
+                addMessage(
+                  `连接建立成功，连接ID: ${data.connectionId}`,
+                  "system"
+                );
+                break;
+              case "authenticated":
+                addMessage(`认证成功，用户ID: ${data.userId}`, "system");
+                break;
+              case "auth_error":
+                addMessage(`认证失败: ${data.message}`, "system");
+                break;
+              case "chat_message":
+                addMessage(
+                  `收到消息: ${data.data.content} (来自: ${data.data.fromUserId})`,
+                  "received"
+                );
+                break;
+              case "message_sent":
+                addMessage(
+                  `消息发送成功，ID: ${data.data.messageId}`,
+                  "system"
+                );
+                break;
+              case "pong":
+                addMessage("收到心跳响应", "system");
+                break;
+              case "error":
+                addMessage(`错误: ${data.message}`, "system");
+                break;
+              default:
+                addMessage(`未知消息类型: ${data.type}`, "system");
+            }
+          } catch (error) {
+            addMessage(`消息解析错误: ${event.data}`, "system");
+          }
+        };
+
+        ws.onclose = function (event) {
+          isConnected = false;
+          updateStatus("WebSocket连接已关闭", false);
+          addMessage("WebSocket连接已关闭", "system");
+        };
+
+        ws.onerror = function (error) {
+          updateStatus("WebSocket连接错误", false);
+          addMessage("WebSocket连接错误", "system");
+          console.error("WebSocket错误:", error);
+        };
+      }
+
+      function disconnect() {
+        if (ws) {
+          ws.close();
+          ws = null;
+        }
+      }
+
+      function authenticate() {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          addMessage("请先连接WebSocket", "system");
+          return;
+        }
+
+        const userId = document.getElementById("userId").value;
+        if (!userId) {
+          addMessage("请输入用户ID", "system");
+          return;
+        }
+
+        const message = {
+          type: "authenticate",
+          data: {
+            userId: userId,
+          },
+        };
+
+        ws.send(JSON.stringify(message));
+        addMessage(`发送认证消息: ${userId}`, "sent");
+      }
+
+      function sendPing() {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          addMessage("请先连接WebSocket", "system");
+          return;
+        }
+
+        const message = {
+          type: "ping",
+        };
+
+        ws.send(JSON.stringify(message));
+        addMessage("发送心跳", "sent");
+      }
+
+      function sendMessage() {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          addMessage("请先连接WebSocket", "system");
+          return;
+        }
+
+        const targetUserId = document.getElementById("targetUserId").value;
+        const content = document.getElementById("messageInput").value;
+
+        if (!targetUserId || !content) {
+          addMessage("请输入目标用户ID和消息内容", "system");
+          return;
+        }
+
+        const message = {
+          type: "chat_message",
+          data: {
+            toUserId: targetUserId,
+            content: content,
+            messageType: "text",
+          },
+        };
+
+        ws.send(JSON.stringify(message));
+        addMessage(`发送消息给 ${targetUserId}: ${content}`, "sent");
+        document.getElementById("messageInput").value = "";
+      }
+
+      // 页面加载时自动连接
+      window.onload = function () {
+        addMessage('页面加载完成，点击"连接WebSocket"开始测试', "system");
+      };
+    </script>
+  </body>
+</html>
