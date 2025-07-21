@@ -42,6 +42,14 @@ export const AvatarUploadAPI = (
 };
 
 /**
+ * 获取所有用户列表
+ * @returns Promise<ContactUser[]>
+ */
+export const UserListAPI = (): Promise<any[]> => {
+  return request.get("/userInfo/query");
+};
+
+/**
  * 关注作者
  */
 export const followUserAPI = (userId: string, followUserId: string) =>

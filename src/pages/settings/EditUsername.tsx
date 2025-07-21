@@ -1,45 +1,83 @@
 import React, { useState, useEffect } from "react";
 import { NavBar, Button, Input, Toast } from "antd-mobile";
-import { useNavigate } from "umi";
+import { useNavigate, useLocation } from "umi";
 import { storage } from "@/utils/storage";
 import { UserInfoUpdateAPI } from "@/service/api/user";
 
 /**
- * 用户名修改页面
+ * 用户名/昵称修改页面
  * @returns {JSX.Element}
  */
 const EditUsername: React.FC = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [saving, setSaving] = useState(false);
+  const location = useLocation();
   const loginInfo = storage.get("login-info");
-  // 初始化用户名
-  useEffect(() => {
-    if (loginInfo && (loginInfo.username || loginInfo.loginName)) {
-      setUsername(loginInfo.username || loginInfo.loginName || "");
+
+  // 从URL参数获取编辑类型
+  const searchParams = new URLSearchParams(location.search);
+  const editType = searchParams.get("type") || "username"; // 'username' 或 'nickname'
+
+  // 根据编辑类型设置初始值和标题
+  const getInitialValue = () => {
+    if (editType === "nickname") {
+      return loginInfo?.nickname || "";
     }
-  }, []);
+    return loginInfo?.username || "";
+  };
 
-  // 保存用户名
+  const getTitle = () => {
+    return editType === "nickname" ? "修改昵称" : "修改用户名";
+  };
+
+  const getPlaceholder = () => {
+    return editType === "nickname" ? "请输入新昵称" : "请输入新用户名";
+  };
+
+  const getDescription = () => {
+    return editType === "nickname"
+      ? "好昵称可以让你的朋友更容易记住你。"
+      : "好名字可以让你的朋友更容易记住你。";
+  };
+
+  const [value, setValue] = useState(getInitialValue());
+  const [saving, setSaving] = useState(false);
+
+  // 保存用户名或昵称
   const handleSave = async () => {
-    if (!username.trim()) return;
+    if (!value.trim()) return;
     setSaving(true);
-    // 更新本地 storage
 
-    // 同步数据库
-    const userId = loginInfo?.userId;
+    const userId = loginInfo?.userId || loginInfo?.id;
     if (userId) {
       try {
-        await UserInfoUpdateAPI({ userId, username: username.trim() } as any);
+        const updateData =
+          editType === "nickname"
+            ? { userId: String(userId), nickname: value.trim() }
+            : { userId: String(userId), username: value.trim() };
+
+        await UserInfoUpdateAPI(updateData);
+
+        // 更新本地存储
+        const updatedLoginInfo = { ...loginInfo };
+        if (editType === "nickname") {
+          updatedLoginInfo.nickname = value.trim();
+        } else {
+          updatedLoginInfo.username = value.trim();
+        }
+        storage.set("login-info", updatedLoginInfo);
+
+        Toast.show({ icon: "success", content: "保存成功" });
+        navigate(-1);
       } catch (e) {
-        Toast.show({ icon: "fail", content: "数据库同步失败" });
+        console.error("保存失败:", e);
+        Toast.show({ icon: "fail", content: "保存失败，请重试" });
+      } finally {
+        setSaving(false);
       }
-    }
-    setTimeout(() => {
+    } else {
+      Toast.show({ icon: "fail", content: "用户信息获取失败" });
       setSaving(false);
-      Toast.show({ icon: "success", content: "保存成功" });
-      navigate(-1);
-    }, 500);
+    }
   };
 
   return (
@@ -51,13 +89,13 @@ const EditUsername: React.FC = () => {
           <Button
             color="primary"
             size="small"
-            disabled={!username.trim()}
+            disabled={!value.trim()}
             loading={saving}
             onClick={handleSave}
             style={{
               background: "transparent",
               border: "none",
-              color: !username.trim() ? "#ccc" : "#1677ff",
+              color: !value.trim() ? "#ccc" : "#1677ff",
               fontWeight: 600,
             }}
           >
@@ -65,13 +103,13 @@ const EditUsername: React.FC = () => {
           </Button>
         }
       >
-        更改名字
+        {getTitle()}
       </NavBar>
       <div style={{ padding: "32px 20px 0 20px" }}>
         <Input
-          value={username}
-          onChange={setUsername}
-          placeholder="请输入新用户名"
+          value={value}
+          onChange={setValue}
+          placeholder={getPlaceholder()}
           clearable
           style={{
             fontSize: 18,
@@ -94,7 +132,7 @@ const EditUsername: React.FC = () => {
             marginTop: 12,
           }}
         >
-          好名字可以让你的朋友更容易记住你。
+          {getDescription()}
         </div>
       </div>
     </div>

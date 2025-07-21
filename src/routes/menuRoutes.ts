@@ -90,6 +90,13 @@ export const menuRoutes: API.MenuRoutesType[] = [
     hideTabBar: true,
   },
   {
+    path: "/msg/contacts",
+    component: "@/pages/msg/contacts",
+    title: "联系人",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "notice",
     title: "文章消息",
     path: "/notice/article",

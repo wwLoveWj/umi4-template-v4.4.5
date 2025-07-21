@@ -43,9 +43,9 @@ const emojiList = [
 interface ChatMessage {
   id: string;
   from: string;
-  fromUserId: string;
+  fromUserId: number;
   toUserId: string;
-  avatar: string;
+  avatar?: string;
   content: string;
   time: string;
   self: boolean;
@@ -54,6 +54,7 @@ interface ChatMessage {
 }
 
 export default function ChatPage() {
+  const loginInfo = storage.get("login-info");
   const params = useParams<{ userId: string }>();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -61,14 +62,13 @@ export default function ChatPage() {
   const [popup, setPopup] = useState<{ visible: boolean; msgId?: string }>({
     visible: false,
   });
-  const [targetUser, setTargetUser] = useState<{
-    name: string;
-    avatar: string;
-  }>({
-    name: "掘金酱",
-    avatar:
-      "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto",
-  });
+  const [targetUser, setTargetUser] = useState<API.LoginInfoType>(
+    loginInfo || {
+      nickname: "系统",
+      avatar:
+        "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto",
+    }
+  );
 
   const inputRef = useRef<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -107,24 +107,32 @@ export default function ChatPage() {
       }
 
       // 调用API获取聊天记录
-      const response = await getChatHistoryAPI(currentUserId, params.userId);
-
+      const response = await getChatHistoryAPI(
+        currentUserId,
+        Number(params.userId)
+      );
       // 转换API数据格式为组件需要的格式
-      const formattedMessages: ChatMessage[] = response.messages.map((msg) => ({
-        id: String(msg.id),
-        from: msg.fromUserId === currentUserId ? "我" : targetUser.name,
-        fromUserId: msg.fromUserId,
-        toUserId: msg.toUserId,
-        avatar:
-          msg.fromUserId === currentUserId
-            ? "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto"
-            : targetUser.avatar,
-        content: msg.content,
-        time: new Date(msg.createdAt).toTimeString().slice(0, 5),
-        self: msg.fromUserId === currentUserId,
-        unread: !msg.isRead && msg.fromUserId !== currentUserId,
-        type: msg.messageType as "text" | "emoji" | "system",
-      }));
+      const formattedMessages: ChatMessage[] = response.messages?.map(
+        (msg) => ({
+          id: String(msg.id),
+          from:
+            msg.fromUserId === currentUserId
+              ? "我"
+              : msg.fromNickname || "对方",
+          fromUserId: msg.fromUserId,
+          toUserId: msg.toUserId,
+          avatar:
+            msg.fromUserId === currentUserId
+              ? targetUser.avatar
+              : msg?.fromAvatar ||
+                "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto",
+          content: msg.content,
+          time: new Date(msg.createdAt).toTimeString().slice(0, 5),
+          self: msg.fromUserId === currentUserId,
+          unread: !msg.isRead && msg.fromUserId !== currentUserId,
+          type: msg.messageType as "text" | "emoji" | "system",
+        })
+      );
 
       setMessages(formattedMessages);
 
@@ -155,9 +163,10 @@ export default function ChatPage() {
     const newMessage: ChatMessage = {
       id: Date.now().toString(),
       from: "我",
-      fromUserId: "current_user",
+      fromUserId: loginInfo?.id || 16,
       toUserId: params.userId,
       avatar:
+        loginInfo?.avatar ||
         "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto",
       content: input,
       time: new Date().toTimeString().slice(0, 5),
@@ -179,6 +188,7 @@ export default function ChatPage() {
           toUserId: params.userId,
           content: input,
           messageType: "text",
+          fromAvatar: loginInfo?.avatar,
         },
       });
     } catch (error) {
@@ -265,7 +275,7 @@ export default function ChatPage() {
         onBack={() => history.back()}
         style={{ background: "#fff", borderBottom: "1px solid #eee" }}
       >
-        {targetUser.name}
+        {targetUser.nickname}
       </NavBar>
 
       {/* 消息列表区域 */}
@@ -327,11 +337,7 @@ export default function ChatPage() {
               >
                 {msg.from}
                 {msg.unread && !msg.self && (
-                  <Badge
-                    color="danger"
-                    content="未读"
-                    style={{ marginLeft: 8 }}
-                  />
+                  <Badge content="未读" style={{ marginLeft: 8 }} />
                 )}
               </div>
               <div

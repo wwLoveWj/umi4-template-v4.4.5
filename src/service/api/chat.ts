@@ -7,12 +7,14 @@ import { request } from "../request";
 
 export interface ChatMessage {
   id: number;
-  fromUserId: string;
+  fromUserId: number;
   toUserId: string;
   content: string;
   messageType: "text" | "emoji" | "system";
   isRead: boolean;
   createdAt: string;
+  fromAvatar: string; //发送方头像
+  fromNickname: string; //昵称
 }
 
 export interface ChatSession {
@@ -20,6 +22,8 @@ export interface ChatSession {
   lastMessage: string;
   lastMessageTime: string;
   unreadCount: number;
+  targetAvatar: string;
+  targetNickname: string;
 }
 
 export interface ChatHistoryResponse {
@@ -35,19 +39,18 @@ export interface ChatHistoryResponse {
  * @param offset 偏移量
  */
 export const getChatHistoryAPI = async (
-  userId: string,
-  targetUserId: string,
+  userId: number,
+  targetUserId: number,
   limit: number = 50,
   offset: number = 0
 ): Promise<ChatHistoryResponse> => {
-  const response = await request.get(`/api/chat/history/${targetUserId}`, {
+  return await request.get(`/api/chat/history/${targetUserId}`, {
     params: {
       userId,
       limit,
       offset,
     },
   });
-  return response.data;
 };
 
 /**
@@ -55,12 +58,11 @@ export const getChatHistoryAPI = async (
  * @param userId 用户ID
  */
 export const getChatSessionsAPI = async (
-  userId: string
+  userId: number
 ): Promise<ChatSession[]> => {
-  const response = await request.get("/api/chat/sessions", {
+  return await request.get("/api/chat/sessions", {
     params: { userId },
   });
-  return response.data;
 };
 
 /**
@@ -69,7 +71,7 @@ export const getChatSessionsAPI = async (
  * @param targetUserId 目标用户ID
  */
 export const markChatReadAPI = async (
-  userId: string,
+  userId: number,
   targetUserId: string
 ): Promise<void> => {
   await request.post(`/api/chat/read/${targetUserId}`, {
@@ -96,12 +98,12 @@ export const recallMessageAPI = async (
  * @param userId 用户ID
  */
 export const getChatUnreadCountAPI = async (
-  userId: string
+  userId: number
 ): Promise<number> => {
   const response = await request.get("/api/chat/unread-count", {
     params: { userId },
   });
-  return response.data.count;
+  return response.count;
 };
 
 /**

@@ -118,7 +118,7 @@ const Settings: React.FC = () => {
       setUser((u) => ({ ...u, avatar: response.avatarUrl }));
 
       // 更新用户信息到数据库
-      const userId = loginInfo?.userId || loginInfo?.id;
+      const userId = loginInfo?.userId || "";
       if (userId) {
         await UserInfoUpdateAPI({ userId, avatar: response.avatarUrl });
       }
@@ -148,9 +148,9 @@ const Settings: React.FC = () => {
    * @param key 字段名
    * @param value 字段值
    */
-  const handleChange = async (key: string, value: string) => {
+  const handleChange = async (key: string, value: string | number) => {
     setUser((u) => ({ ...u, [key]: value }));
-    const userId = loginInfo?.userId || loginInfo?.id;
+    const userId = loginInfo?.userId || "";
     if (userId) {
       try {
         await UserInfoUpdateAPI({ userId, [key]: value });
@@ -258,26 +258,26 @@ const Settings: React.FC = () => {
             loginInfo && (loginInfo.username || loginInfo.loginName) ? (
               <span>{loginInfo.username || loginInfo.loginName}</span>
             ) : (
-              ""
+              <span style={{ color: "#999" }}>未设置</span>
             )
           }
-          onClick={() => history.push("/settings/edit-username")}
+          onClick={() => history.push("/settings/edit-username?type=username")}
         >
           用户名
         </List.Item>
         {/* 昵称 */}
-        {/* <List.Item
+        <List.Item
           extra={
-            <Input
-              value={user.nickname}
-              onChange={(val) => handleChange("nickname", val)}
-              clearable
-              style={{ minWidth: 100 }}
-            />
+            loginInfo?.nickname ? (
+              <span>{loginInfo.nickname}</span>
+            ) : (
+              <span style={{ color: "#999" }}>未设置</span>
+            )
           }
+          onClick={() => history.push("/settings/edit-username?type=nickname")}
         >
           昵称
-        </List.Item> */}
+        </List.Item>
         {/* 性别 */}
         <List.Item extra={user.gender} onClick={() => setGenderVisible(true)}>
           性别
