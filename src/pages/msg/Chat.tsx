@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { NavBar, Input, Toast, Badge, List, Popup, Button } from "antd-mobile";
-import { history, useParams } from "umi";
+import { history, useParams, useLocation } from "umi";
 import websocketManager from "../../utils/websocket";
 import { SendOutline, SmileOutline } from "antd-mobile-icons";
 import { getChatHistoryAPI, markChatReadAPI } from "../../service/api/chat";
@@ -55,6 +55,8 @@ interface ChatMessage {
 
 export default function ChatPage() {
   const loginInfo = storage.get("login-info");
+  const location = useLocation();
+  const session = location.state?.session;
   const params = useParams<{ userId: string }>();
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -118,13 +120,13 @@ export default function ChatPage() {
           from:
             msg.fromUserId === currentUserId
               ? "我"
-              : msg.fromNickname || "对方",
+              : session?.targetNickname || "对方",
           fromUserId: msg.fromUserId,
           toUserId: msg.toUserId,
           avatar:
             msg.fromUserId === currentUserId
               ? targetUser.avatar
-              : msg?.fromAvatar ||
+              : session?.targetAvatar ||
                 "https://img1.baidu.com/it/u=2302465390,3219849774&fm=253&app=138&size=w931&n=0&f=JPEG&fmt=auto",
           content: msg.content,
           time: new Date(msg.createdAt).toTimeString().slice(0, 5),

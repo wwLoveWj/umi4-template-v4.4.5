@@ -143,7 +143,7 @@ export default function CommonMsgPage() {
       }
 
       // 跳转到聊天页面
-      history.push(`/msg/chat/${session.targetUserId}`);
+      history.push(`/msg/chat/${session.targetUserId}`, { session });
     } catch (error) {
       console.error("跳转失败:", error);
     }
@@ -251,7 +251,10 @@ export default function CommonMsgPage() {
                 key={session.targetUserId}
                 prefix={
                   <Avatar
-                    src={session.targetAvatar}
+                    src={
+                      session.targetAvatar ||
+                      getUserAvatar(loginInfo?.userId || "")
+                    }
                     style={{ "--size": "48px" }}
                   />
                 }
