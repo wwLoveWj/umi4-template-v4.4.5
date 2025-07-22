@@ -190,7 +190,6 @@ export default function ChatPage() {
           toUserId: params.userId,
           content: input,
           messageType: "text",
-          fromAvatar: loginInfo?.avatar,
         },
       });
     } catch (error) {

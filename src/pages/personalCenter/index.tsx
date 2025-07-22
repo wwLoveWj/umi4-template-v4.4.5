@@ -244,7 +244,7 @@ export default function PersonalCenter() {
               style={{ borderRadius: 32 }}
             />
             <div className={styles.authorInfo}>
-              <h3>{loginInfo?.username}</h3>
+              <h3>{loginInfo?.nickname}</h3>
               <div className="article-follow-info">
                 <span>关注 {loginInfo?.authorFollowCount ?? 0}</span>
                 <span className="follow-divider">|</span>
