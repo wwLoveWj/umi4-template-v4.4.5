@@ -21,13 +21,13 @@ type NotificationType = "success" | "info" | "warning" | "error";
 const instance: AxiosInstance = axios.create({
   // baseURL:
   //   "https://static-mp-309598e8-5425-4f17-88bb-3d15e093f28b.next.bspapp.com/www/", //后端接口的相应地址，现在属于umi的mock接口，默认项目的启动地址端口8001
-  baseURL: "http://localhost:3007/",
+  baseURL: "https://carefully-equal-monarch.ngrok-free.app/",
   // `timeout` 指定请求超时的毫秒数(0 表示无超时时间)
   // 如果请求话费了超过 `timeout` 的时间，请求将被中断
   timeout: 60000,
   // `withCredentials` 表示跨域请求时是否需要使用凭证
   withCredentials: false, // default
-  headers: { "X-Custom-Header": "foobar" },
+  headers: { "X-Custom-Header": "foobar", "ngrok-skip-browser-warning": 69420 },
 });
 
 /* 请求拦截器 */

@@ -94,11 +94,12 @@ const UploadAPI = async (formData: any) => {
   let token = await getToken();
   let result;
   await axios({
-    url: "http://localhost:3007/file/upload",
+    url: "https://carefully-equal-monarch.ngrok-free.app/file/upload",
     method: "post",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
+      "ngrok-skip-browser-warning": 69420,
     },
     data: formData,
     // onUploadProgress: function (progressEvent) {
