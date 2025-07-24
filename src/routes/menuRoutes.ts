@@ -131,6 +131,13 @@ export const menuRoutes: API.MenuRoutesType[] = [
     hideTabBar: true,
   },
   {
+    key: "voice",
+    title: "我的声音",
+    path: "/voice",
+    component: "./personalCenter/components/MyVoice",
+    hideTabBar: true,
+  },
+  {
     key: "album",
     title: "宝宝相册",
     path: "/baby/album",

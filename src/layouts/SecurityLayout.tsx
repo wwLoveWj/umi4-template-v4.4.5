@@ -3,7 +3,7 @@ import styles from "./index.less";
 import TabBar from "@/components/menus";
 import routes from "@/routes";
 import { useMemo } from "react";
-import { NavBar } from "antd-mobile";
+import { NavBar, SafeArea } from "antd-mobile";
 import React, { useState } from "react";
 export default function Layout() {
   const { pathname } = useLocation();
@@ -37,6 +37,9 @@ export default function Layout() {
   }, [pathname, routes]);
   return (
     <div className={styles.layoutContainer}>
+      <div style={{ background: "#ace0ff" }}>
+        <SafeArea position="top" />
+      </div>
       <div id="home">
         {shouldShowBack && (
           <NavBar
@@ -61,6 +64,9 @@ export default function Layout() {
       <div className="qrcode">
         <div id="reader"></div>
         <div id="msg"></div>
+      </div>
+      <div style={{ background: "#ffcfac" }}>
+        <SafeArea position="bottom" />
       </div>
     </div>
   );

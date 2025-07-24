@@ -1,0 +1,102 @@
+.bg {
+  position: relative;
+  min-height: 400px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.overlay {
+  width: 100%;
+  min-height: 400px;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 32px 16px 16px 16px;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+.title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px #000;
+}
+.listWrap {
+  max-height: 260px;
+  overflow-y: auto;
+  margin-bottom: 32px;
+}
+.listItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 12px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: background 0.2s;
+}
+.listItem:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+.fileName {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.playBtn {
+  margin-left: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+.empty {
+  color: #fff;
+  text-align: center;
+  opacity: 0.7;
+  margin-top: 40px;
+}
+.uploadModal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.uploadBox {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 24px 24px 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.uploadInput {
+  margin-bottom: 18px;
+}
+.closeBtn {
+  background: #1677ff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.closeBtn:hover {
+  background: #0056b3;
+}

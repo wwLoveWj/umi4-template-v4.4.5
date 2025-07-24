@@ -57,7 +57,10 @@ function getUnreadMsgCount() {
   }
 }
 
-export default function PersonalCenter() {
+/**
+ * 个人中心页面
+ */
+const PersonalCenter: React.FC = () => {
   const loginInfo = storage.get("login-info");
   const canChgList = [
     {
@@ -118,6 +121,13 @@ export default function PersonalCenter() {
       icon: <FlagOutline />,
       onClick: () => {
         history.push("/goal");
+      },
+    },
+    {
+      title: "我的声音",
+      icon: <FlagOutline />,
+      onClick: () => {
+        history.push("/voice");
       },
     },
     {
@@ -271,4 +281,6 @@ export default function PersonalCenter() {
       </List>
     </>
   );
-}
+};
+
+export default PersonalCenter;
