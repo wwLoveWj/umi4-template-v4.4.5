@@ -14,6 +14,7 @@ import styles from "./MyVoice.module.css";
 
 const BG_IMG = require("@/assets/avatar/avatar1.jpg"); // 可替换为任意炫酷图片
 const DB_KEY = "my-voice-files";
+const PLAYER_STATE_KEY = "my-voice-player-state";
 
 const MyVoice: React.FC = () => {
   /** @type {[AudioFileInfo[], Function]} */
@@ -50,6 +51,63 @@ const MyVoice: React.FC = () => {
       }
     });
   }, []);
+
+  // 恢复播放器状态
+  useEffect(() => {
+    get(PLAYER_STATE_KEY).then((state: any) => {
+      if (state && audioFiles.length > 0) {
+        if (
+          typeof state.playingIdx === "number" &&
+          audioFiles[state.playingIdx]
+        ) {
+          setPlayingIdx(state.playingIdx);
+          setCurrentAudioUrl(audioFiles[state.playingIdx].url);
+          setTimeout(() => {
+            if (audioRef.current) {
+              audioRef.current.currentTime = state.currentTime || 0;
+              audioRef.current.volume = state.volume ?? 1;
+              audioRef.current.muted = !!state.muted;
+              if (state.isPlaying) {
+                setTimeout(() => {
+                  audioRef.current?.play().catch(() => {});
+                }, 100);
+              }
+            }
+          }, 200);
+        }
+      }
+    });
+    // eslint-disable-next-line
+  }, [audioFiles.length]);
+
+  // 存储播放器状态
+  useEffect(() => {
+    if (playingIdx === null) return;
+    const saveState = () => {
+      set(PLAYER_STATE_KEY, {
+        playingIdx,
+        currentTime: audioRef.current?.currentTime || 0,
+        isPlaying: audioRef.current ? !audioRef.current.paused : false,
+        volume: audioRef.current?.volume ?? 1,
+        muted: audioRef.current?.muted ?? false,
+      });
+    };
+    const audio = audioRef.current;
+    if (audio) {
+      audio.addEventListener("timeupdate", saveState);
+      audio.addEventListener("volumechange", saveState);
+      audio.addEventListener("pause", saveState);
+      audio.addEventListener("play", saveState);
+    }
+    return () => {
+      if (audio) {
+        audio.removeEventListener("timeupdate", saveState);
+        audio.removeEventListener("volumechange", saveState);
+        audio.removeEventListener("pause", saveState);
+        audio.removeEventListener("play", saveState);
+      }
+    };
+  }, [playingIdx]);
 
   // 监听播放进度
   useEffect(() => {
@@ -187,6 +245,10 @@ const MyVoice: React.FC = () => {
       audioRef.current.currentTime = val * duration;
       setCurrentTime(val * duration);
       setProgress(val);
+      // 拖动后始终尝试播放
+      setTimeout(() => {
+        audioRef.current?.play().catch(() => {});
+      }, 0);
     }
   };
 

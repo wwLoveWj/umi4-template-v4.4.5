@@ -23,6 +23,7 @@
     "browser-image-compression": "^2.0.2",
     "cross-env": "^7.0.3",
     "html5-qrcode": "^2.3.8",
+    "idb-keyval": "^6.2.2",
     "jsencrypt": "^3.3.2",
     "jsqr": "^1.4.0",
     "md5": "^2.3.0",
