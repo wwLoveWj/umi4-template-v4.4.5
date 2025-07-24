@@ -1,27 +1,32 @@
 .bg {
   position: relative;
-  min-height: 400px;
+  height: 100vh;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  overflow: hidden;
 }
 .overlay {
   width: 100%;
-  min-height: 400px;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.45);
   padding: 32px 16px 16px 16px;
-  border-radius: 16px;
+  border-radius: 20px;
   box-sizing: border-box;
+  backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: 0 4px 32px 0 rgba(0, 0, 0, 0.25);
 }
 .title {
   color: #fff;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
   text-align: center;
   letter-spacing: 2px;
-  text-shadow: 0 2px 8px #000;
+  text-shadow: 0 4px 16px #000;
 }
 .listWrap {
   max-height: 260px;
@@ -32,36 +37,45 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 12px 18px;
-  margin-bottom: 14px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: background 0.2s;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 16px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, box-shadow 0.2s;
+  position: relative;
+  backdrop-filter: blur(4px) saturate(1.1);
 }
 .listItem:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 .fileName {
   color: #fff;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 2px 8px #000;
 }
 .playBtn {
-  margin-left: 16px;
+  margin-left: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
+  transition: transform 0.15s;
+}
+.playBtn:active {
+  transform: scale(1.15);
 }
 .empty {
   color: #fff;
   text-align: center;
   opacity: 0.7;
   margin-top: 40px;
+  font-size: 18px;
 }
 .uploadModal {
   position: fixed;
@@ -77,26 +91,183 @@
 }
 .uploadBox {
   background: #fff;
-  border-radius: 12px;
-  padding: 32px 24px 24px 24px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  border-radius: 16px;
+  padding: 36px 28px 28px 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 .uploadInput {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
 .closeBtn {
   background: #1677ff;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 8px 24px;
-  font-size: 16px;
+  border-radius: 10px;
+  padding: 10px 28px;
+  font-size: 18px;
   cursor: pointer;
   transition: background 0.2s;
+  margin-left: 10px;
 }
 .closeBtn:hover {
   background: #0056b3;
+}
+.progressBarWrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 8px;
+}
+.progressBarBox {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 8px;
+  gap: 10px;
+}
+.progressBar {
+  flex: 1;
+  height: 8px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #1677ff 0%, #ff9800 100%);
+  outline: none;
+  accent-color: #1677ff;
+  box-shadow: 0 2px 8px #1677ff44;
+}
+.time {
+  color: #fff;
+  font-size: 15px;
+  /* margin: 0 8px; */
+  min-width: 70px;
+  text-shadow: 0 2px 8px #000;
+}
+/* 进度条和关闭按钮内嵌到当前播放的列表项下方 */
+.activeItem {
+  box-shadow: 0 0 0 2px #1677ff, 0 4px 16px #1677ff44;
+  background: rgba(22, 119, 255, 0.18);
+}
+.progressBarSmall {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1677ff 0%, #ff9800 100%);
+  outline: none;
+  accent-color: #1677ff;
+  box-shadow: 0 1px 4px #1677ff44;
+  margin: 4px 0 0 0;
+}
+.activeProgress {
+  width: 100%;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: transparent;
+  padding: 0;
+}
+.activeCloseBtn {
+  background: #1677ff;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-left: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #1677ff44;
+  transition: background 0.2s;
+}
+.activeCloseBtn:hover {
+  background: #0056b3;
+}
+.volumeWrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  padding-left: 2px;
+}
+.volumeBar {
+  flex: 1;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1677ff 0%, #ff9800 100%);
+  outline: none;
+  accent-color: #1677ff;
+  box-shadow: 0 1px 4px #1677ff44;
+}
+.muteBtn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  /* margin-left: 4px; */
+  transition: color 0.2s;
+  /* padding: 0 4px; */
+}
+.muteBtn:hover {
+  color: #ff9800;
+}
+.volumePopup {
+  position: absolute;
+  right: 32px;
+  top: 44px;
+  z-index: 20;
+  background: rgba(30, 34, 50, 0.92);
+  border-radius: 8px;
+  /* padding: 8px 12px; */
+  box-shadow: 0 2px 12px #0005;
+  display: flex;
+  align-items: center;
+  min-width: 100px;
+}
+.volumeBarPopup {
+  width: 80px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #1677ff 0%, #ff9800 100%);
+  outline: none;
+  accent-color: #1677ff;
+  margin: 0 4px;
+}
+.floatingPlayerBar {
+  width: calc(100% - 24px);
+  background: rgba(30, 34, 50, 0.98);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px #0007;
+  padding: 12px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.playerBarDrag {
+  width: 100%;
+  cursor: move;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+  text-shadow: 0 2px 8px #000;
+  text-align: left;
+}
+.playerBarMain {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
 }
