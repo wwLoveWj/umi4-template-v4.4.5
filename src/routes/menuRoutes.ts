@@ -124,6 +124,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     hideTabBar: true,
   },
   {
+    key: "bill",
+    title: "我的账单",
+    path: "/bill",
+    component: "./personalCenter/components/WwBillList",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "goal",
     title: "我的目标",
     path: "/goal",

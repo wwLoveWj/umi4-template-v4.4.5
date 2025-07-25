@@ -30,6 +30,9 @@ const configList = [
   {
     title: "账单",
     icon: <ReceivePaymentOutline />,
+    onClick: () => {
+      history.push("/bill");
+    },
   },
   {
     title: "优惠券",
