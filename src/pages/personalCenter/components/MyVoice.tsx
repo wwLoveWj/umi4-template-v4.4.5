@@ -1,6 +1,11 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Toast, FloatingBubble } from "antd-mobile";
-import { PlayOutline, CloseCircleFill, SoundOutline } from "antd-mobile-icons";
+import {
+  PlayOutline,
+  CloseCircleFill,
+  SoundOutline,
+  LeftOutline,
+} from "antd-mobile-icons";
 import { set, get } from "idb-keyval";
 import styles from "./MyVoice.module.css";
 
@@ -278,6 +283,24 @@ const MyVoice: React.FC = () => {
       }}
     >
       <div className={styles.overlay}>
+        {/* 左上角返回按钮 */}
+        <button
+          style={{
+            position: "absolute",
+            top: 12,
+            left: 16,
+            zIndex: 1001,
+            background: "transparent",
+            border: "none",
+            padding: 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+          }}
+          onClick={() => history.back()}
+        >
+          <LeftOutline fontSize={28} color="#fff" />
+        </button>
         <h3 className={styles.title}>我的声音</h3>
         <div className={styles.listWrap}>
           {audioFiles.length === 0 && (
