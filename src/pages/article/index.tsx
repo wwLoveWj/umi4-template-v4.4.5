@@ -67,8 +67,8 @@ const ArticleList: React.FC = () => {
       keyword: search || searchValue,
       isPage: true,
     });
-    setArticles((prev) => [...prev, ...res.list]);
-    setHasMore(res.list.length === pageSize); // 关键：如果返回数据不足一页，说明没有更多了
+    setArticles((prev) => [...prev, ...(res?.list || [])]);
+    setHasMore(res?.list?.length === pageSize); // 关键：如果返回数据不足一页，说明没有更多了
     setPage((prev) => prev + 1);
   };
 

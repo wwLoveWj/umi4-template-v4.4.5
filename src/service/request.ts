@@ -34,6 +34,11 @@ const instance: AxiosInstance = axios.create({
 // 主要在这里处理请求发送前的一些工作，比如给 HTTP Header 添加 token ，开启 Loading 效果，设置取消请求等。
 instance.interceptors.request.use(
   async (config: any) => {
+    if (window.__OFFLINE__ || localStorage.getItem("offline") === "1") {
+      // Toast.show("当前为离线模式，接口请求已拦截");
+      return;
+      // Promise.reject(new Error("当前为离线模式，接口请求已拦截"));
+    }
     let token = await getToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -106,6 +111,11 @@ instance.interceptors.response.use(
     let message = "";
     // HTTP 状态码
     const status = error.response?.status;
+    if (window.__OFFLINE__ || localStorage.getItem("offline") === "1") {
+      Toast.show("当前为离线模式，接口请求已拦截");
+      return;
+      // Promise.reject(new Error("当前为离线模式，接口请求已拦截"));
+    }
     switch (status) {
       case 401:
         message = "token 失效，请重新登录";

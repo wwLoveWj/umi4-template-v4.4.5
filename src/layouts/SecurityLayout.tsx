@@ -5,11 +5,13 @@ import routes from "@/routes";
 import { useMemo } from "react";
 import { NavBar, SafeArea } from "antd-mobile";
 import React, { useState } from "react";
+import { useOffline } from "@/context/OfflineContext";
 export default function Layout() {
   const { pathname } = useLocation();
   const [currentRoute, setCurrentRoute] = useState<Partial<API.MenuRoutesType>>(
     {}
   );
+  const { offline, setOffline } = useOffline();
   // 获取到所有的菜单数据进行处理
   const menus =
     routes
@@ -39,6 +41,30 @@ export default function Layout() {
     <div className={styles.layoutContainer}>
       <div style={{ background: "#ace0ff" }}>
         <SafeArea position="top" />
+        {/* 一键离线按钮 */}
+        <button
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 16,
+            zIndex: 1001,
+            background: offline ? "#ff9800" : "#1677ff",
+            color: "#fff",
+            border: "none",
+            borderRadius: 8,
+            padding: "6px 16px",
+            fontWeight: 600,
+            cursor: "pointer",
+            boxShadow: "0 2px 8px #0002",
+          }}
+          onClick={() => {
+            setOffline(!offline);
+            window.__OFFLINE__ = !offline;
+            localStorage.setItem("offline", !offline ? "1" : "0");
+          }}
+        >
+          {offline ? "恢复在线" : "一键离线"}
+        </button>
       </div>
       <div id="home">
         {shouldShowBack && (

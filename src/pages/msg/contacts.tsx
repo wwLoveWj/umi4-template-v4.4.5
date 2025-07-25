@@ -110,7 +110,7 @@ const ContactsPage: React.FC = () => {
       </div>
 
       <div style={{ padding: "0 12px" }}>
-        {filteredContacts.length === 0 ? (
+        {filteredContacts?.length === 0 ? (
           <Empty
             description={isLoading ? "加载中..." : "暂无联系人"}
             image={
@@ -121,7 +121,7 @@ const ContactsPage: React.FC = () => {
           />
         ) : (
           <List>
-            {filteredContacts.map((contact) => (
+            {filteredContacts?.map((contact) => (
               <List.Item
                 key={contact.id}
                 prefix={

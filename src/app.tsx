@@ -19,11 +19,14 @@ dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
 
 import { NotificationProvider } from "@/context/NotificationContext";
+import { OfflineProvider } from "@/context/OfflineContext";
 
 export function rootContainer(container: React.ReactNode) {
   return (
     <NotificationProvider>
-      <ConfigProvider locale={zhCN}>{container}</ConfigProvider>
+      <ConfigProvider locale={zhCN}>
+        <OfflineProvider>{container}</OfflineProvider>
+      </ConfigProvider>
     </NotificationProvider>
   );
 }
