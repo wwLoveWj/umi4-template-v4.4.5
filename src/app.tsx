@@ -20,14 +20,17 @@ dayjs.extend(isSameOrBefore);
 
 import { NotificationProvider } from "@/context/NotificationContext";
 import { OfflineProvider } from "@/context/OfflineContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 
 export function rootContainer(container: React.ReactNode) {
   return (
-    <NotificationProvider>
-      <ConfigProvider locale={zhCN}>
-        <OfflineProvider>{container}</OfflineProvider>
-      </ConfigProvider>
-    </NotificationProvider>
+    <ThemeProvider>
+      <NotificationProvider>
+        <ConfigProvider locale={zhCN}>
+          <OfflineProvider>{container}</OfflineProvider>
+        </ConfigProvider>
+      </NotificationProvider>
+    </ThemeProvider>
   );
 }
 

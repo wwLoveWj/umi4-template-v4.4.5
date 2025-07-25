@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavBar, ImageUploader, Toast } from "antd-mobile";
 import { history } from "umi";
 import imageCompression from "browser-image-compression";
-
+import { useTheme } from "@/context/ThemeContext";
 // 工具函数：文件转base64
 function fileToBase64(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,7 +30,8 @@ async function compressAndCheck(file: File, maxSizeKB = 300) {
   return file;
 }
 
-export default function Personalize() {
+const Personalize: React.FC = () => {
+  const { themeColor, setThemeColor, presetColors } = useTheme();
   // 读取本地已设置的图片
   const [carouselImages, setCarouselImages] = useState<string[]>(
     JSON.parse(localStorage.getItem("carouselImages") || "[]")
@@ -116,6 +117,33 @@ export default function Personalize() {
           />
         </div>
       </div>
+      <div style={{ padding: 24 }}>
+        <h3>主题色切换</h3>
+        <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+          {presetColors.map((item) => (
+            <button
+              key={item.color}
+              style={{
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                border:
+                  themeColor === item.color
+                    ? "3px solid #222"
+                    : "2px solid #eee",
+                background: item.color,
+                cursor: "pointer",
+                outline: "none",
+                boxShadow:
+                  themeColor === item.color ? "0 0 8px 2px #1677ff44" : "none",
+              }}
+              onClick={() => setThemeColor(item.color)}
+              title={item.name}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
+};
+export default Personalize;

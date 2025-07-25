@@ -3,9 +3,18 @@
     padding: 0;
 }
 
+:root {
+    --primary-color: #1677ff;
+    --primary-bg: #f5f7fa;
+    --primary-text: #222;
+    --primary-btn: var(--primary-color);
+    --primary-btn-text: #fff;
+}
+
 body {
     min-height: 100vh;
-    background: #ededed;
+    background: var(--primary-bg);
+    color: var(--primary-text);
     // background: url(@/assets/imgs/bg.png) center / cover;
 }
 

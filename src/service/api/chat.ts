@@ -103,7 +103,7 @@ export const getChatUnreadCountAPI = async (
   const response = await request.get("/api/chat/unread-count", {
     params: { userId },
   });
-  return response.count;
+  return response?.count;
 };
 
 /**

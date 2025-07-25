@@ -159,7 +159,7 @@ export default function CommonMsgPage() {
   });
 
   return (
-    <div style={{ background: "#f7f8fa", minHeight: "100vh" }}>
+    <div style={{ background: "var(--primary-bg)", minHeight: "100vh" }}>
       <NavBar
         back="返回"
         onBack={() => history.back()}
