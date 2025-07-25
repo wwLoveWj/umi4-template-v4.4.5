@@ -3,9 +3,32 @@ import styles from "./index.less";
 import TabBar from "@/components/menus";
 import routes from "@/routes";
 import { useMemo } from "react";
-import { NavBar, SafeArea } from "antd-mobile";
+import { NavBar, SafeArea, FloatingBubble } from "antd-mobile";
 import React, { useState } from "react";
 import { useOffline } from "@/context/OfflineContext";
+// 替换为自定义svg图标
+const PoweroffIcon = () => (
+  <svg
+    width="28"
+    height="28"
+    viewBox="0 0 1024 1024"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M512 64v384"
+      stroke="#fff"
+      strokeWidth="64"
+      strokeLinecap="round"
+    />
+    <path
+      d="M256 464a256 256 0 10512 0"
+      stroke="#fff"
+      strokeWidth="64"
+      fill="none"
+    />
+  </svg>
+);
 export default function Layout() {
   const { pathname } = useLocation();
   const [currentRoute, setCurrentRoute] = useState<Partial<API.MenuRoutesType>>(
@@ -41,21 +64,14 @@ export default function Layout() {
     <div className={styles.layoutContainer}>
       <div style={{ background: "#ace0ff" }}>
         <SafeArea position="top" />
-        {/* 一键离线按钮 */}
-        <button
+        {/* 一键离线悬浮按钮 */}
+        <FloatingBubble
+          axis="xy"
           style={{
-            position: "absolute",
-            top: 12,
-            right: 16,
-            zIndex: 1001,
-            background: offline ? "#ff9800" : "#1677ff",
-            color: "#fff",
-            border: "none",
-            borderRadius: 8,
-            padding: "6px 16px",
-            fontWeight: 600,
-            cursor: "pointer",
-            boxShadow: "0 2px 8px #0002",
+            right: "32px",
+            bottom: "32px",
+            "--z-index": "9999",
+            "--background": offline ? "#ff9800" : "#1677ff",
           }}
           onClick={() => {
             setOffline(!offline);
@@ -63,8 +79,8 @@ export default function Layout() {
             localStorage.setItem("offline", !offline ? "1" : "0");
           }}
         >
-          {offline ? "恢复在线" : "一键离线"}
-        </button>
+          <PoweroffIcon />
+        </FloatingBubble>
       </div>
       <div id="home">
         {shouldShowBack && (
