@@ -12,7 +12,6 @@ function fileToBase64(file: File): Promise<string> {
     reader.readAsDataURL(file);
   });
 }
-
 // 校验和压缩
 async function compressAndCheck(file: File, maxSizeKB = 300) {
   if (file.size > maxSizeKB * 1024) {
@@ -31,7 +30,17 @@ async function compressAndCheck(file: File, maxSizeKB = 300) {
 }
 
 const Personalize: React.FC = () => {
-  const { themeColor, setThemeColor, presetColors } = useTheme();
+  const {
+    themeColor,
+    setThemeColor,
+    presetColors,
+    fontColor,
+    setFontColor,
+    presetFontColors,
+    fontSize,
+    setFontSize,
+    presetFontSizes,
+  } = useTheme();
   // 读取本地已设置的图片
   const [carouselImages, setCarouselImages] = useState<string[]>(
     JSON.parse(localStorage.getItem("carouselImages") || "[]")
@@ -39,7 +48,6 @@ const Personalize: React.FC = () => {
   const [bgImage, setBgImage] = useState<string>(
     localStorage.getItem("personalBg") || ""
   );
-
   // 轮播图上传
   const handleCarouselChange = async (files: any[]) => {
     try {
@@ -60,7 +68,6 @@ const Personalize: React.FC = () => {
       Toast.show(e.message || "图片处理失败");
     }
   };
-
   // 背景图上传
   const handleBgChange = async (files: any[]) => {
     try {
@@ -78,7 +85,6 @@ const Personalize: React.FC = () => {
       Toast.show(e.message || "图片处理失败");
     }
   };
-
   return (
     <div>
       <NavBar onBack={() => history.back()}>个性化设置</NavBar>
@@ -127,23 +133,96 @@ const Personalize: React.FC = () => {
                 width: 40,
                 height: 40,
                 borderRadius: "50%",
-                border:
-                  themeColor === item.color
-                    ? "3px solid #222"
-                    : "2px solid #eee",
+                border: "2px solid #eee",
                 background: item.color,
                 cursor: "pointer",
                 outline: "none",
-                boxShadow:
-                  themeColor === item.color ? "0 0 8px 2px #1677ff44" : "none",
+                position: "relative",
               }}
               onClick={() => setThemeColor(item.color)}
               title={item.name}
-            />
+            >
+              {themeColor === item.color && (
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                    color: "#fff",
+                    fontSize: 20,
+                    fontWeight: 700,
+                    pointerEvents: "none",
+                  }}
+                >
+                  ✔
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <h3 style={{ marginTop: 32 }}>字体颜色</h3>
+        <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+          {presetFontColors.map((item) => (
+            <button
+              key={item.color}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                background: item.color,
+                color: "#fff",
+                border: "2px solid #eee",
+                position: "relative",
+                cursor: "pointer",
+              }}
+              onClick={() => setFontColor(item.color)}
+              title={item.name}
+            >
+              {fontColor === item.color && (
+                <span
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: "50%",
+                    transform: "translate(-50%,-50%)",
+                    fontSize: 18,
+                    color: "#fff",
+                    fontWeight: 700,
+                  }}
+                >
+                  ✔
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+        <h3 style={{ marginTop: 24 }}>字体大小</h3>
+        <div style={{ display: "flex", gap: 16, marginTop: 8 }}>
+          {presetFontSizes.map((item) => (
+            <button
+              key={item.size}
+              style={{
+                padding: "4px 16px",
+                borderRadius: 8,
+                fontSize: item.size,
+                border:
+                  fontSize === item.size
+                    ? "2px solid #1677ff"
+                    : "2px solid #eee",
+                background: "#fff",
+                color: "#222",
+                cursor: "pointer",
+              }}
+              onClick={() => setFontSize(item.size)}
+            >
+              {item.name}
+            </button>
           ))}
         </div>
       </div>
     </div>
   );
 };
+
 export default Personalize;
