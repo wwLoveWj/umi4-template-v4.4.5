@@ -310,15 +310,6 @@ export default function CommonMsgPage() {
             ))}
           </List>
         )}
-
-        {/* 加载状态 */}
-        {isLoading && (
-          <div
-            style={{ textAlign: "center", padding: "20px 0", color: "#999" }}
-          >
-            加载中...
-          </div>
-        )}
       </div>
     </div>
   );
