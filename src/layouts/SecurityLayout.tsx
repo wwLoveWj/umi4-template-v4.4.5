@@ -2,7 +2,7 @@ import { useLocation, Outlet } from "umi";
 import styles from "./index.less";
 import TabBar from "@/components/menus";
 import routes from "@/routes";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { NavBar, SafeArea, FloatingBubble } from "antd-mobile";
 import React, { useState } from "react";
 import { useOffline } from "@/context/OfflineContext";
@@ -35,6 +35,24 @@ export default function Layout() {
     {}
   );
   const { offline, setOffline } = useOffline();
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+  useEffect(() => {
+    if (!isOnline && !offline) {
+      setOffline(true);
+      window.__OFFLINE__ = true;
+      localStorage.setItem("offline", "1");
+    }
+  }, [isOnline]);
   // 获取到所有的菜单数据进行处理
   const menus =
     routes
@@ -71,12 +89,19 @@ export default function Layout() {
             right: "32px",
             bottom: "32px",
             "--z-index": "9999",
-            "--background": offline ? "#ff9800" : "#1677ff",
+            "--background": offline ? "#ff9800" : isOnline ? "#1677ff" : "#aaa",
+            opacity: isOnline ? 1 : 0.5,
+            pointerEvents: isOnline ? "auto" : "none",
           }}
           onClick={() => {
+            if (!isOnline) return;
             setOffline(!offline);
             window.__OFFLINE__ = !offline;
             localStorage.setItem("offline", !offline ? "1" : "0");
+            if (offline) {
+              // 离线切换为在线时自动刷新当前页接口
+              window.location.reload();
+            }
           }}
         >
           <PoweroffIcon />
