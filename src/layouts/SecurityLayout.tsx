@@ -5,7 +5,7 @@ import routes from "@/routes";
 import { useMemo, useEffect } from "react";
 import { NavBar, SafeArea, FloatingBubble } from "antd-mobile";
 import React, { useState } from "react";
-import { useOffline } from "@/context/OfflineContext";
+// import { useOffline } from "@/context/OfflineContext";
 // 替换为自定义svg图标
 const PoweroffIcon = () => (
   <svg
@@ -34,25 +34,25 @@ export default function Layout() {
   const [currentRoute, setCurrentRoute] = useState<Partial<API.MenuRoutesType>>(
     {}
   );
-  const { offline, setOffline } = useOffline();
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
-    return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
-    };
-  }, []);
-  useEffect(() => {
-    if (!isOnline && !offline) {
-      setOffline(true);
-      window.__OFFLINE__ = true;
-      localStorage.setItem("offline", "1");
-    }
-  }, [isOnline]);
+  // const { offline, setOffline } = useOffline();
+  // const [isOnline, setIsOnline] = useState(navigator.onLine);
+  // useEffect(() => {
+  //   const handleOnline = () => setIsOnline(true);
+  //   const handleOffline = () => setIsOnline(false);
+  //   window.addEventListener("online", handleOnline);
+  //   window.addEventListener("offline", handleOffline);
+  //   return () => {
+  //     window.removeEventListener("online", handleOnline);
+  //     window.removeEventListener("offline", handleOffline);
+  //   };
+  // }, []);
+  // useEffect(() => {
+  //   if (!isOnline && !offline) {
+  //     setOffline(true);
+  //     window.__OFFLINE__ = true;
+  //     localStorage.setItem("offline", "1");
+  //   }
+  // }, [isOnline]);
   // 获取到所有的菜单数据进行处理
   const menus =
     routes
@@ -83,7 +83,7 @@ export default function Layout() {
       <div style={{ background: "#ace0ff" }}>
         <SafeArea position="top" />
         {/* 一键离线悬浮按钮 */}
-        <FloatingBubble
+        {/* <FloatingBubble
           axis="xy"
           style={{
             right: "32px",
@@ -105,7 +105,7 @@ export default function Layout() {
           }}
         >
           <PoweroffIcon />
-        </FloatingBubble>
+        </FloatingBubble> */}
       </div>
       <div id="home">
         {shouldShowBack && (

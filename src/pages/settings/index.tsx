@@ -7,6 +7,7 @@ import {
   Input,
   DatePicker,
   Picker,
+  Switch,
 } from "antd-mobile";
 import { history } from "umi";
 import md5 from "md5";
@@ -14,6 +15,7 @@ import { setToken } from "@/utils/localToken";
 import { storage } from "@/utils/storage";
 import { UserInfoUpdateAPI, AvatarUploadAPI } from "@/service/api/user";
 import { BellOutline } from "antd-mobile-icons";
+import { useOffline } from "@/context/OfflineContext";
 
 const genderOptions = [
   { label: "男", value: "男" },
@@ -54,7 +56,9 @@ const Settings: React.FC = () => {
   const [aboutVisible, setAboutVisible] = useState(false);
   // 头像上传loading
   const [avatarUploading, setAvatarUploading] = useState(false);
-
+  // 设备状态
+  const { offline, setOffline } = useOffline();
+  const [isOnline, setIsOnline] = useState(navigator.onLine); //网络状态
   // 刷新缓存大小
   const refreshCacheSize = () => setCacheSize(getCacheSizeMB());
 
@@ -204,7 +208,24 @@ const Settings: React.FC = () => {
       },
     });
   };
-
+  // 监听设备离线状态
+  useEffect(() => {
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, []);
+  useEffect(() => {
+    if (!isOnline && !offline) {
+      setOffline(true);
+      window.__OFFLINE__ = true;
+      localStorage.setItem("offline", "1");
+    }
+  }, [isOnline]);
   return (
     <div>
       <List header="个人资料">
@@ -363,6 +384,31 @@ const Settings: React.FC = () => {
         </List.Item>
         {/* 关于 */}
         <List.Item onClick={() => setAboutVisible(true)}>关于</List.Item>
+        <List.Item
+          extra={
+            <Switch
+              uncheckedText="离线"
+              checkedText="在线"
+              checked={!offline}
+              disabled={!isOnline}
+              style={{
+                "--checked-color": "#00b578",
+              }}
+              onChange={() => {
+                if (!isOnline) return;
+                setOffline(!offline);
+                window.__OFFLINE__ = !offline;
+                localStorage.setItem("offline", !offline ? "1" : "0");
+                // if (offline) {
+                //   // 离线切换为在线时自动刷新当前页接口
+                //   window.location.reload();
+                // }
+              }}
+            />
+          }
+        >
+          设备状态
+        </List.Item>
       </List>
       <Button
         block
