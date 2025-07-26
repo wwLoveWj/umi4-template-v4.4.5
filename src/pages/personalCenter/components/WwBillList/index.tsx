@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FloatingBubble, Toast } from "antd-mobile";
-import { UpCircleOutline } from "antd-mobile-icons";
+import { BillOutline } from "antd-mobile-icons";
 import BillForm from "./BillForm";
 import { billIcons } from "./billIcons";
+import { get, set } from "idb-keyval";
 
 const BILL_KEY = "my-bill-list";
 
@@ -36,8 +37,9 @@ const BillList: React.FC = () => {
   });
 
   useEffect(() => {
-    const list = JSON.parse(localStorage.getItem(BILL_KEY) || "[]");
-    setBills(list);
+    get(BILL_KEY).then((list: any) =>
+      setBills(Array.isArray(list) ? list : [])
+    );
   }, [showForm]);
 
   const monthMap = groupByMonth(bills);
@@ -104,7 +106,15 @@ const BillList: React.FC = () => {
                   fontSize: 24,
                 }}
               >
-                {billIcons[bill.category]}
+                {bill.icon && bill.icon.startsWith("data:image") ? (
+                  <img
+                    src={bill.icon}
+                    alt="icon"
+                    style={{ width: 32, height: 32, borderRadius: 8 }}
+                  />
+                ) : (
+                  billIcons[bill.category]
+                )}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 600, fontSize: 16 }}>
@@ -131,7 +141,7 @@ const BillList: React.FC = () => {
         style={{ right: 32, bottom: 32, zIndex: 10, "--background": "#ff9800" }}
         onClick={() => setShowForm(true)}
       >
-        <UpCircleOutline fontSize={36} />
+        <BillOutline fontSize={36} />
       </FloatingBubble>
       {showForm && (
         <div
@@ -149,10 +159,10 @@ const BillList: React.FC = () => {
           }}
         >
           <BillForm
-            onSubmit={(bill) => {
-              const list = JSON.parse(localStorage.getItem(BILL_KEY) || "[]");
+            onSubmit={async (bill) => {
+              const list = (await get(BILL_KEY)) || [];
               list.push(bill);
-              localStorage.setItem(BILL_KEY, JSON.stringify(list));
+              await set(BILL_KEY, list);
               setShowForm(false);
               Toast.show("账单已记录");
             }}
