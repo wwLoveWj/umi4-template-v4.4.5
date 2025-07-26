@@ -142,7 +142,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     key: "voice",
     title: "我的声音",
     path: "/voice",
-    component: "./personalCenter/components/MyVoice",
+    component: "./personalCenter/components/WwVoice",
     hideTabBar: true,
   },
   {
@@ -257,7 +257,7 @@ export const menuRoutes: API.MenuRoutesType[] = [
     key: "add-goal",
     title: "添加目标",
     path: "/personalCenter/add-goal",
-    component: "./personalCenter/components/AddGoal",
+    component: "./personalCenter/components/WwGoal/AddGoal",
     hideTabBar: true,
     showBack: true,
   },
