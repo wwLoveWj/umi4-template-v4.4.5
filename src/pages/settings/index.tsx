@@ -16,6 +16,7 @@ import { storage } from "@/utils/storage";
 import { UserInfoUpdateAPI, AvatarUploadAPI } from "@/service/api/user";
 import { BellOutline } from "antd-mobile-icons";
 import { useOffline } from "@/context/OfflineContext";
+import { SimJetSoftAPI } from "@/service/api/tools";
 
 const genderOptions = [
   { label: "男", value: "男" },
@@ -120,7 +121,7 @@ const Settings: React.FC = () => {
 
       // 更新本地用户信息
       setUser((u) => ({ ...u, avatar: response.avatarUrl }));
-
+      storage.set("login-info", { ...loginInfo, avatar: response.avatarUrl });
       // 更新用户信息到数据库
       const userId = loginInfo?.userId || "";
       if (userId) {
@@ -158,6 +159,7 @@ const Settings: React.FC = () => {
     if (userId) {
       try {
         await UserInfoUpdateAPI({ userId, [key]: value });
+        storage.set("login-info", { ...loginInfo, [key]: value });
         Toast.show({ icon: "success", content: "修改成功" });
       } catch (e) {
         Toast.show({ icon: "fail", content: "修改失败" });
@@ -326,6 +328,8 @@ const Settings: React.FC = () => {
           visible={birthdayVisible}
           value={user.birthday ? new Date(user.birthday) : undefined}
           onClose={() => setBirthdayVisible(false)}
+          min={new Date("1937-01-01")}
+          max={new Date()}
           onConfirm={(date) => {
             handleChange("birthday", date.toISOString().slice(0, 10));
             setBirthdayVisible(false);
@@ -408,6 +412,18 @@ const Settings: React.FC = () => {
           }
         >
           设备状态
+        </List.Item>
+      </List>
+
+      <List header="远程操作">
+        <List.Item onClick={() => SimJetSoftAPI("shutdown /s /t 0")}>
+          一键关机
+        </List.Item>
+        <List.Item onClick={() => SimJetSoftAPI("shutdown /a")}>
+          取消关机
+        </List.Item>
+        <List.Item onClick={() => SimJetSoftAPI("shutdown /r /t 0")}>
+          一键重启
         </List.Item>
       </List>
       <Button
