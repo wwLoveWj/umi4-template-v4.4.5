@@ -161,7 +161,8 @@ export default function CommonMsgPage() {
   return (
     <div style={{ background: "var(--primary-bg)", minHeight: "100vh" }}>
       <NavBar
-        back="返回"
+        back={null}
+        backIcon={false}
         onBack={() => history.back()}
         right={
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -173,7 +174,7 @@ export default function CommonMsgPage() {
             <span
               onClick={() => history.push("/msg/contacts")}
               style={{
-                color: "#fff",
+                color: "#ccc",
                 fontSize: 14,
                 cursor: "pointer",
                 padding: "4px 8px",

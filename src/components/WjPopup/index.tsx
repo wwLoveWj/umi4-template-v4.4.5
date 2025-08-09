@@ -1,8 +1,8 @@
 import React from "react";
-import { NavBar, Popup, Button } from "antd-mobile";
+import { NavBar, Popup } from "antd-mobile";
 import { useControllableValue } from "ahooks";
 export default function Index(props: any) {
-  const { title = "标题", popupHeight = "100vh" } = props;
+  const { title = "标题", popupHeight = "100vh", onClose } = props;
   const [visible, setVisible] = useControllableValue<boolean>(props);
   return (
     <Popup
@@ -11,9 +11,17 @@ export default function Index(props: any) {
         setVisible(false);
       }}
       onClose={() => {
-        setVisible(false);
+        if (onClose) {
+          onClose();
+        } else {
+          setVisible(false);
+        }
       }}
+      showCloseButton={!!onClose}
+      destroyOnClose
+      closeIcon={onClose ? <span>提交</span> : null}
       bodyStyle={{ height: popupHeight }}
+      closeOnSwipe={true}
     >
       <NavBar
         back="取消"

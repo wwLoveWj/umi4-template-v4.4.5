@@ -1,71 +1,78 @@
-import React, { useEffect, RefObject } from "react";
-import schedule from "node-schedule";
+import React, { forwardRef, RefObject, useImperativeHandle } from "react";
 import { createNotification } from "@/utils/index";
-// import sendEmail from "@/utils/email";
-const sendEmail = require("@/utils/email");
 import { Button, DatePicker, TextArea, Form, Input } from "antd-mobile";
 import type { DatePickerRef } from "antd-mobile/es/components/date-picker";
 import dayjs from "dayjs";
 import { storage } from "@/utils/storage";
 import { guid } from "@/utils";
-export default function Index({
-  onClose,
-}: {
-  onClose?: (params: any) => void;
-}) {
+
+export default forwardRef(function Index(
+  {
+    onClose,
+  }: {
+    onClose?: (params: any) => void;
+  },
+  ref
+) {
+  const [form] = Form.useForm();
   const todoList = storage?.get("todoList") || [];
-  const onFinish = async (values: any) => {
-    const noticeTime = {
-      hour: dayjs(values?.noticeTime).hour(),
-      minute: dayjs(values?.noticeTime).minute(),
-    };
-    await sendEmail({
-      title: values?.title,
-      content: values?.description,
-      sendToWho: "xxx@163.com",
-    }).then((res) => {
-      debugger;
+  const onFinish = () => {
+    return form.validateFields()?.then((values) => {
+      const noticeTime = {
+        hour: dayjs(values?.noticeTime).hour(),
+        minute: dayjs(values?.noticeTime).minute(),
+      };
+      createNotification(values?.title, {
+        body: values?.description,
+      });
+      let arr = [
+        ...todoList,
+        {
+          ...values,
+          noticeTime: dayjs(values?.noticeTime)?.format("YYYY-MM-DD HH:mm"),
+          todoId: guid(),
+          status: 1,
+        },
+      ];
+      storage?.set("todoList", arr);
+      onClose?.(arr);
     });
-    // schedule.scheduleJob(noticeTime, (time) => {
-    //   try {
-    //     // 定时提醒时间到了发送邮件/通知
-    //     console.log("通知时间", time);
-    //     debugger;
-    //     createNotification(values?.title, {
-    //       body: values?.description,
-    //     });
-    //     sendMail({
-    //       title: values?.title,
-    //       content: values?.description,
-    //       sendToWho: "xxx@hh.com",
-    //     }).then((res) => {
-    //       debugger;
-    //     });
-    //   } catch (error) {
-    //     console.error("Send reminder email error:", error);
-    //   }
-    // });
-    let arr = [
-      ...todoList,
-      {
-        ...values,
-        noticeTime: dayjs(values?.noticeTime)?.format("YYYY-MM-DD HH:mm"),
-        todoId: guid(),
-        status: 1,
-      },
-    ];
-    storage?.set("todoList", arr);
-    onClose?.(arr);
   };
+
+  /**
+   * 第一个参数是ref，父组件传过来的
+   * 我们想要把方法挂载的ref
+   *
+   * 第二个参数是一个方法，必须有返回值
+   * 返回的值就是要挂再到useRef上面的值
+   *
+   * 第三个参数是依赖项 依赖项改变的情况第一个参数
+   * 会重新调用，如果依赖项不传则每次render都会调用
+   */
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        onFinish,
+      };
+      /**
+       * 如果依赖项传一个空数组
+       * 则第一个方法只会在初始化的时候调用一次
+       * 里面的值不是最新的
+       */
+    },
+    []
+  );
   return (
     <Form
       name="form"
-      onFinish={onFinish}
-      footer={
-        <Button block type="submit" color="primary" size="large">
-          定时提醒
-        </Button>
-      }
+      form={form}
+      // onFinish={onFinish}
+      // footer={
+      //   <Button block type="submit" color="primary" size="large">
+      //     定时提醒
+      //   </Button>
+      // }
     >
       <Form.Item name="title" label="提醒主题" rules={[{ required: true }]}>
         <Input placeholder="请输入主题" />
@@ -95,4 +102,4 @@ export default function Index({
       </Form.Item>
     </Form>
   );
-}
+});

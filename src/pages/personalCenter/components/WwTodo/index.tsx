@@ -1,8 +1,5 @@
-import React, { useEffect, useState } from "react";
-import schedule from "node-schedule";
-import { createNotification } from "@/utils/index";
-import { Button, Card, Toast, Form, Input } from "antd-mobile";
-import type { DatePickerRef } from "antd-mobile/es/components/date-picker";
+import React, { useState, useRef } from "react";
+import { Button, Card, Toast } from "antd-mobile";
 import dayjs from "dayjs";
 import WjPopup from "@/components/WjPopup";
 import CreateNotice from "./components/CreateNotice";
@@ -16,9 +13,11 @@ import {
 } from "antd-mobile-icons";
 import { history } from "umi";
 import styles from "./style.less";
+
 export default function Index() {
   const [visible, setVisible] = useState(false);
   const [todoList, setTodoList] = useState(storage?.get("todoList") || []);
+  const noticeRef = useRef();
 
   return (
     <div className={styles.todoContainer}>
@@ -76,8 +75,10 @@ export default function Index() {
         isShowSubmit={false}
         title={"创建待办"}
         popupHeight={"60vh"}
+        onClose={() => (noticeRef?.current as any).onFinish()}
       >
         <CreateNotice
+          ref={noticeRef}
           onClose={(params) => {
             setTodoList(params);
             setVisible(false);
