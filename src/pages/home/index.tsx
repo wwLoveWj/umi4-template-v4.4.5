@@ -1,18 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { history, useModel } from "umi";
-import {
-  Swiper,
-  Toast,
-  ImageViewer,
-  SearchBar,
-  Space,
-  Button,
-} from "antd-mobile";
+import { Swiper, Toast, ImageViewer } from "antd-mobile";
 import { ScanningOutline } from "antd-mobile-icons";
 import { SearchBarRef } from "antd-mobile/es/components/search-bar";
 import { ScheduledNotifyAPI } from "@/service/api/scheduled";
-import { MailSendAPI } from "@/service/api/mail";
-import { useRequest } from "ahooks";
 import SearchHead from "./components/SearchHead";
 import img1 from "@/assets/articleBg.jpg";
 import websocketManager from "@/utils/websocket";
@@ -115,42 +106,6 @@ export default function Index() {
           />
           <h1 className={styles.title}>首页</h1>
           <MajorEvents />
-          <div className={styles.homeBottom}>
-            {/* <ScanWeb /> */}
-            <button
-              onClick={() =>
-                // MailSendAPI({
-                //   to: "wei.wu-n@msxf.com",
-                //   text: "我发送了一封邮件",
-                //   subject: "首页",
-                //   nickname: "系统",
-                //   recipientname: "女王大人",
-                // })
-                history.push("/demo")
-              }
-            >
-              扫描二维码
-            </button>
-            <button onClick={() => websocketManager.disconnect()}>888</button>
-            <button
-              // onClick={() => {
-              //   websocketMsgHandler(
-              //     JSON.stringify({
-              //       editorContent: "青女王=======",
-              //       editorKey: "editor-add",
-              //       title: "你到底想说啥",
-              //       isEditMode: true, //编辑器操作类型，用于判断是否更新数据库
-              //     })
-              //   );
-              // }}
-              onClick={() => {
-                history.push("/notice");
-              }}
-            >
-              跳转到详情页
-            </button>
-            <Button onClick={() => stop()}>关闭888</Button>
-          </div>
         </div>
       </div>
       {/* <div className="qrcode">

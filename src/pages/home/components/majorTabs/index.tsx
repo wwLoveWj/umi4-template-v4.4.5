@@ -2,6 +2,7 @@ import React, { Children, useRef, useState } from "react";
 import { history } from "umi";
 import CustomTabs from "@/components/tabs";
 import MajorEvents from "./components/MajorEvents.tsx";
+import { Badge, ErrorBlock, Space } from "antd-mobile";
 
 export default function Index() {
   const items = [
@@ -11,23 +12,39 @@ export default function Index() {
       key: 1,
     },
     {
-      title: "待办通知",
-      children: 2,
+      title: <Badge content="新">待办通知</Badge>,
+      children: (
+        <Space block direction="vertical" style={{ "--gap": "16px" }}>
+          <ErrorBlock status="default" />
+        </Space>
+      ),
       key: 2,
     },
     {
       title: "重要消息",
-      children: 3,
+      children: (
+        <Space block direction="vertical" style={{ "--gap": "16px" }}>
+          <ErrorBlock status="default" />
+        </Space>
+      ),
       key: 3,
     },
     {
       title: "今日消费",
-      children: 4,
+      children: (
+        <Space block direction="vertical" style={{ "--gap": "16px" }}>
+          <ErrorBlock status="default" />
+        </Space>
+      ),
       key: 4,
     },
     {
       title: "创意园区",
-      children: 5,
+      children: (
+        <Space block direction="vertical" style={{ "--gap": "16px" }}>
+          <ErrorBlock status="default" />
+        </Space>
+      ),
       key: 5,
     },
   ];

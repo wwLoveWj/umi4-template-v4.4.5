@@ -5,6 +5,8 @@ import type { DatePickerRef } from "antd-mobile/es/components/date-picker";
 import dayjs from "dayjs";
 import { storage } from "@/utils/storage";
 import { guid } from "@/utils";
+import { MailSendAPI } from "@/service/api/mail";
+import { useRequest } from "ahooks";
 
 export default forwardRef(function Index(
   {
@@ -16,12 +18,20 @@ export default forwardRef(function Index(
 ) {
   const [form] = Form.useForm();
   const todoList = storage?.get("todoList") || [];
+
   const onFinish = () => {
     return form.validateFields()?.then((values) => {
       const noticeTime = {
         hour: dayjs(values?.noticeTime).hour(),
         minute: dayjs(values?.noticeTime).minute(),
       };
+      MailSendAPI({
+        to: "123456789@qq.com",
+        text: "我发送了一封邮件",
+        subject: "首页",
+        nickname: "系统",
+        recipientname: "女王大人",
+      });
       createNotification(values?.title, {
         body: values?.description,
       });

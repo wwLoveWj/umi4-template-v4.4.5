@@ -11,7 +11,6 @@ import {
   MessageFill,
   AddOutline,
 } from "antd-mobile-icons";
-import { history } from "umi";
 import styles from "./style.less";
 
 export default function Index() {
