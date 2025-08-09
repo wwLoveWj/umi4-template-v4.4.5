@@ -10,6 +10,7 @@ import {
   TextArea,
   List,
   Empty,
+  PullToRefresh,
 } from "antd-mobile";
 import {
   HeartOutline,
@@ -332,9 +333,24 @@ const ArticleDetail: React.FC = () => {
 
   if (!article) {
     return (
-      <div className="article-detail-error">
-        <span>文章不存在</span>
-      </div>
+      <>
+        <NavBar
+          onBack={() => navigate(-1)}
+          backArrow={<LeftOutline />}
+          className="article-navbar"
+        >
+          文章详情
+        </NavBar>
+        <PullToRefresh
+          onRefresh={async () => {
+            await loadArticleDetail();
+          }}
+        >
+          <div className="article-detail-error">
+            <span>文章不存在</span>
+          </div>
+        </PullToRefresh>
+      </>
     );
   }
 
@@ -379,27 +395,31 @@ const ArticleDetail: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* 内容区 */}
-      <div className="article-detail-content">
-        {/* 标题/摘要/正文 */}
-        <div className="detail-title">{article.title}</div>
-        <div className="detail-summary">{article.summary}</div>
-        <div
-          className="detail-html"
-          dangerouslySetInnerHTML={{ __html: article.htmlContent }}
-        />
-        {/* 标签 */}
-        <div className="detail-tags">
-          {Array.isArray(article.tags) &&
-            article.tags?.map((tag) => (
-              <Tag key={tag} color="primary" fill="outline">
-                {tag}
-              </Tag>
-            ))}
-        </div>
-        {/* 操作区 */}
-        {/* <div className="detail-actions">
+      <PullToRefresh
+        onRefresh={async () => {
+          await loadArticleDetail();
+        }}
+      >
+        {/* 内容区 */}
+        <div className="article-detail-content">
+          {/* 标题/摘要/正文 */}
+          <div className="detail-title">{article.title}</div>
+          <div className="detail-summary">{article.summary}</div>
+          <div
+            className="detail-html"
+            dangerouslySetInnerHTML={{ __html: article.htmlContent }}
+          />
+          {/* 标签 */}
+          <div className="detail-tags">
+            {Array.isArray(article.tags) &&
+              article.tags?.map((tag) => (
+                <Tag key={tag} color="primary" fill="outline">
+                  {tag}
+                </Tag>
+              ))}
+          </div>
+          {/* 操作区 */}
+          {/* <div className="detail-actions">
           <span className="action-btn">
             <EyeOutline />
             {article.readCount}
@@ -421,98 +441,100 @@ const ArticleDetail: React.FC = () => {
             {article.commentCount}
           </span>
         </div> */}
-        <div className="detail-divider" />
-        {/* 评论区 */}
-        <div className="detail-comments">
-          <div
-            style={{ fontWeight: 600, fontSize: 16, margin: "16px 0 8px 0" }}
-          >
-            评论
-          </div>
-          {comments.length === 0 ? (
-            <Empty description="暂无评论" />
-          ) : (
-            <List>
-              {comments.map((comment) =>
-                comment && comment.authorAvatar ? (
-                  <List.Item key={comment.id} className="comment-item">
-                    <div
-                      className="comment-content"
-                      style={{ display: "flex", alignItems: "flex-start" }}
-                    >
-                      {/* 头像 */}
-                      <img
-                        className="detail-avatar"
-                        src={comment.authorAvatar}
-                        alt={comment.author}
-                        style={{
-                          width: 40,
-                          height: 40,
-                          borderRadius: "50%",
-                          marginRight: 10,
-                          flexShrink: 0,
-                        }}
-                      />
-                      {/* 右侧信息+内容 */}
-                      <div style={{ flex: 1 }}>
-                        <div
-                          style={{ display: "flex", flexDirection: "column" }}
-                        >
-                          <span style={{ fontWeight: 600, fontSize: 15 }}>
-                            {comment.author}
-                          </span>
-                          <span
-                            style={{
-                              color: "#aaa",
-                              fontSize: 12,
-                              margin: "2px 0 0 0",
-                            }}
-                          >
-                            {formatTime(comment.createTime)}
-                          </span>
-                        </div>
-                        {/* 内容区，与时间左对齐 */}
-                        <div style={{ marginTop: 8 }}>
-                          <div className="comment-text">{comment.content}</div>
-                          {comment.canvasImage && (
-                            <div style={{ marginTop: 8 }}>
-                              <img
-                                src={comment.canvasImage}
-                                alt="画板内容"
-                                style={{
-                                  width: "100%",
-                                  maxHeight: 120,
-                                  borderRadius: 8,
-                                  objectFit: "contain",
-                                  background: "#f6f6f6",
-                                }}
-                              />
-                            </div>
-                          )}
-                        </div>
-                        <div className="comment-actions">
+          <div className="detail-divider" />
+          {/* 评论区 */}
+          <div className="detail-comments">
+            <div
+              style={{ fontWeight: 600, fontSize: 16, margin: "16px 0 8px 0" }}
+            >
+              评论
+            </div>
+            {comments.length === 0 ? (
+              <Empty description="暂无评论" />
+            ) : (
+              <List>
+                {comments.map((comment) =>
+                  comment && comment.authorAvatar ? (
+                    <List.Item key={comment.id} className="comment-item">
+                      <div
+                        className="comment-content"
+                        style={{ display: "flex", alignItems: "flex-start" }}
+                      >
+                        {/* 头像 */}
+                        <img
+                          className="detail-avatar"
+                          src={comment.authorAvatar}
+                          alt={comment.author}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: "50%",
+                            marginRight: 10,
+                            flexShrink: 0,
+                          }}
+                        />
+                        {/* 右侧信息+内容 */}
+                        <div style={{ flex: 1 }}>
                           <div
-                            className="comment-like"
-                            onClick={() => handleLikeComment(comment)}
+                            style={{ display: "flex", flexDirection: "column" }}
                           >
-                            {comment.isLiked ? (
-                              <HeartFill color="#ff4757" />
-                            ) : (
-                              <HeartOutline />
+                            <span style={{ fontWeight: 600, fontSize: 15 }}>
+                              {comment.author}
+                            </span>
+                            <span
+                              style={{
+                                color: "#aaa",
+                                fontSize: 12,
+                                margin: "2px 0 0 0",
+                              }}
+                            >
+                              {formatTime(comment.createTime)}
+                            </span>
+                          </div>
+                          {/* 内容区，与时间左对齐 */}
+                          <div style={{ marginTop: 8 }}>
+                            <div className="comment-text">
+                              {comment.content}
+                            </div>
+                            {comment.canvasImage && (
+                              <div style={{ marginTop: 8 }}>
+                                <img
+                                  src={comment.canvasImage}
+                                  alt="画板内容"
+                                  style={{
+                                    width: "100%",
+                                    maxHeight: 120,
+                                    borderRadius: 8,
+                                    objectFit: "contain",
+                                    background: "#f6f6f6",
+                                  }}
+                                />
+                              </div>
                             )}
-                            <span>{comment.likeCount}</span>
+                          </div>
+                          <div className="comment-actions">
+                            <div
+                              className="comment-like"
+                              onClick={() => handleLikeComment(comment)}
+                            >
+                              {comment.isLiked ? (
+                                <HeartFill color="#ff4757" />
+                              ) : (
+                                <HeartOutline />
+                              )}
+                              <span>{comment.likeCount}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  </List.Item>
-                ) : null
-              )}
-            </List>
-          )}
+                    </List.Item>
+                  ) : null
+                )}
+              </List>
+            )}
+          </div>
         </div>
-      </div>
-
+      </PullToRefresh>
       {/* 底部操作栏 */}
       <div className="article-actions">
         <div className="action-input">
