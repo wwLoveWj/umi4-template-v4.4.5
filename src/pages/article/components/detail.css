@@ -303,7 +303,9 @@
 .article-detail-page .comment-input-popup .comment-input-content :global(.adm-text-area) {
   margin-bottom: 16px;
 }
-.article-detail-loading,
+.article-detail-loading {
+  padding: 12px;
+}
 .article-detail-error {
   display: flex;
   flex-direction: column;

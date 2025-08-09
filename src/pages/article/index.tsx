@@ -9,6 +9,7 @@ import {
   InfiniteScroll,
   Toast,
   PullToRefresh,
+  Skeleton,
 } from "antd-mobile";
 import { useNavigate } from "umi";
 import { articleApi } from "@/service/api/article";
@@ -53,6 +54,16 @@ const ArticleList: React.FC = () => {
     { key: "vite", title: "Vite" },
     { key: "webpack", title: "Webpack" },
   ];
+
+  const { runAsync: loadArticleList, loading } = useRequest(
+    async (params) => {
+      const res = await articleApi.getArticleList(params);
+      return res?.list;
+    },
+    {
+      refreshDeps: [activeTab],
+    }
+  );
   /**
    * 加载文章列表
    */
@@ -61,15 +72,15 @@ const ArticleList: React.FC = () => {
     currentPage: number,
     category: string = activeTab
   ) => {
-    const res = await articleApi.getArticleList({
+    const res = await loadArticleList({
       category: category === "recommend" ? undefined : category,
       page: currentPage,
       pageSize,
       keyword: search || searchValue,
       isPage: true,
     });
-    setArticles((prev) => [...prev, ...(res?.list || [])]);
-    setHasMore(res?.list?.length === pageSize); // 关键：如果返回数据不足一页，说明没有更多了
+    setArticles((prev) => [...prev, ...(res || [])]);
+    setHasMore(res?.length === pageSize); // 关键：如果返回数据不足一页，说明没有更多了
     setPage((prev) => prev + 1);
   };
 
@@ -282,28 +293,87 @@ const ArticleList: React.FC = () => {
         }}
       >
         <div className="article-content">
-          <div className="article-list">
-            {(articleInfoList || [])?.map((article) => (
-              <div
-                className="article-item"
-                key={article.articleId}
-                onClick={() => handleArticleClick(article)}
-              >
-                <div className="article-meta-row">
-                  <img
-                    className="article-avatar"
-                    src={article.authorAvatar}
-                    alt={article.author}
-                  />
-                  <span className="article-author">{article.author}</span>
-                  <span className="article-time">
-                    {formatTime(article.publishTime)}
-                  </span>
-                </div>
-                {/* 新增：有封面图时右侧展示图片 */}
-                {article.coverImage ? (
-                  <div className="article-item-row">
-                    <div className="article-item-main">
+          {loading ? (
+            <>
+              <Skeleton.Title animated />
+              <Skeleton.Paragraph lineCount={5} animated />
+            </>
+          ) : (
+            <div className="article-list">
+              {(articleInfoList || [])?.map((article) => (
+                <div
+                  className="article-item"
+                  key={article.articleId}
+                  onClick={() => handleArticleClick(article)}
+                >
+                  <div className="article-meta-row">
+                    <img
+                      className="article-avatar"
+                      src={article.authorAvatar}
+                      alt={article.author}
+                    />
+                    <span className="article-author">{article.author}</span>
+                    <span className="article-time">
+                      {formatTime(article.publishTime)}
+                    </span>
+                  </div>
+                  {/* 新增：有封面图时右侧展示图片 */}
+                  {article.coverImage ? (
+                    <div className="article-item-row">
+                      <div className="article-item-main">
+                        <div className="article-title">{article.title}</div>
+                        <div className="article-summary">{article.summary}</div>
+                        <div className="article-tags">
+                          {Array.isArray(article.tags) &&
+                            article.tags?.slice(0, 3).map((tag) => (
+                              <Tag key={tag} color="primary" fill="outline">
+                                {tag}
+                              </Tag>
+                            ))}
+                        </div>
+                        <div className="article-bottom-row">
+                          <span className="article-stat">
+                            <EyeOutline />
+                            {article.readCount}
+                          </span>
+                          <div
+                            className="action-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleLike(article);
+                            }}
+                          >
+                            {article.isLiked ? (
+                              <HeartFill color="#ff4757" />
+                            ) : (
+                              <HeartOutline />
+                            )}
+                            <span>点赞</span>
+                          </div>
+                          <div
+                            className="action-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCollect(article);
+                            }}
+                          >
+                            {article.isCollected ? (
+                              <StarFill color="#ffa502" />
+                            ) : (
+                              <StarOutline />
+                            )}
+                            <span>收藏</span>
+                          </div>
+                        </div>
+                      </div>
+                      <img
+                        className="article-cover"
+                        src={article.coverImage}
+                        alt="封面"
+                      />
+                    </div>
+                  ) : (
+                    <>
                       <div className="article-title">{article.title}</div>
                       <div className="article-summary">{article.summary}</div>
                       <div className="article-tags">
@@ -348,64 +418,12 @@ const ArticleList: React.FC = () => {
                           <span>收藏</span>
                         </div>
                       </div>
-                    </div>
-                    <img
-                      className="article-cover"
-                      src={article.coverImage}
-                      alt="封面"
-                    />
-                  </div>
-                ) : (
-                  <>
-                    <div className="article-title">{article.title}</div>
-                    <div className="article-summary">{article.summary}</div>
-                    <div className="article-tags">
-                      {Array.isArray(article.tags) &&
-                        article.tags?.slice(0, 3).map((tag) => (
-                          <Tag key={tag} color="primary" fill="outline">
-                            {tag}
-                          </Tag>
-                        ))}
-                    </div>
-                    <div className="article-bottom-row">
-                      <span className="article-stat">
-                        <EyeOutline />
-                        {article.readCount}
-                      </span>
-                      <div
-                        className="action-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleLike(article);
-                        }}
-                      >
-                        {article.isLiked ? (
-                          <HeartFill color="#ff4757" />
-                        ) : (
-                          <HeartOutline />
-                        )}
-                        <span>点赞</span>
-                      </div>
-                      <div
-                        className="action-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCollect(article);
-                        }}
-                      >
-                        {article.isCollected ? (
-                          <StarFill color="#ffa502" />
-                        ) : (
-                          <StarOutline />
-                        )}
-                        <span>收藏</span>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
           {/* 加载更多 */}
           <InfiniteScroll
             loadMore={() => loadMore("", page)}

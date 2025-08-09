@@ -147,10 +147,6 @@ const ArticleCollections: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    loadCollections(true);
-  }, []);
-
   return (
     <div className="article-collections-page">
       {/* 收藏文章列表 */}

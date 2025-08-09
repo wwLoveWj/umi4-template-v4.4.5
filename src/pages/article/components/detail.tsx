@@ -11,6 +11,7 @@ import {
   List,
   Empty,
   PullToRefresh,
+  Skeleton,
 } from "antd-mobile";
 import {
   HeartOutline,
@@ -325,8 +326,8 @@ const ArticleDetail: React.FC = () => {
   if (loading) {
     return (
       <div className="article-detail-loading">
-        <SpinLoading />
-        <span>加载中...</span>
+        <Skeleton.Title animated />
+        <Skeleton.Paragraph lineCount={20} animated />
       </div>
     );
   }
