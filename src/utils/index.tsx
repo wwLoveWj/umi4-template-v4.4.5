@@ -94,7 +94,7 @@ const UploadAPI = async (formData: any) => {
   let token = await getToken();
   let result;
   await axios({
-    url: "https://carefully-equal-monarch.ngrok-free.app/file/upload",
+    url: process.env.UMI_URL + "file/upload",
     method: "post",
     headers: {
       Authorization: `Bearer ${token}`,

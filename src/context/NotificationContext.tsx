@@ -81,7 +81,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({
     }
     try {
       await websocketManager.connect({
-        url: "ws://carefully-equal-monarch.ngrok-free.app/ws",
+        url: process.env.UMI_WS + "ws",
         userId,
         onConnectionEstablished: (connectionId) => {
           websocketManager.authenticate(userId);

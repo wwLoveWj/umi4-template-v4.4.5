@@ -60,7 +60,7 @@ export const useNotification = (): UseNotificationReturn => {
 
     try {
       await websocketManager.connect({
-        url: "ws://carefully-equal-monarch.ngrok-free.app/", // WebSocket连接地址
+        url: process.env.UMI_WS, // WebSocket连接地址
         userId,
         onConnectionEstablished: (connectionId) => {
           console.log("WebSocket连接已建立:", connectionId);

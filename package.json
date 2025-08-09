@@ -6,11 +6,13 @@
     "npm": ">=8.0.0"
   },
   "scripts": {
+    "start": "cross-env UMI_ENV=dev umi dev",
+    "uat": "cross-env UMI_ENV=uat umi build",
+    "sit": "cross-env UMI_ENV=sit umi build",
+    "build": "cross-env UMI_ENV=prod umi build",
     "dev": "cross-env HTTPS=true SSL_CRT_FILE=localhost.pem SSL_KEY_FILE=localhost-key.pem umi dev",
-    "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev",
     "glitch-start": "npm run build && serve -s dist -l 3000",
     "optimize-images": "node scripts/optimize-images.js",
     "optimize-bg": "imagemin src/assets/lake.jpg --out-dir=src/assets --plugin.mozjpeg.quality=85"
