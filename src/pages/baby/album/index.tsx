@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { ImageViewer, Toast } from "antd-mobile";
+import { ImageViewer, Toast, PullToRefresh } from "antd-mobile";
 import { imgInfoUploadAPI, imgInfoListAPI } from "@/service/api/album";
 import { AddCircleOutline, PicturesOutline } from "antd-mobile-icons";
 import AddFloatingBubble from "@/components/floatingBubble";
@@ -56,34 +56,40 @@ const BabyAlbum: React.FC = () => {
         onChange={handleFilesChange}
       />
       {/* 瀑布流布局 */}
-      <div
-        style={{
-          columnCount: 2,
-          columnGap: 8,
+      <PullToRefresh
+        onRefresh={async () => {
+          await fetchPhotos();
         }}
       >
-        {photos?.map((photo, idx) => (
-          <div
-            key={photo.url}
-            style={{
-              breakInside: "avoid",
-              marginBottom: 8,
-              borderRadius: 8,
-              overflow: "hidden",
-              cursor: "pointer",
-              background: "#f6f6f6",
-            }}
-            onClick={() => setPreviewIndex(idx)}
-          >
-            <img
-              src={photo.thumbUrl}
-              alt="宝宝照片"
-              style={{ width: "100%", display: "block" }}
-              loading={idx < 4 ? undefined : "lazy"}
-            />
-          </div>
-        ))}
-      </div>
+        <div
+          style={{
+            columnCount: 2,
+            columnGap: 8,
+          }}
+        >
+          {photos?.map((photo, idx) => (
+            <div
+              key={photo.url}
+              style={{
+                breakInside: "avoid",
+                marginBottom: 8,
+                borderRadius: 8,
+                overflow: "hidden",
+                cursor: "pointer",
+                background: "#f6f6f6",
+              }}
+              onClick={() => setPreviewIndex(idx)}
+            >
+              <img
+                src={photo.thumbUrl}
+                alt="宝宝照片"
+                style={{ width: "100%", display: "block" }}
+                loading={idx < 4 ? undefined : "lazy"}
+              />
+            </div>
+          ))}
+        </div>
+      </PullToRefresh>
       {previewIndex !== null && (
         <ImageViewer.Multi
           images={photos.map((p) => p.url)}

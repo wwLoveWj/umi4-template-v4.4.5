@@ -10,6 +10,7 @@ import {
   InfiniteScroll,
   Empty,
   Toast,
+  PullToRefresh,
 } from "antd-mobile";
 import {
   HeartOutline,
@@ -153,108 +154,114 @@ const ArticleCollections: React.FC = () => {
   return (
     <div className="article-collections-page">
       {/* 收藏文章列表 */}
-      <div className="collections-content">
-        {articles.length === 0 && !loading ? (
-          <Empty
-            description="暂无收藏文章"
-            image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-          />
-        ) : (
-          <ul>
-            {articles.map((article) => (
-              <li
-                key={article.id}
-                onClick={() => handleArticleClick(article)}
-                style={{ marginBottom: "12px" }}
-              >
-                <Card className="collection-card">
-                  <div className="author-info">
-                    {article.authorAvatar && (
-                      <Image
-                        src={article.authorAvatar}
-                        width={32}
-                        height={32}
-                        fit="cover"
-                        style={{ borderRadius: 16 }}
-                      />
-                    )}
-                    <span className="author-name">{article.author}</span>
-                    {/* <span className="publish-time">
+      <PullToRefresh
+        onRefresh={async () => {
+          await loadCollections(true);
+        }}
+      >
+        <div className="collections-content">
+          {articles.length === 0 && !loading ? (
+            <Empty
+              description="暂无收藏文章"
+              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
+            />
+          ) : (
+            <ul>
+              {articles.map((article) => (
+                <li
+                  key={article.id}
+                  onClick={() => handleArticleClick(article)}
+                  style={{ marginBottom: "12px" }}
+                >
+                  <Card className="collection-card">
+                    <div className="author-info">
+                      {article.authorAvatar && (
+                        <Image
+                          src={article.authorAvatar}
+                          width={32}
+                          height={32}
+                          fit="cover"
+                          style={{ borderRadius: 16 }}
+                        />
+                      )}
+                      <span className="author-name">{article.author}</span>
+                      {/* <span className="publish-time">
                             {formatTime(article.publishTime)}
                           </span> */}
-                  </div>
-                  <div className="article-header">
-                    <div className="article-cover">
-                      <img src={article.coverImage} alt={article.title} />
                     </div>
-                    <div className="article-info">
-                      <h3 className="article-title">{article.title}</h3>
-                      <p className="article-summary">{article.summary}</p>
-                      <div className="article-tags">
-                        {Array.isArray(article.tags) &&
-                          article.tags?.slice(0, 3).map((tag) => (
-                            <Tag key={tag} color="primary" fill="outline">
-                              {tag}
-                            </Tag>
-                          ))}
+                    <div className="article-header">
+                      <div className="article-cover">
+                        <img src={article.coverImage} alt={article.title} />
+                      </div>
+                      <div className="article-info">
+                        <h3 className="article-title">{article.title}</h3>
+                        <p className="article-summary">{article.summary}</p>
+                        <div className="article-tags">
+                          {Array.isArray(article.tags) &&
+                            article.tags?.slice(0, 3).map((tag) => (
+                              <Tag key={tag} color="primary" fill="outline">
+                                {tag}
+                              </Tag>
+                            ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  {/* 操作按钮 */}
-                  <div className="article-actions">
-                    <div className="action-btn">
-                      <EyeOutline />
-                      {article.readCount}
+                    {/* 操作按钮 */}
+                    <div className="article-actions">
+                      <div className="action-btn">
+                        <EyeOutline />
+                        {article.readCount}
+                      </div>
+                      <div
+                        className="action-btn"
+                        // onClick={(e) => {
+                        //   e.stopPropagation();
+                        //   handleLike(article);
+                        // }}
+                      >
+                        {article.isLiked ? (
+                          <HeartFill color="#ff4757" />
+                        ) : (
+                          <HeartOutline />
+                        )}
+                        {article.likeCount}
+                      </div>
+                      <div
+                        className="action-btn danger"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUncollect(article);
+                        }}
+                      >
+                        <StarFill color="#ffa502" />
+                        <span>取消收藏</span>
+                      </div>
                     </div>
-                    <div
-                      className="action-btn"
-                      // onClick={(e) => {
-                      //   e.stopPropagation();
-                      //   handleLike(article);
-                      // }}
-                    >
-                      {article.isLiked ? (
-                        <HeartFill color="#ff4757" />
-                      ) : (
-                        <HeartOutline />
-                      )}
-                      {article.likeCount}
-                    </div>
-                    <div
-                      className="action-btn danger"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUncollect(article);
-                      }}
-                    >
-                      <StarFill color="#ffa502" />
-                      <span>取消收藏</span>
-                    </div>
-                  </div>
-                </Card>
-              </li>
-            ))}
-          </ul>
-        )}
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          )}
 
-        {/* 加载更多 */}
-        <InfiniteScroll
-          loadMore={() => loadCollections()}
-          hasMore={hasMore}
-          threshold={250}
-        >
-          {hasMore ? (
-            <div className="loading-more">
-              <SpinLoading />
-              <span>加载中...</span>
-            </div>
-          ) : articles.length > 0 ? (
-            <div className="no-more">
-              <span>没有更多了</span>
-            </div>
-          ) : null}
-        </InfiniteScroll>
-      </div>
+          {/* 加载更多 */}
+          <InfiniteScroll
+            loadMore={() => loadCollections()}
+            hasMore={hasMore}
+            threshold={250}
+          >
+            {hasMore ? (
+              <div className="loading-more">
+                <SpinLoading />
+                <span>加载中...</span>
+              </div>
+            ) : articles.length > 0 ? (
+              <div className="no-more">
+                <span>没有更多了</span>
+              </div>
+            ) : null}
+          </InfiniteScroll>
+        </div>
+      </PullToRefresh>
     </div>
   );
 };

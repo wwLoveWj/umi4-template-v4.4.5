@@ -7,6 +7,7 @@ import {
   Tag,
   Dialog,
   Modal,
+  PullToRefresh,
 } from "antd-mobile";
 import dayjs from "dayjs";
 import {
@@ -141,98 +142,104 @@ const WwGoal: React.FC = () => {
           />
         </div>
       </div>
-      <div style={{ maxWidth: 420, margin: "0 12px", padding: "18px 0" }}>
-        {goals.length === 0 && (
-          <div style={{ color: "#bbb", textAlign: "center", marginTop: 48 }}>
-            暂无目标，快去添加吧！
-          </div>
-        )}
-        {goals.map((goal, idx) => (
-          <div
-            key={goal.id}
-            style={{
-              background: "#fff",
-              borderRadius: 16,
-              boxShadow: "0 2px 8px rgba(22,119,255,0.06)",
-              marginBottom: 18,
-              padding: "18px 16px",
-              display: "flex",
-              alignItems: "center",
-              gap: 12,
-              position: "relative",
-              borderLeft: `5px solid ${typeColor[goal.type] || "#1677ff"}`,
-            }}
-          >
-            <Checkbox
-              disabled={goal.completed}
-              checked={!!goal.completed}
-              onChange={() => handleComplete(goal.id)}
-              style={{ marginTop: 4 }}
-            />
-            <div style={{ flex: 1 }}>
-              <div
-                style={{
-                  fontWeight: 600,
-                  fontSize: 17,
-                  marginBottom: 4,
-                  color: goal.completed ? "#bbb" : "#222",
-                }}
-              >
-                {goal.title}
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 4,
-                }}
-              >
-                <Tag
-                  color={goal.completed ? "default" : "primary"}
-                  style={{ borderRadius: 12, fontSize: 13 }}
-                >
-                  {goal.type}
-                </Tag>
-                <span style={{ color: "#888", fontSize: 13 }}>
-                  截止：{dayjs(goal.deadline).format("YYYY-MM-DD HH:mm")}
-                </span>
-              </div>
-              {goal.reward && (
-                <span
-                  style={{ color: "#faad14", fontSize: 14, marginRight: 8 }}
-                >
-                  奖励：{goal.reward}
-                </span>
-              )}
-              {goal.completed ? (
-                <span
+      <PullToRefresh
+        onRefresh={async () => {
+          await loadGoals();
+        }}
+      >
+        <div style={{ maxWidth: 420, margin: "0 12px", padding: "18px 0" }}>
+          {goals.length === 0 && (
+            <div style={{ color: "#bbb", textAlign: "center", marginTop: 48 }}>
+              暂无目标，快去添加吧！
+            </div>
+          )}
+          {goals.map((goal, idx) => (
+            <div
+              key={goal.id}
+              style={{
+                background: "#fff",
+                borderRadius: 16,
+                boxShadow: "0 2px 8px rgba(22,119,255,0.06)",
+                marginBottom: 18,
+                padding: "18px 16px",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                position: "relative",
+                borderLeft: `5px solid ${typeColor[goal.type] || "#1677ff"}`,
+              }}
+            >
+              <Checkbox
+                disabled={goal.completed}
+                checked={!!goal.completed}
+                onChange={() => handleComplete(goal.id)}
+                style={{ marginTop: 4 }}
+              />
+              <div style={{ flex: 1 }}>
+                <div
                   style={{
-                    color: "#00b578",
                     fontWeight: 600,
-                    fontSize: 15,
-                    marginLeft: 8,
+                    fontSize: 17,
+                    marginBottom: 4,
+                    color: goal.completed ? "#bbb" : "#222",
                   }}
                 >
-                  yyds
-                </span>
-              ) : null}
-            </div>
-            {!goal.completed && (
-              <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                <MailOutline
-                  style={{ borderRadius: 16, fontSize: 24, color: "#1677ff" }}
-                  onClick={() => handleSetRemind(goal)}
-                />
-                <DeleteOutline
-                  style={{ borderRadius: 16, fontSize: 24, color: "red" }}
-                  onClick={() => handleDelete(goal.id)}
-                />
+                  {goal.title}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginBottom: 4,
+                  }}
+                >
+                  <Tag
+                    color={goal.completed ? "default" : "primary"}
+                    style={{ borderRadius: 12, fontSize: 13 }}
+                  >
+                    {goal.type}
+                  </Tag>
+                  <span style={{ color: "#888", fontSize: 13 }}>
+                    截止：{dayjs(goal.deadline).format("YYYY-MM-DD HH:mm")}
+                  </span>
+                </div>
+                {goal.reward && (
+                  <span
+                    style={{ color: "#faad14", fontSize: 14, marginRight: 8 }}
+                  >
+                    奖励：{goal.reward}
+                  </span>
+                )}
+                {goal.completed ? (
+                  <span
+                    style={{
+                      color: "#00b578",
+                      fontWeight: 600,
+                      fontSize: 15,
+                      marginLeft: 8,
+                    }}
+                  >
+                    yyds
+                  </span>
+                ) : null}
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+              {!goal.completed && (
+                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                  <MailOutline
+                    style={{ borderRadius: 16, fontSize: 24, color: "#1677ff" }}
+                    onClick={() => handleSetRemind(goal)}
+                  />
+                  <DeleteOutline
+                    style={{ borderRadius: 16, fontSize: 24, color: "red" }}
+                    onClick={() => handleDelete(goal.id)}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </PullToRefresh>
       {/* 添加目标弹窗 */}
       <Modal
         visible={addGoalModal}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FloatingBubble, Toast } from "antd-mobile";
+import { FloatingBubble, Toast, PullToRefresh } from "antd-mobile";
 import { BillOutline } from "antd-mobile-icons";
 import BillForm from "./BillForm";
 import { billIcons } from "./billIcons";
@@ -75,67 +75,73 @@ const BillList: React.FC = () => {
           本月暂无账单
         </div>
       )}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {currentBills
-          .sort(
-            (a, b) =>
-              b.date.localeCompare(a.date) || b.time.localeCompare(a.time)
-          )
-          .map((bill) => (
-            <div
-              key={bill.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                background: "#fff",
-                borderRadius: 14,
-                boxShadow: "0 2px 8px #0001",
-                padding: 12,
-                gap: 12,
-              }}
-            >
+      <PullToRefresh
+        onRefresh={async () => {
+          await groupByMonth(bills);
+        }}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {currentBills
+            .sort(
+              (a, b) =>
+                b.date.localeCompare(a.date) || b.time.localeCompare(a.time)
+            )
+            .map((bill) => (
               <div
+                key={bill.id}
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  background: "#f5f7fa",
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 24,
+                  background: "#fff",
+                  borderRadius: 14,
+                  boxShadow: "0 2px 8px #0001",
+                  padding: 12,
+                  gap: 12,
                 }}
               >
-                {bill.icon && bill.icon.startsWith("data:image") ? (
-                  <img
-                    src={bill.icon}
-                    alt="icon"
-                    style={{ width: 32, height: 32, borderRadius: 8 }}
-                  />
-                ) : (
-                  billIcons[bill.category]
-                )}
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600, fontSize: 16 }}>
-                  {bill.category}
+                <div
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 12,
+                    background: "#f5f7fa",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 24,
+                  }}
+                >
+                  {bill.icon && bill.icon.startsWith("data:image") ? (
+                    <img
+                      src={bill.icon}
+                      alt="icon"
+                      style={{ width: 32, height: 32, borderRadius: 8 }}
+                    />
+                  ) : (
+                    billIcons[bill.category]
+                  )}
                 </div>
-                <div style={{ color: "#888", fontSize: 13 }}>
-                  {bill.date} {bill.time} {bill.remark && `｜${bill.remark}`}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, fontSize: 16 }}>
+                    {bill.category}
+                  </div>
+                  <div style={{ color: "#888", fontSize: 13 }}>
+                    {bill.date} {bill.time} {bill.remark && `｜${bill.remark}`}
+                  </div>
+                </div>
+                <div
+                  style={{
+                    fontWeight: 700,
+                    color: "var(--primary-color)",
+                    fontSize: 18,
+                  }}
+                >
+                  -￥{Number(bill.amount).toFixed(2)}
                 </div>
               </div>
-              <div
-                style={{
-                  fontWeight: 700,
-                  color: "var(--primary-color)",
-                  fontSize: 18,
-                }}
-              >
-                -￥{Number(bill.amount).toFixed(2)}
-              </div>
-            </div>
-          ))}
-      </div>
+            ))}
+        </div>
+      </PullToRefresh>
       <FloatingBubble
         axis="xy"
         style={{ right: 32, bottom: 32, zIndex: 10, "--background": "#ff9800" }}
