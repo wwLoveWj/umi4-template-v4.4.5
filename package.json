@@ -18,6 +18,7 @@
     "optimize-bg": "imagemin src/assets/lake.jpg --out-dir=src/assets --plugin.mozjpeg.quality=85"
   },
   "dependencies": {
+    "@amap/amap-jsapi-loader": "^1.0.1",
     "@types/md5": "^2.3.5",
     "ahooks": "^3.8.4",
     "antd-mobile": "^5.38.1",
@@ -37,6 +38,7 @@
     "serve": "^14.2.1",
     "umi": "^4.4.5",
     "umi-plugin-keep-alive": "^0.0.1-beta.35",
+    "vconsole": "^3.15.1",
     "vstores": "^0.0.17"
   },
   "devDependencies": {
