@@ -21,8 +21,20 @@ dayjs.extend(isSameOrBefore);
 import { NotificationProvider } from "@/context/NotificationContext";
 import { OfflineProvider } from "@/context/OfflineContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import VConsole from "vconsole";
 
 export function rootContainer(container: React.ReactNode) {
+  const vConsole = new VConsole({
+    theme: "light", // 主题颜色 'light'|'dark'
+    onReady: function () {
+      console.log("vConsole is ready.");
+    },
+    onClearLog: function () {
+      console.log("on clearLog");
+    },
+    maxLogNumber: 1000, // 最大日志数量
+    disableLogScrolling: false, // 是否禁用日志滚动
+  });
   return (
     <ThemeProvider>
       <NotificationProvider>

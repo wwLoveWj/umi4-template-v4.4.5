@@ -1,18 +1,42 @@
 import React, { useState, useEffect } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
-
+import { GetLocationRegeoAPI } from "@/service/api/checkIn";
+import { useRequest } from "ahooks";
 const LocationCheckIn = () => {
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
   const [checkIns, setCheckIns] = useState([]);
-  const [address, setAddress] = useState("");
+  //   const [address, setAddress] = useState("");
+  // 转地址
+  const { data: address, run: runGetLocationRegeoAPI } = useRequest(
+    async (params) => {
+      const res = await GetLocationRegeoAPI(params);
+      return res.data.regeocode.formatted_address;
+    },
+    {
+      manual: true,
+      onSuccess: (res) => {
+        console.log(res, "逆向编码=================");
+        //用户所在的地理位置信息
+        //   setAddress(res.data.regeocode.formatted_address);
+      },
+      onError(e, params) {
+        console.log(e, params, "Cuowu--------------");
+      },
+    }
+  );
 
   // 初始化地图
   useEffect(() => {
     AMapLoader.load({
-      key: "882c94eea50e2900d1e33043cdfb88d5", // 替换为你的实际key
+      key: process.env.GD_KEY, // 替换为你的实际key
       version: "2.0",
-      plugins: ["AMap.Geolocation", "AMap.PlaceSearch", "AMap.Marker"],
+      plugins: [
+        "AMap.Geolocation",
+        "AMap.PlaceSearch",
+        "AMap.Marker",
+        "AMap.Geocoder",
+      ],
     })
       .then((AMap) => {
         const mapInstance = new AMap.Map("map-container", {
@@ -34,7 +58,6 @@ const LocationCheckIn = () => {
           console.log(status, "地图===============", result);
           if (status === "complete") {
             const { position } = result;
-            debugger;
             setPosition(position);
             mapInstance.setCenter(position);
 
@@ -43,9 +66,14 @@ const LocationCheckIn = () => {
               position: position,
               map: mapInstance,
             });
-
+            runGetLocationRegeoAPI({
+              key: process.env.GD_KEY,
+              location: `${position?.lng},${position?.lat}`,
+              output: "JSON",
+              extensions: "base", // 必需参数：base（精简）或 all（详细）
+            });
             // 获取地址信息
-            getAddress(AMap, position);
+            // getAddress(AMap, position);
           }
         });
       })
@@ -58,8 +86,9 @@ const LocationCheckIn = () => {
   const getAddress = (AMap, lnglat) => {
     const geocoder = new AMap.Geocoder();
     geocoder.getAddress(lnglat, (status, result) => {
+      console.log(result, "地址=================", status);
       if (status === "complete" && result.regeocode) {
-        setAddress(result.regeocode.formattedAddress);
+        // setAddress(result.regeocode.formattedAddress);
       }
     });
   };
@@ -67,7 +96,7 @@ const LocationCheckIn = () => {
   // 签到功能
   const handleCheckIn = () => {
     if (!position) return;
-
+    console.log(address, "地址信息");
     const newCheckIn = {
       id: Date.now(),
       time: new Date().toLocaleString(),
@@ -100,7 +129,6 @@ const LocationCheckIn = () => {
         >
           签到
         </button>
-
         <h3>签到记录</h3>
         <ul>
           {checkIns.map((item) => (
