@@ -2,11 +2,20 @@ import React, { useState, useEffect } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
+// import { Toast } from "antd-mobile";
+
 const LocationCheckIn = () => {
   const [map, setMap] = useState(null);
   const [position, setPosition] = useState(null);
-  const [checkIns, setCheckIns] = useState([]);
-  //   const [address, setAddress] = useState("");
+  const [checkIns, setCheckIns] = useState<
+    {
+      id: number;
+      time: string;
+      position: never;
+      address: string;
+    }[]
+  >([]);
+  // const [address, setAddress] = useState("");
   // 转地址
   const { data: address, run: runGetLocationRegeoAPI } = useRequest(
     async (params) => {
@@ -44,7 +53,6 @@ const LocationCheckIn = () => {
           viewMode: "3D",
         });
         setMap(mapInstance);
-
         // 添加定位控件
         const geolocation = new AMap.Geolocation({
           enableHighAccuracy: true,
@@ -73,7 +81,7 @@ const LocationCheckIn = () => {
               extensions: "base", // 必需参数：base（精简）或 all（详细）
             });
             // 获取地址信息
-            // getAddress(AMap, position);
+            // getAddress(AMap, [position?.lng, position?.lat]);
           }
         });
       })
@@ -89,6 +97,8 @@ const LocationCheckIn = () => {
       console.log(result, "地址=================", status);
       if (status === "complete" && result.regeocode) {
         // setAddress(result.regeocode.formattedAddress);
+      } else {
+        // Toast.show("根据经纬度查询地址失败！");
       }
     });
   };
