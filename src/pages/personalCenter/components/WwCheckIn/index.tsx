@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import AMapLoader from "@amap/amap-jsapi-loader";
 import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
-// import { Toast } from "antd-mobile";
+import { Input } from "antd-mobile";
 
 const LocationCheckIn = () => {
-  const [map, setMap] = useState(null);
+  const [map, setMap] = useState();
   const [position, setPosition] = useState(null);
   const [checkIns, setCheckIns] = useState<
     {
@@ -15,6 +15,10 @@ const LocationCheckIn = () => {
       address: string;
     }[]
   >([]);
+  const [lastCheckInPosition, setLastCheckInPosition] = useState(null); //最近一次的打卡信息
+  const [photo, setPhoto] = useState<string | ArrayBuffer | null>(null);
+  const [lngAndLat, setLngAndLat] = useState(null); //获取输入地点的经纬度信息
+  const [valueLngLat, setValueLngLat] = useState(""); //输入的想获取的地点名称
   // const [address, setAddress] = useState("");
   // 转地址
   const { data: address, run: runGetLocationRegeoAPI } = useRequest(
@@ -49,13 +53,13 @@ const LocationCheckIn = () => {
     })
       .then((AMap) => {
         const mapInstance = new AMap.Map("map-container", {
-          zoom: 15,
-          viewMode: "3D",
+          zoom: 15, //级别
+          viewMode: "3D", //使用3D视图
         });
-        setMap(mapInstance);
+        setMap(AMap);
         // 添加定位控件
         const geolocation = new AMap.Geolocation({
-          enableHighAccuracy: true,
+          enableHighAccuracy: true, //是否使用高精度定位，默认:true
           timeout: 10000,
           buttonPosition: "RB",
         });
@@ -74,6 +78,7 @@ const LocationCheckIn = () => {
               position: position,
               map: mapInstance,
             });
+            // 获取签到地址信息
             runGetLocationRegeoAPI({
               key: process.env.GD_KEY,
               location: `${position?.lng},${position?.lat}`,
@@ -92,7 +97,10 @@ const LocationCheckIn = () => {
 
   // 获取地址信息
   const getAddress = (AMap, lnglat) => {
-    const geocoder = new AMap.Geocoder();
+    const geocoder = new AMap.Geocoder({
+      city: "重庆", // 限定在北京市搜索
+      radius: 1000, // 搜索半径（单位：米）
+    });
     geocoder.getAddress(lnglat, (status, result) => {
       console.log(result, "地址=================", status);
       if (status === "complete" && result.regeocode) {
@@ -103,18 +111,54 @@ const LocationCheckIn = () => {
     });
   };
 
-  // 签到功能
+  // 添加拍照/上传函数
+  const handleTakePhoto = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPhoto(event.target!.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  // 在handleCheckIn函数中添加距离检查
   const handleCheckIn = () => {
-    if (!position) return;
-    console.log(address, "地址信息");
+    if (!position || !lastCheckInPosition) {
+      // 第一次签到不做距离限制
+      const newCheckIn = {
+        id: Date.now(),
+        time: new Date().toLocaleString(),
+        position,
+        address,
+      };
+      setCheckIns([...checkIns, newCheckIn]);
+      setLastCheckInPosition(position);
+      alert(`第一次签到成功！位置：${address}`);
+      return;
+    }
+
+    // 计算与上次签到的距离(米)
+    const distance = map.GeometryUtil.distance(position, lastCheckInPosition);
+    console.log(distance, "距离-----------");
+    const allowedDistance = 500; // 允许500米内签到
+
+    if (distance < allowedDistance) {
+      alert(`距离上次签到点太近，请移动至少${allowedDistance}米后再签到`);
+      return;
+    }
+
+    // 允许签到
     const newCheckIn = {
       id: Date.now(),
       time: new Date().toLocaleString(),
-      position: position,
-      address: address,
+      position,
+      address,
+      photo,
     };
-
     setCheckIns([...checkIns, newCheckIn]);
+    setPhoto(null); // 清空照片
+    setLastCheckInPosition(position);
     alert(`签到成功！位置：${address}`);
   };
 
@@ -125,7 +169,13 @@ const LocationCheckIn = () => {
       <div style={{ padding: "20px" }}>
         <h2>当前位置信息</h2>
         {address && <p>{address}</p>}
-
+        <input
+          type="file"
+          accept="image/*"
+          capture="camera"
+          onChange={handleTakePhoto}
+        />
+        {photo && <img src={photo} alt="签到照片" style={{ width: "100px" }} />}
         <button
           onClick={handleCheckIn}
           style={{
@@ -148,6 +198,73 @@ const LocationCheckIn = () => {
             </li>
           ))}
         </ul>
+      </div>
+
+      <div>
+        <h2>获取某地坐标</h2>
+        <Input
+          placeholder="请输入想获取坐标的地点名称"
+          clearable
+          onChange={(e) => {
+            setValueLngLat(e);
+          }}
+        />
+        <button
+          onClick={() => {
+            // 使用官方推荐的异步加载方式
+            AMapLoader.load({
+              key: process.env.GD_KEY, // 必须是「Web端(JS API)」类型的Key
+              version: "2.0",
+              plugins: ["AMap.Geocoder"], // 明确加载Geocoder插件
+            })
+              .then((AMap) => {
+                // 初始化地理编码器
+                const geocoder = new AMap.Geocoder({
+                  city: "全国", // 优先搜索城市
+                  radius: 1000, // 搜索范围（米）
+                  extensions: "base", // 返回基础地址信息（可选'all'返回详细信息）
+                });
+                console.log("进来了吗？", valueLngLat, geocoder.getLocation);
+                // 搜索杭州市的"西湖"
+                geocoder.getLocation(valueLngLat, (status, result) => {
+                  console.log(status, "进来了");
+                  console.log(
+                    valueLngLat,
+                    result,
+                    "990-------------------------"
+                  );
+                  if (status === "complete") {
+                    console.log("西湖坐标:", result.geocodes[0].location);
+                    setLngAndLat(result.geocodes[0].location);
+                  } else {
+                    console.error("地理编码失败:", result?.info || status);
+                  }
+                });
+                // 示例：逆地理编码
+                // geocoder.getAddress(
+                //   [116.397428, 39.90923],
+                //   (status, result) => {
+                //     if (status === "complete" && result.regeocode) {
+                //       console.log(
+                //         "完整地址:",
+                //         result.regeocode.formattedAddress
+                //       );
+                //     } else {
+                //       console.error("逆地理编码失败:", result?.info || status);
+                //     }
+                //   }
+                // );
+              })
+              .catch((error) => {
+                console.error("高德地图加载失败:", error);
+              });
+          }}
+        >
+          获取某地坐标
+        </button>
+        <p>
+          经度：{lngAndLat?.lng}纬度：{lngAndLat?.lat}
+        </p>
       </div>
     </div>
   );
