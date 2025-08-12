@@ -3,7 +3,7 @@ import AMapLoader from "@amap/amap-jsapi-loader";
 import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
 import { Input } from "antd-mobile";
-
+import { storage } from "@/utils/storage";
 const LocationCheckIn = () => {
   const [map, setMap] = useState();
   const [position, setPosition] = useState(null);
@@ -17,10 +17,7 @@ const LocationCheckIn = () => {
   >([]);
   const [lastCheckInPosition, setLastCheckInPosition] = useState(null); //最近一次的打卡信息
   const [photo, setPhoto] = useState<string | ArrayBuffer | null>(null);
-  const [lngAndLat, setLngAndLat] = useState({
-    lng: 106.499219,
-    lat: 29.619455,
-  }); //获取输入地点的经纬度信息
+  const [lngAndLat, setLngAndLat] = useState(storage.get("lngAndLat-info")); //获取输入地点的经纬度信息
   const [valueLngLat, setValueLngLat] = useState(""); //输入的想获取的地点名称
   // const [address, setAddress] = useState("");
   // 转地址
@@ -42,6 +39,39 @@ const LocationCheckIn = () => {
     }
   );
 
+  // 监听是否接近目标地点
+  const monitorApproachedTarget = (
+    geolocation,
+    checkDistance,
+    targetAddress
+  ) => {
+    geolocation.watchPosition((status, result) => {
+      if (status === "complete") {
+        const userLocation = [result.position.lng, result.position.lat];
+        const isInRange = checkDistance(userLocation, targetAddress, 200);
+        console.log("监听目标", userLocation, targetAddress, isInRange);
+        if (isInRange) {
+          alert("🚨 你已进入目标地点 200 米范围内！");
+          setTimeout(() => {
+            const nav: any = navigator;
+            nav.vibrate =
+              nav.vibrate ||
+              nav.webkitVibrate ||
+              nav.mozVibrate ||
+              nav.msVibrate;
+            if (nav.vibrate) {
+              console.log("支持设备震动！");
+              nav.vibrate(5000);
+            }
+          }, 1000);
+          // 可选：停止监听
+          geolocation.clearWatch();
+        }
+      } else {
+        console.error("定位失败:", result.message);
+      }
+    });
+  };
   // 初始化地图
   useEffect(() => {
     AMapLoader.load({
@@ -62,6 +92,24 @@ const LocationCheckIn = () => {
           viewMode: "3D", //使用3D视图
         });
         setMap(AMap);
+        // 添加定位控件
+        const geolocation = new AMap.Geolocation({
+          enableHighAccuracy: true, //是否使用高精度定位，默认:true
+          timeout: 10000,
+          buttonPosition: "RB",
+          zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+        });
+        mapInstance.addControl(geolocation);
+
+        // 测算两点间距离信息
+        function checkDistance(userLocation, targetLocation, radius = 10) {
+          const distance = AMap.GeometryUtil.distance(
+            new AMap.LngLat(userLocation[0], userLocation[1]),
+            new AMap.LngLat(targetLocation?.lng, targetLocation?.lat)
+          );
+          console.log(distance, "接近距离");
+          return distance <= radius; // 返回是否在范围内
+        }
         //点击地图获取位置
         mapInstance.on("click", function (e) {
           console.log(e, "点击地图获取位置");
@@ -73,24 +121,40 @@ const LocationCheckIn = () => {
             map: mapInstance,
           });
           setLngAndLat({ lng, lat });
+          geolocation.watchPosition((status, result) => {
+            if (status === "complete") {
+              const userLocation = [result.position.lng, result.position.lat];
+              const isInRange = checkDistance(userLocation, { lng, lat }, 200);
+              console.log(
+                "重新设置目标位置后，监听目标",
+                userLocation,
+                { lng, lat },
+                isInRange
+              );
+              if (isInRange) {
+                alert("🚨 你已进入目标地点 200 米范围内！");
+                setTimeout(() => {
+                  const nav: any = navigator;
+                  nav.vibrate =
+                    nav.vibrate ||
+                    nav.webkitVibrate ||
+                    nav.mozVibrate ||
+                    nav.msVibrate;
+                  if (nav.vibrate) {
+                    console.log("支持设备震动！");
+                    nav.vibrate(5000);
+                  }
+                }, 1000);
+                // 可选：停止监听
+                geolocation.clearWatch();
+              }
+            } else {
+              console.error("定位失败:", result.message);
+            }
+          });
+          storage.set("lngAndLat-info", { lng, lat });
         });
-        // 添加定位控件
-        const geolocation = new AMap.Geolocation({
-          enableHighAccuracy: true, //是否使用高精度定位，默认:true
-          timeout: 10000,
-          buttonPosition: "RB",
-          zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-        });
-        mapInstance.addControl(geolocation);
-        // 测算两点间距离信息
-        function checkDistance(userLocation, targetLocation, radius = 10) {
-          const distance = AMap.GeometryUtil.distance(
-            new AMap.LngLat(userLocation[0], userLocation[1]),
-            new AMap.LngLat(targetLocation?.lng, targetLocation?.lat)
-          );
-          console.log(distance, "接近距离");
-          return distance <= radius; // 返回是否在范围内
-        }
+
         // 监听是否接近目标地点
         geolocation.watchPosition((status, result) => {
           if (status === "complete") {
@@ -146,7 +210,7 @@ const LocationCheckIn = () => {
       .catch((e) => {
         console.error("地图加载失败:", e);
       });
-  }, [lngAndLat]);
+  }, []);
 
   // 获取地址信息
   const getAddress = (AMap, lnglat) => {
