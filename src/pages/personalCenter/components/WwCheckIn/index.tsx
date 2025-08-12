@@ -17,7 +17,10 @@ const LocationCheckIn = () => {
   >([]);
   const [lastCheckInPosition, setLastCheckInPosition] = useState(null); //最近一次的打卡信息
   const [photo, setPhoto] = useState<string | ArrayBuffer | null>(null);
-  const [lngAndLat, setLngAndLat] = useState(null); //获取输入地点的经纬度信息
+  const [lngAndLat, setLngAndLat] = useState({
+    lng: 106.499219,
+    lat: 29.619455,
+  }); //获取输入地点的经纬度信息
   const [valueLngLat, setValueLngLat] = useState(""); //输入的想获取的地点名称
   // const [address, setAddress] = useState("");
   // 转地址
@@ -49,22 +52,72 @@ const LocationCheckIn = () => {
         "AMap.PlaceSearch",
         "AMap.Marker",
         "AMap.Geocoder",
+        "AMap.AdvancedInfoWindow",
       ],
     })
       .then((AMap) => {
+        //存储实例地图
         const mapInstance = new AMap.Map("map-container", {
-          zoom: 15, //级别
+          zoom: 15, //设置地图显示的缩放级别
           viewMode: "3D", //使用3D视图
         });
         setMap(AMap);
+        //点击地图获取位置
+        mapInstance.on("click", function (e) {
+          console.log(e, "点击地图获取位置");
+          let lng = e.lnglat.getLng(); //获取经度
+          let lat = e.lnglat.getLat(); //获取纬度
+          // 添加当前位置标记
+          new AMap.Marker({
+            position: e.lnglat,
+            map: mapInstance,
+          });
+          setLngAndLat({ lng, lat });
+        });
         // 添加定位控件
         const geolocation = new AMap.Geolocation({
           enableHighAccuracy: true, //是否使用高精度定位，默认:true
           timeout: 10000,
           buttonPosition: "RB",
+          zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
         });
         mapInstance.addControl(geolocation);
-
+        // 测算两点间距离信息
+        function checkDistance(userLocation, targetLocation, radius = 10) {
+          const distance = AMap.GeometryUtil.distance(
+            new AMap.LngLat(userLocation[0], userLocation[1]),
+            new AMap.LngLat(targetLocation?.lng, targetLocation?.lat)
+          );
+          console.log(distance, "接近距离");
+          return distance <= radius; // 返回是否在范围内
+        }
+        // 监听是否接近目标地点
+        geolocation.watchPosition((status, result) => {
+          if (status === "complete") {
+            const userLocation = [result.position.lng, result.position.lat];
+            const isInRange = checkDistance(userLocation, lngAndLat, 200);
+            console.log("监听目标", userLocation, lngAndLat, isInRange);
+            if (isInRange) {
+              alert("🚨 你已进入目标地点 200 米范围内！");
+              setTimeout(() => {
+                const nav: any = navigator;
+                nav.vibrate =
+                  nav.vibrate ||
+                  nav.webkitVibrate ||
+                  nav.mozVibrate ||
+                  nav.msVibrate;
+                if (nav.vibrate) {
+                  console.log("支持设备震动！");
+                  nav.vibrate(5000);
+                }
+              }, 1000);
+              // 可选：停止监听
+              geolocation.clearWatch();
+            }
+          } else {
+            console.error("定位失败:", result.message);
+          }
+        });
         // 获取当前位置
         geolocation.getCurrentPosition((status, result) => {
           console.log(status, "地图===============", result);
@@ -93,7 +146,7 @@ const LocationCheckIn = () => {
       .catch((e) => {
         console.error("地图加载失败:", e);
       });
-  }, []);
+  }, [lngAndLat]);
 
   // 获取地址信息
   const getAddress = (AMap, lnglat) => {
@@ -200,8 +253,8 @@ const LocationCheckIn = () => {
         </ul>
       </div>
 
-      <div>
-        <h2>获取某地坐标</h2>
+      <div style={{ padding: "20px" }}>
+        <h2 style={{ margin: "5px 0" }}>获取某地坐标</h2>
         <Input
           placeholder="请输入想获取坐标的地点名称"
           clearable
@@ -210,54 +263,59 @@ const LocationCheckIn = () => {
           }}
         />
         <button
+          style={{
+            padding: "10px 20px",
+            background: "#1890ff",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+            margin: "5px 0",
+          }}
           onClick={() => {
             // 使用官方推荐的异步加载方式
-            AMapLoader.load({
-              key: process.env.GD_KEY, // 必须是「Web端(JS API)」类型的Key
-              version: "2.0",
-              plugins: ["AMap.Geocoder"], // 明确加载Geocoder插件
-            })
-              .then((AMap) => {
-                // 初始化地理编码器
-                const geocoder = new AMap.Geocoder({
-                  city: "全国", // 优先搜索城市
-                  radius: 1000, // 搜索范围（米）
-                  extensions: "base", // 返回基础地址信息（可选'all'返回详细信息）
-                });
-                console.log("进来了吗？", valueLngLat, geocoder.getLocation);
-                // 搜索杭州市的"西湖"
-                geocoder.getLocation(valueLngLat, (status, result) => {
-                  console.log(status, "进来了");
-                  console.log(
-                    valueLngLat,
-                    result,
-                    "990-------------------------"
-                  );
-                  if (status === "complete") {
-                    console.log("西湖坐标:", result.geocodes[0].location);
-                    setLngAndLat(result.geocodes[0].location);
-                  } else {
-                    console.error("地理编码失败:", result?.info || status);
-                  }
-                });
-                // 示例：逆地理编码
-                // geocoder.getAddress(
-                //   [116.397428, 39.90923],
-                //   (status, result) => {
-                //     if (status === "complete" && result.regeocode) {
-                //       console.log(
-                //         "完整地址:",
-                //         result.regeocode.formattedAddress
-                //       );
-                //     } else {
-                //       console.error("逆地理编码失败:", result?.info || status);
-                //     }
-                //   }
-                // );
-              })
-              .catch((error) => {
-                console.error("高德地图加载失败:", error);
-              });
+
+            // 初始化地理编码器
+            const geocoder = new map.Geocoder();
+            // {
+            // city: "全国", // 优先搜索城市
+            // radius: 1000, // 搜索范围（米）
+            // extensions: "base", // 返回基础地址信息（可选'all'返回详细信息）
+            // }
+            console.log(
+              "进来了吗？西湖自定义",
+              valueLngLat,
+              geocoder.getLocation
+            );
+            // 搜索杭州市的"西湖"
+            geocoder.getLocation(valueLngLat, (status, result) => {
+              console.log(status, "进来了西湖");
+              console.log(
+                valueLngLat,
+                result,
+                "西湖地址的结果----------------------"
+              );
+              if (status === "complete") {
+                console.log("西湖坐标:", result.geocodes[0].location);
+                setLngAndLat(result.geocodes[0].location);
+              } else {
+                console.error("地理编码失败:", result?.info || status);
+              }
+            });
+            // 示例：逆地理编码
+            // geocoder.getAddress(
+            //   [116.397428, 39.90923],
+            //   (status, result) => {
+            //     if (status === "complete" && result.regeocode) {
+            //       console.log(
+            //         "完整地址:",
+            //         result.regeocode.formattedAddress
+            //       );
+            //     } else {
+            //       console.error("逆地理编码失败:", result?.info || status);
+            //     }
+            //   }
+            // );
           }}
         >
           获取某地坐标
