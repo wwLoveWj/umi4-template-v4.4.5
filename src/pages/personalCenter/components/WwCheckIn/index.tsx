@@ -4,9 +4,13 @@ import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
 import { Input } from "antd-mobile";
 import { storage } from "@/utils/storage";
+
+let marker;
 const LocationCheckIn = () => {
   const [map, setMap] = useState();
-  const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState(
+    storage.get("lngAndLat-info") || { lng: 106.49732, lat: 29.619233 }
+  );
   const [checkIns, setCheckIns] = useState<
     {
       id: number;
@@ -17,7 +21,7 @@ const LocationCheckIn = () => {
   >([]);
   const [lastCheckInPosition, setLastCheckInPosition] = useState(null); //最近一次的打卡信息
   const [photo, setPhoto] = useState<string | ArrayBuffer | null>(null);
-  const [lngAndLat, setLngAndLat] = useState(storage.get("lngAndLat-info")); //获取输入地点的经纬度信息
+  const [lngAndLat, setLngAndLat] = useState(); //获取输入地点的经纬度信息
   const [valueLngLat, setValueLngLat] = useState(""); //输入的想获取的地点名称
   // const [address, setAddress] = useState("");
   // 转地址
@@ -38,18 +42,45 @@ const LocationCheckIn = () => {
       },
     }
   );
-
+  // 设置签到点
+  const handleSetCheckInPosition = (mapInstance, AMap, place) => {
+    setPosition(place);
+    // 设置中心点
+    mapInstance.setCenter(place);
+    // 添加当前位置标记
+    marker = new AMap.Marker({
+      position: place,
+      map: mapInstance,
+      title: "设定的签到地点",
+    });
+    // 获取签到地址信息
+    runGetLocationRegeoAPI({
+      key: process.env.GD_KEY,
+      location: `${place?.lng},${place?.lat}`,
+      output: "JSON",
+      extensions: "base", // 必需参数：base（精简）或 all（详细）
+    });
+  };
   // 监听是否接近目标地点
   const monitorApproachedTarget = (
     geolocation,
     checkDistance,
     targetAddress
   ) => {
-    geolocation.watchPosition((status, result) => {
+    // geolocation.clearWatch();
+    console.log("666监听", geolocation);
+    return geolocation.watchPosition((status, result) => {
+      console.log("首次实时监听了吗", status, result, targetAddress);
       if (status === "complete") {
+        // 实时移动位置
         const userLocation = [result.position.lng, result.position.lat];
         const isInRange = checkDistance(userLocation, targetAddress, 200);
-        console.log("监听目标", userLocation, targetAddress, isInRange);
+        console.log(
+          "监听目标,第一个实时位置，第二个是目标位置",
+          userLocation,
+          targetAddress,
+          isInRange
+        );
         if (isInRange) {
           alert("🚨 你已进入目标地点 200 米范围内！");
           setTimeout(() => {
@@ -103,97 +134,51 @@ const LocationCheckIn = () => {
 
         // 测算两点间距离信息
         function checkDistance(userLocation, targetLocation, radius = 10) {
+          console.log("尽力啊比较-", targetLocation);
           const distance = AMap.GeometryUtil.distance(
             new AMap.LngLat(userLocation[0], userLocation[1]),
-            new AMap.LngLat(targetLocation?.lng, targetLocation?.lat)
+            new AMap.LngLat(targetLocation[0], targetLocation[1])
           );
           console.log(distance, "接近距离");
           return distance <= radius; // 返回是否在范围内
         }
-        //点击地图获取位置
+        //点击地图获取位置,设置打卡点
         mapInstance.on("click", function (e) {
           console.log(e, "点击地图获取位置");
-          let lng = e.lnglat.getLng(); //获取经度
-          let lat = e.lnglat.getLat(); //获取纬度
+          let lng = e?.lnglat.getLng(); //获取经度
+          let lat = e?.lnglat.getLat(); //获取纬度
+          marker?.remove();
           // 添加当前位置标记
-          new AMap.Marker({
+          marker = new AMap.Marker({
             position: e.lnglat,
             map: mapInstance,
+            title: "设定的签到地点",
           });
           setLngAndLat({ lng, lat });
-          geolocation.watchPosition((status, result) => {
-            if (status === "complete") {
-              const userLocation = [result.position.lng, result.position.lat];
-              const isInRange = checkDistance(userLocation, { lng, lat }, 200);
-              console.log(
-                "重新设置目标位置后，监听目标",
-                userLocation,
-                { lng, lat },
-                isInRange
-              );
-              if (isInRange) {
-                alert("🚨 你已进入目标地点 200 米范围内！");
-                setTimeout(() => {
-                  const nav: any = navigator;
-                  nav.vibrate =
-                    nav.vibrate ||
-                    nav.webkitVibrate ||
-                    nav.mozVibrate ||
-                    nav.msVibrate;
-                  if (nav.vibrate) {
-                    console.log("支持设备震动！");
-                    nav.vibrate(5000);
-                  }
-                }, 1000);
-                // 可选：停止监听
-                geolocation.clearWatch();
-              }
-            } else {
-              console.error("定位失败:", result.message);
-            }
-          });
-          storage.set("lngAndLat-info", { lng, lat });
+          monitorApproachedTarget(geolocation, checkDistance, [lng, lat]);
+          setPosition(e?.lnglat);
+          storage.set("lngAndLat-info", e?.lnglat);
         });
 
         // 监听是否接近目标地点
-        geolocation.watchPosition((status, result) => {
-          if (status === "complete") {
-            const userLocation = [result.position.lng, result.position.lat];
-            const isInRange = checkDistance(userLocation, lngAndLat, 200);
-            console.log("监听目标", userLocation, lngAndLat, isInRange);
-            if (isInRange) {
-              alert("🚨 你已进入目标地点 200 米范围内！");
-              setTimeout(() => {
-                const nav: any = navigator;
-                nav.vibrate =
-                  nav.vibrate ||
-                  nav.webkitVibrate ||
-                  nav.mozVibrate ||
-                  nav.msVibrate;
-                if (nav.vibrate) {
-                  console.log("支持设备震动！");
-                  nav.vibrate(5000);
-                }
-              }, 1000);
-              // 可选：停止监听
-              geolocation.clearWatch();
-            }
-          } else {
-            console.error("定位失败:", result.message);
-          }
-        });
+        monitorApproachedTarget(geolocation, checkDistance, [
+          position?.lng,
+          position?.lat,
+        ]);
         // 获取当前位置
         geolocation.getCurrentPosition((status, result) => {
-          console.log(status, "地图===============", result);
           if (status === "complete") {
             const { position } = result;
+            console.log(position, "当前位置");
             setPosition(position);
+            storage.set("lngAndLat-info", position);
             mapInstance.setCenter(position);
 
             // 添加当前位置标记
-            new AMap.Marker({
+            marker = new AMap.Marker({
               position: position,
               map: mapInstance,
+              title: "设定的签到地点",
             });
             // 获取签到地址信息
             runGetLocationRegeoAPI({
