@@ -4,8 +4,9 @@ import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
 import { storage } from "@/utils/storage";
 
+let myWatchId;
 const LocationCheckIn = () => {
-  const [AMap, setMap] = useState();
+  const [mapInfo, setMapInfo] = useState();
   const [position, setPosition] = useState(storage.get("lngAndLat-info"));
   const [checkIns, setCheckIns] = useState<
     {
@@ -40,13 +41,7 @@ const LocationCheckIn = () => {
 
   // 监听是否接近目标地点
   const monitorApproachedTarget = (geolocation, checkDistance) => {
-    const lastestWatchId = storage.get("lngAndLat-watchId");
-    if (lastestWatchId) {
-      // 停止这个特定的监听
-      geolocation.clearWatch(lastestWatchId);
-    }
-
-    const watchId = geolocation.watchPosition((status, result) => {
+    myWatchId = geolocation.watchPosition((status, result) => {
       console.log("首次实时监听了吗", status, result);
       if (status === "complete") {
         // 实时移动位置
@@ -74,8 +69,7 @@ const LocationCheckIn = () => {
         console.error("定位失败:", result.message);
       }
     });
-    storage.set("lngAndLat-watchId", watchId);
-    console.log(watchId, "监听消失了？");
+    console.log(myWatchId, "监听消失了？");
   };
 
   // 初始化地图
@@ -91,12 +85,40 @@ const LocationCheckIn = () => {
         "AMap.AdvancedInfoWindow",
       ],
     });
-    setMap(map);
+    //存储实例地图
+    const mapInstance = new map.Map("map-container", {
+      zoom: 15, //设置地图显示的缩放级别
+      viewMode: "3D", //使用3D视图
+    });
+    // 添加定位控件
+    const geolocation = new map.Geolocation({
+      enableHighAccuracy: true, //是否使用高精度定位，默认:true
+      timeout: 10000,
+      buttonPosition: "RB",
+      zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+    });
+    setMapInfo({ map, mapInstance, geolocation });
+    if (!position) {
+      // 获取当前位置
+      geolocation.getCurrentPosition((status, result) => {
+        if (status === "complete") {
+          const { position } = result;
+          console.log(position, "当前位置============================");
+          handleSetCheckInPosition(mapInstance, map, position);
+        }
+      });
+    }
+    return { map, mapInstance, geolocation };
   };
   useEffect(() => {
     initMap();
-    setPosition(storage.get("lngAndLat-info"));
-    console.log("进来了多少次===============-----------------------");
+    // 组件卸载时清除监听
+    return () => {
+      if (myWatchId) {
+        mapInfo?.geolocation.clearWatch(myWatchId);
+        myWatchId = null;
+      }
+    };
   }, []);
 
   // 设置签到点
@@ -120,21 +142,13 @@ const LocationCheckIn = () => {
     });
   };
   useEffect(() => {
+    const AMap = mapInfo?.map;
+    const mapInstance = mapInfo?.mapInstance;
+    const geolocation = mapInfo?.geolocation;
     if (AMap) {
-      //存储实例地图
-      const mapInstance = new AMap.Map("map-container", {
-        zoom: 15, //设置地图显示的缩放级别
-        viewMode: "3D", //使用3D视图
-      });
-      // 添加定位控件
-      const geolocation = new AMap.Geolocation({
-        enableHighAccuracy: true, //是否使用高精度定位，默认:true
-        timeout: 10000,
-        buttonPosition: "RB",
-        zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-      });
       mapInstance.addControl(geolocation);
       if (position) {
+        console.log("进来了多少次===============-----------------------");
         // 设置中心点坐标
         mapInstance.setCenter(position);
         // 添加当前位置标记
@@ -172,18 +186,9 @@ const LocationCheckIn = () => {
 
         // 监听是否接近目标地点
         monitorApproachedTarget(geolocation, checkDistance);
-      } else {
-        // 获取当前位置
-        geolocation.getCurrentPosition((status, result) => {
-          if (status === "complete") {
-            const { position } = result;
-            console.log(position, "当前位置============================");
-            handleSetCheckInPosition(mapInstance, AMap, position);
-          }
-        });
       }
     }
-  }, [position, AMap]);
+  }, [position, mapInfo?.map]);
 
   // 添加拍照/上传函数
   const handleTakePhoto = (e) => {

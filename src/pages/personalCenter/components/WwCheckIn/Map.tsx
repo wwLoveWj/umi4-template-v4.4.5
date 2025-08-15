@@ -28,9 +28,15 @@ const Map = () => {
     }
   );
   // 设置签到点
-  const handleSetCheckInPosition = (mapInstance, AMap, place) => {
+  const handleSetCheckInPosition = (
+    mapInstance,
+    AMap,
+    place,
+    first = false
+  ) => {
     // 设置中心点
     mapInstance.setCenter(place);
+    console.log(place, "mmn---------");
     // 移除以前的标记
     marker?.remove();
     // 添加当前位置标记
@@ -44,7 +50,9 @@ const Map = () => {
     // 获取签到地址信息
     runGetLocationRegeoAPI({
       key: process.env.GD_KEY,
-      location: `${place?.lng},${place?.lat}`,
+      location: first
+        ? `${place?.lng},${place?.lat}`
+        : `${place[0]},${place[1]}`,
       output: "JSON",
       extensions: "base", // 必需参数：base（精简）或 all（详细）
     });
@@ -92,6 +100,10 @@ const Map = () => {
           handleSetCheckInPosition(mapInstance, AMap, position);
         }
       });
+    } else {
+      const pos = storage.get("lngAndLat-info");
+      console.log(pos, "009------------");
+      handleSetCheckInPosition(mapInstance, AMap, pos, true);
     }
   };
   useEffect(() => {
