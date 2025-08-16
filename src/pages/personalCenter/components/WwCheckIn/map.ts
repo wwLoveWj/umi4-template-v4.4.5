@@ -49,12 +49,8 @@ export const getLngAndLat = (place) => {
     return [place?.lng, place?.lat];
   }
 };
-// 设置签到点
+// 给当前经纬度位置打标记录
 export const commonSetCheckInPosition = (mapInstance, AMap, place) => {
-  //要转换的地理经纬度坐标
-  var longitude = 116.4;
-  var latitude = 39.9;
-  console.log(getLngAndLat(place), "009-------");
   //构造成 AMap.LngLat 对象后传入
   const lnglat = new AMap.LngLat(
     getLngAndLat(place)[0],
@@ -78,13 +74,23 @@ export const commonSetCheckInPosition = (mapInstance, AMap, place) => {
   });
 };
 
+// 测算两点间距离信息
+function checkDistance(AMap, position, userLocation, radius = 10) {
+  console.log("--------------目标位置", position);
+  const distance = AMap.GeometryUtil.distance(
+    new AMap.LngLat(userLocation[0], userLocation[1]),
+    new AMap.LngLat(getLngAndLat(position)[0], getLngAndLat(position)[1])
+  );
+  console.log(distance, "接近距离");
+  return distance <= radius; // 返回是否在范围内
+}
 // 监听是否接近设定的签到目标地点
-export const monitorApproachedTarget = (geolocation, checkDistance) => {
-  const myWatchId = geolocation.watchPosition((status, result) => {
+export const monitorApproachedTarget = (geolocation, map, position) => {
+  geolocation.watchPosition((status, result) => {
     if (status === "complete") {
       // 实时移动位置
       const userLocation = [result.position.lng, result.position.lat];
-      const isInRange = checkDistance(userLocation, 200);
+      const isInRange = checkDistance(map, position, userLocation, 200);
       console.log("监听目标,用户实时位置", userLocation, isInRange);
       if (isInRange) {
         alert("🚨 你已进入目标地点 200 米范围内！");
@@ -104,6 +110,4 @@ export const monitorApproachedTarget = (geolocation, checkDistance) => {
       console.error("定位失败:", result.message);
     }
   });
-  console.log(myWatchId, "监听消失了？");
-  return myWatchId;
 };

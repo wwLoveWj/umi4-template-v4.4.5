@@ -70,11 +70,9 @@ const LocationCheckIn = () => {
   useEffect(() => {
     const AMap = mapInfo?.map;
     const mapInstance = mapInfo?.mapInstance;
-    // const geolocation = mapInfo?.geolocation;
     if (AMap && position) {
-      console.log("进来了多少次===============position-----------------------");
+      // 标记当前位置
       commonSetCheckInPosition(mapInstance, AMap, position);
-      // 设置中心点坐标
       console.log(
         position,
         "签到地址中心点信息------------position",
@@ -87,24 +85,9 @@ const LocationCheckIn = () => {
         output: "JSON",
         extensions: "base", // 必需参数：base（精简）或 all（详细）
       });
-      // 测算两点间距离信息
-      function checkDistance(userLocation, radius = 10) {
-        console.log(
-          getLngAndLat(position),
-          "--------------目标位置",
-          position,
-          userLocation
-        );
-        const distance = AMap.GeometryUtil.distance(
-          new AMap.LngLat(userLocation[0], userLocation[1]),
-          new AMap.LngLat(getLngAndLat(position)[0], getLngAndLat(position)[1])
-        );
-        console.log(distance, "接近距离");
-        return distance <= radius; // 返回是否在范围内
-      }
 
       // 监听是否接近目标地点
-      monitorApproachedTarget(geolocation, checkDistance);
+      monitorApproachedTarget(geolocation, AMap, position);
     }
   }, [position, mapInfo?.map]);
 
