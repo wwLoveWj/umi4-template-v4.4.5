@@ -67,6 +67,13 @@ const PersonalCenter: React.FC = () => {
   const loginInfo = storage.get("login-info");
   const canChgList = [
     {
+      title: "设置签到点",
+      icon: <SetOutline />,
+      onClick: () => {
+        history.push("/checkIn/setting");
+      },
+    },
+    {
       title: "签到",
       icon: <SetOutline />,
       onClick: () => {

@@ -239,6 +239,14 @@ export const menuRoutes: API.MenuRoutesType[] = [
     showBack: true,
   },
   {
+    key: "checkIn-setting",
+    title: "设置签到地点",
+    path: "/checkIn/setting",
+    component: "./personalCenter/components/WwCheckIn/Map",
+    hideTabBar: true,
+    showBack: true,
+  },
+  {
     key: "settings/notification",
     title: "通知设置",
     path: "/settings/notification",

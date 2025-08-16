@@ -1,5 +1,23 @@
 import AMapLoader from "@amap/amap-jsapi-loader";
 // 初始化地图配置
+export const getGeolocation = (map, mapInstance) => {
+  // 添加定位控件
+  const geolocation = new map.Geolocation({
+    enableHighAccuracy: true, //是否使用高精度定位，默认:true
+    timeout: 10000,
+    maximumAge: 0, //定位结果缓存0毫秒，默认：0
+    convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+    showButton: true, //显示定位按钮，默认：true
+    buttonPosition: "RB",
+    buttonOffset: new map.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+    showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+    showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+    panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
+    zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+  });
+  mapInstance.addControl(geolocation);
+  return geolocation;
+};
 export const initMapConfig = async () => {
   const map = await AMapLoader.load({
     key: process.env.GD_KEY, // 替换为你的实际key
@@ -17,22 +35,8 @@ export const initMapConfig = async () => {
     zoom: 15, //设置地图显示的缩放级别
     viewMode: "3D", //使用3D视图
   });
-  // 添加定位控件
-  const geolocation = new map.Geolocation({
-    enableHighAccuracy: true, //是否使用高精度定位，默认:true
-    timeout: 10000,
-    maximumAge: 0, //定位结果缓存0毫秒，默认：0
-    convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-    showButton: true, //显示定位按钮，默认：true
-    buttonPosition: "RB",
-    buttonOffset: new map.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-    showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
-    showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
-    panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
-    zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-  });
-  mapInstance.addControl(geolocation);
-  return { map, mapInstance, geolocation };
+
+  return { map, mapInstance };
 };
 // 获取经纬度
 export const getLngAndLat = (place) => {
@@ -61,28 +65,17 @@ export const commonSetCheckInPosition = (mapInstance, AMap, place) => {
   console.log(pixel.x, pixel.y, "经纬度换px======"); //即为经纬度在 #container 上对应的像素坐标
   // 设置中心点
   mapInstance.setCenter(place);
-  // gps坐标转换为高德坐标
-  AMap.convertFrom(
-    `${getLngAndLat(place)[0]},${getLngAndLat(place)[1]}`,
-    "gps",
-    function (status, result) {
-      if (result.info === "ok") {
-        const resLnglat = result.locations[0];
-        console.log("转换坐标系后的坐标", resLnglat);
-        const marker = new AMap.Marker({
-          position: resLnglat,
-          map: mapInstance,
-          title: "当前用户实时位置",
-        });
-        // 添加当前位置标记
-        mapInstance.add(marker);
-        marker.setLabel({
-          offset: new AMap.Pixel(pixel?.x, pixel?.y),
-          content: "高德坐标系中首开广场（正确）",
-        });
-      }
-    }
-  );
+  const marker = new AMap.Marker({
+    position: place,
+    map: mapInstance,
+    title: "当前用户实时位置",
+  });
+  // 添加当前位置标记
+  mapInstance.add(marker);
+  marker.setLabel({
+    offset: new AMap.Pixel(pixel?.x, pixel?.y),
+    content: "高德坐标系中首开广场（正确）",
+  });
 };
 
 // 监听是否接近设定的签到目标地点

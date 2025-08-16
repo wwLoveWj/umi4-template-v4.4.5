@@ -14,6 +14,7 @@ type StorageType = {
     todoId: string;
   }[];
   html5QrCode: any;
+  "lngAndLat-info": { lng: number; lat: number };
 };
 
 export const storage = vstores.create<StorageType>({

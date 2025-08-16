@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
-import AMapLoader from "@amap/amap-jsapi-loader";
 import { GetLocationRegeoAPI } from "@/service/api/checkIn";
 import { useRequest } from "ahooks";
 import { storage } from "@/utils/storage";
+import {
+  initMapConfig,
+  getGeolocation,
+  commonSetCheckInPosition,
+  monitorApproachedTarget,
+  getLngAndLat,
+} from "./map.ts";
 
-let myWatchId;
+let geolocation;
 const LocationCheckIn = () => {
-  const [mapInfo, setMapInfo] = useState();
-  const [position, setPosition] = useState();
+  const [mapInfo, setMapInfo] = useState<{
+    map: any;
+    mapInstance: any;
+  }>();
+  const [position, setPosition] = useState<
+    { lng: number; lat: number } | number[] | undefined
+  >(storage.get("lngAndLat-info"));
   const [checkIns, setCheckIns] = useState<
     {
       id: number;
@@ -31,202 +42,69 @@ const LocationCheckIn = () => {
       manual: true,
       refreshDeps: [position],
       onSuccess: (res) => {
-        console.log(res, "逆向编码=================");
+        console.log(res, "设置的签到点的地理位置信息=================");
       },
       onError(e, params) {
-        console.log(e, params, "Cuowu--------------");
+        console.log(e, params, "逆向编码地址报错了--------------");
       },
     }
   );
 
-  // 监听是否接近目标地点
-  const monitorApproachedTarget = (geolocation, checkDistance) => {
-    myWatchId = geolocation.watchPosition((status, result) => {
-      console.log("首次实时监听了吗", status, result);
-      if (status === "complete") {
-        // 实时移动位置
-        const userLocation = [result.position.lng, result.position.lat];
-        const isInRange = checkDistance(userLocation, 200);
-        console.log("监听目标,第一个实时位置", userLocation, isInRange);
-        if (isInRange) {
-          alert("🚨 你已进入目标地点 200 米范围内！");
-          setTimeout(() => {
-            const nav: any = navigator;
-            nav.vibrate =
-              nav.vibrate ||
-              nav.webkitVibrate ||
-              nav.mozVibrate ||
-              nav.msVibrate;
-            if (nav.vibrate) {
-              console.log("支持设备震动！");
-              nav.vibrate(5000);
-            }
-          }, 1000);
-          // 可选：停止监听
-          geolocation.clearWatch();
-        }
-      } else {
-        console.error("定位失败:", result.message);
-      }
-    });
-    console.log(myWatchId, "监听消失了？");
-  };
-
   // 初始化地图
   const initMap = async () => {
-    const map = await AMapLoader.load({
-      key: process.env.GD_KEY, // 替换为你的实际key
-      version: "2.0",
-      plugins: [
-        "AMap.Geolocation",
-        "AMap.PlaceSearch",
-        "AMap.Marker",
-        "AMap.Geocoder",
-        "AMap.AdvancedInfoWindow",
-      ],
-    });
-    //存储实例地图
-    const mapInstance = new map.Map("map-container", {
-      zoom: 15, //设置地图显示的缩放级别
-      viewMode: "3D", //使用3D视图
-    });
-
+    const getMapConfig = await initMapConfig();
+    const { mapInstance, map } = getMapConfig;
+    setMapInfo(getMapConfig);
     // 添加定位控件
-    const geolocation = new map.Geolocation({
-      enableHighAccuracy: true, //是否使用高精度定位，默认:true
-      timeout: 10000,
-      maximumAge: 0, //定位结果缓存0毫秒，默认：0
-      convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
-      showButton: true, //显示定位按钮，默认：true
-      buttonPosition: "RB",
-      buttonOffset: new map.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-      showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
-      showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
-      panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
-      zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-    });
-    mapInstance.addControl(geolocation);
-    setMapInfo({ map, mapInstance, geolocation });
-    const place = storage.get("lngAndLat-info");
-    setPosition(place);
-    console.log(place, "place==========storge", place instanceof Array, !place);
-    if (!place) {
-      // 获取当前位置
-      geolocation.getCurrentPosition((status, result) => {
-        if (status === "complete") {
-          const { position } = result;
-          console.log(position, "当前位置============================");
-          handleSetCheckInPosition(mapInstance, map, position);
-        }
-      });
-    }
-    return { map, mapInstance, geolocation };
+    geolocation = getGeolocation(map, mapInstance);
   };
   useEffect(() => {
     initMap();
     // 组件卸载时清除监听
     return () => {
-      if (myWatchId) {
-        mapInfo?.geolocation.clearWatch(myWatchId);
-        myWatchId = null;
-      }
+      geolocation?.clearWatch();
+      geolocation = null;
     };
   }, []);
 
-  // 设置签到点
-  const handleSetCheckInPosition = (mapInstance, AMap, place) => {
-    //要转换的地理经纬度坐标
-    var longitude = 116.4;
-    var latitude = 39.9;
-
-    //构造成 AMap.LngLat 对象后传入
-    const lnglat = new AMap.LngLat(place?.lng, place?.lat);
-
-    // 获得 AMap.Pixel 对象
-    const pixel = mapInstance.lngLatToContainer(lnglat);
-    console.log(pixel.x, pixel.y, "经纬度换px======"); //即为经纬度在 #container 上对应的像素坐标
-
-    // 设置中心点
-    mapInstance.setCenter(place);
-    // 添加当前位置标记
-
-    AMap.convertFrom(
-      `${place?.lng},${place?.lat}`,
-      "gps",
-      function (status, result) {
-        if (result.info === "ok") {
-          var resLnglat = result.locations[0];
-          const marker = new AMap.Marker({
-            position: resLnglat,
-            map: mapInstance,
-            title: "设定的签到地点",
-          });
-
-          mapInstance.add(marker);
-          marker.setLabel({
-            offset: new AMap.Pixel(pixel.x, pixel.y),
-            content: "高德坐标系中首开广场（正确）",
-          });
-        }
-        console.log("result=转换坐标系" + result.locations);
-      }
-    );
-    storage.set("lngAndLat-info", place);
-    setPosition(place);
-    // 获取签到地址信息
-    runGetLocationRegeoAPI({
-      key: process.env.GD_KEY,
-      location: `${place?.lng},${place?.lat}`,
-      output: "JSON",
-      extensions: "base", // 必需参数：base（精简）或 all（详细）
-    });
-  };
   useEffect(() => {
     const AMap = mapInfo?.map;
     const mapInstance = mapInfo?.mapInstance;
-    const geolocation = mapInfo?.geolocation;
-    if (AMap) {
-      if (position) {
-        console.log("进来了多少次===============-----------------------");
-        // 设置中心点坐标
-        mapInstance.setCenter(position);
-        // 添加当前位置标记
-        const marker = new AMap.Marker({
-          position,
-          map: mapInstance,
-          title: "设定的签到地点",
-        });
-        mapInstance.add(marker);
+    // const geolocation = mapInfo?.geolocation;
+    if (AMap && position) {
+      console.log("进来了多少次===============position-----------------------");
+      commonSetCheckInPosition(mapInstance, AMap, position);
+      // 设置中心点坐标
+      console.log(
+        position,
+        "签到地址中心点信息------------position",
+        position instanceof Array
+      );
+      // 获取签到地址中心点信息
+      runGetLocationRegeoAPI({
+        key: process.env.GD_KEY,
+        location: `${getLngAndLat(position)[0]},${getLngAndLat(position)[1]}`,
+        output: "JSON",
+        extensions: "base", // 必需参数：base（精简）或 all（详细）
+      });
+      // 测算两点间距离信息
+      function checkDistance(userLocation, radius = 10) {
         console.log(
+          getLngAndLat(position),
+          "--------------目标位置",
           position,
-          "666------------position",
-          position instanceof Array
+          userLocation
         );
-        // 获取签到地址信息
-        runGetLocationRegeoAPI({
-          key: process.env.GD_KEY,
-          location: `${position[0]},${position[1]}`,
-          output: "JSON",
-          extensions: "base", // 必需参数：base（精简）或 all（详细）
-        });
-        // 测算两点间距离信息
-        function checkDistance(userLocation, radius = 10) {
-          console.log(
-            userLocation,
-            "尽力啊比较--------------目标位置",
-            position
-          );
-          const distance = AMap.GeometryUtil.distance(
-            new AMap.LngLat(userLocation[0], userLocation[1]),
-            new AMap.LngLat(position[0], position[1])
-          );
-          console.log(distance, "接近距离");
-          return distance <= radius; // 返回是否在范围内
-        }
-
-        // 监听是否接近目标地点
-        monitorApproachedTarget(geolocation, checkDistance);
+        const distance = AMap.GeometryUtil.distance(
+          new AMap.LngLat(userLocation[0], userLocation[1]),
+          new AMap.LngLat(getLngAndLat(position)[0], getLngAndLat(position)[1])
+        );
+        console.log(distance, "接近距离");
+        return distance <= radius; // 返回是否在范围内
       }
+
+      // 监听是否接近目标地点
+      monitorApproachedTarget(geolocation, checkDistance);
     }
   }, [position, mapInfo?.map]);
 
@@ -258,7 +136,10 @@ const LocationCheckIn = () => {
     }
 
     // 计算与上次签到的距离(米)
-    const distance = AMap.GeometryUtil.distance(position, lastCheckInPosition);
+    const distance = mapInfo?.map.GeometryUtil.distance(
+      position,
+      lastCheckInPosition
+    );
     console.log(distance, "距离-----------");
     const allowedDistance = 500; // 允许500米内签到
 
@@ -322,7 +203,8 @@ const LocationCheckIn = () => {
       <div style={{ padding: "20px" }}>
         <h2 style={{ margin: "5px 0" }}>获取某地坐标</h2>
         <p>
-          经度：{position?.lng}纬度：{position?.lat}
+          经度：{getLngAndLat(position)[0]}纬度：
+          {getLngAndLat(position)[1]}
         </p>
       </div>
     </div>
