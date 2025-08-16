@@ -7,7 +7,7 @@ import { storage } from "@/utils/storage";
 let myWatchId;
 const LocationCheckIn = () => {
   const [mapInfo, setMapInfo] = useState();
-  const [position, setPosition] = useState(storage.get("lngAndLat-info"));
+  const [position, setPosition] = useState();
   const [checkIns, setCheckIns] = useState<
     {
       id: number;
@@ -90,15 +90,27 @@ const LocationCheckIn = () => {
       zoom: 15, //设置地图显示的缩放级别
       viewMode: "3D", //使用3D视图
     });
+
     // 添加定位控件
     const geolocation = new map.Geolocation({
       enableHighAccuracy: true, //是否使用高精度定位，默认:true
       timeout: 10000,
+      maximumAge: 0, //定位结果缓存0毫秒，默认：0
+      convert: true, //自动偏移坐标，偏移后的坐标为高德坐标，默认：true
+      showButton: true, //显示定位按钮，默认：true
       buttonPosition: "RB",
+      buttonOffset: new map.Pixel(10, 20), //定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+      showMarker: true, //定位成功后在定位到的位置显示点标记，默认：true
+      showCircle: true, //定位成功后用圆圈表示定位精度范围，默认：true
+      panToLocation: true, //定位成功后将定位到的位置作为地图中心点，默认：true
       zoomToAccuracy: true, //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
     });
+    mapInstance.addControl(geolocation);
     setMapInfo({ map, mapInstance, geolocation });
-    if (!position) {
+    const place = storage.get("lngAndLat-info");
+    setPosition(place);
+    console.log(place, "place==========storge", place instanceof Array, !place);
+    if (!place) {
       // 获取当前位置
       geolocation.getCurrentPosition((status, result) => {
         if (status === "complete") {
@@ -123,14 +135,42 @@ const LocationCheckIn = () => {
 
   // 设置签到点
   const handleSetCheckInPosition = (mapInstance, AMap, place) => {
+    //要转换的地理经纬度坐标
+    var longitude = 116.4;
+    var latitude = 39.9;
+
+    //构造成 AMap.LngLat 对象后传入
+    const lnglat = new AMap.LngLat(place?.lng, place?.lat);
+
+    // 获得 AMap.Pixel 对象
+    const pixel = mapInstance.lngLatToContainer(lnglat);
+    console.log(pixel.x, pixel.y, "经纬度换px======"); //即为经纬度在 #container 上对应的像素坐标
+
     // 设置中心点
     mapInstance.setCenter(place);
     // 添加当前位置标记
-    new AMap.Marker({
-      position: place,
-      map: mapInstance,
-      title: "设定的签到地点",
-    });
+
+    AMap.convertFrom(
+      `${place?.lng},${place?.lat}`,
+      "gps",
+      function (status, result) {
+        if (result.info === "ok") {
+          var resLnglat = result.locations[0];
+          const marker = new AMap.Marker({
+            position: resLnglat,
+            map: mapInstance,
+            title: "设定的签到地点",
+          });
+
+          mapInstance.add(marker);
+          marker.setLabel({
+            offset: new AMap.Pixel(pixel.x, pixel.y),
+            content: "高德坐标系中首开广场（正确）",
+          });
+        }
+        console.log("result=转换坐标系" + result.locations);
+      }
+    );
     storage.set("lngAndLat-info", place);
     setPosition(place);
     // 获取签到地址信息
@@ -146,17 +186,17 @@ const LocationCheckIn = () => {
     const mapInstance = mapInfo?.mapInstance;
     const geolocation = mapInfo?.geolocation;
     if (AMap) {
-      mapInstance.addControl(geolocation);
       if (position) {
         console.log("进来了多少次===============-----------------------");
         // 设置中心点坐标
         mapInstance.setCenter(position);
         // 添加当前位置标记
-        new AMap.Marker({
+        const marker = new AMap.Marker({
           position,
           map: mapInstance,
           title: "设定的签到地点",
         });
+        mapInstance.add(marker);
         console.log(
           position,
           "666------------position",

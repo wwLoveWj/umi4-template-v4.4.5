@@ -45,14 +45,15 @@ const Map = () => {
       map: mapInstance,
       title: "设定的签到地点",
     });
+    mapInstance.add(marker);
     storage.set("lngAndLat-info", place);
     setPosition(place);
     // 获取签到地址信息
     runGetLocationRegeoAPI({
       key: process.env.GD_KEY,
       location: first
-        ? `${place?.lng},${place?.lat}`
-        : `${place[0]},${place[1]}`,
+        ? `${place[0]},${place[1]}`
+        : `${place?.lng},${place?.lat}`,
       output: "JSON",
       extensions: "base", // 必需参数：base（精简）或 all（详细）
     });
