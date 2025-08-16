@@ -19,6 +19,7 @@ const LocationCheckIn = () => {
   const [position, setPosition] = useState<
     { lng: number; lat: number } | number[] | undefined
   >(storage.get("lngAndLat-info"));
+  const [currentUser, setCurrentUser] = useState<number[]>([0, 0]);
   const [checkIns, setCheckIns] = useState<
     {
       id: number;
@@ -34,22 +35,54 @@ const LocationCheckIn = () => {
   const [photo, setPhoto] = useState<string | ArrayBuffer | null>(null);
   // 转地址
   const { data: address, run: runGetLocationRegeoAPI } = useRequest(
-    async (params) => {
-      const res = await GetLocationRegeoAPI(params);
+    async (place) => {
+      const res = await GetLocationRegeoAPI({
+        key: process.env.GD_KEY,
+        location: place,
+        output: "JSON",
+        extensions: "base", // 必需参数：base（精简）或 all（详细）
+      });
       return res.data.regeocode.formatted_address;
     },
     {
       manual: true,
-      refreshDeps: [position],
       onSuccess: (res) => {
-        console.log(res, "设置的签到点的地理位置信息=================");
+        console.log(
+          `%c获取设置的签到点的地理位置信息${res}`,
+          "background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); color: white; padding: 2px;"
+        );
       },
       onError(e, params) {
-        console.log(e, params, "逆向编码地址报错了--------------");
+        console.log(e, params, "逆向编码地址报错了---------签到点-----");
       },
     }
   );
-
+  // 当前用户地址
+  const { data: currentAddress, run: runGetCurrentLocationRegeoAPI } =
+    useRequest(
+      async (place) => {
+        const res = await GetLocationRegeoAPI({
+          key: process.env.GD_KEY,
+          location: place,
+          output: "JSON",
+          extensions: "base", // 必需参数：base（精简）或 all（详细）
+        });
+        return res.data.regeocode.formatted_address;
+      },
+      {
+        manual: true,
+        onSuccess: (res) => {
+          console.log(
+            `%c获取当前用户实时的地理位置信息%c${res}`,
+            "color:red;",
+            "color:green;"
+          );
+        },
+        onError(e, params) {
+          console.log(e, params, "逆向编码地址报错了----------实时----");
+        },
+      }
+    );
   // 初始化地图
   const initMap = async () => {
     const getMapConfig = await initMapConfig();
@@ -60,6 +93,7 @@ const LocationCheckIn = () => {
   };
   useEffect(() => {
     initMap();
+
     // 组件卸载时清除监听
     return () => {
       geolocation?.clearWatch();
@@ -67,27 +101,29 @@ const LocationCheckIn = () => {
     };
   }, []);
 
+  const getCurrentUserInfo = async (AMap) => {
+    const place = await monitorApproachedTarget(geolocation, AMap, position);
+    console.log(`%c实时位置${place}`, "background:green");
+    console.count("获取实时位置");
+    setCurrentUser(place);
+    runGetCurrentLocationRegeoAPI(`${place[0]},${place[1]}`);
+  };
   useEffect(() => {
     const AMap = mapInfo?.map;
     const mapInstance = mapInfo?.mapInstance;
     if (AMap && position) {
-      // 标记当前位置
+      // 标记签到点位置
       commonSetCheckInPosition(mapInstance, AMap, position);
       console.log(
-        position,
-        "签到地址中心点信息------------position",
-        position instanceof Array
+        `%c设置的签到地址中心点信息${position}`,
+        "color: yellow; font-size: 20px; background-color: green;"
       );
       // 获取签到地址中心点信息
-      runGetLocationRegeoAPI({
-        key: process.env.GD_KEY,
-        location: `${getLngAndLat(position)[0]},${getLngAndLat(position)[1]}`,
-        output: "JSON",
-        extensions: "base", // 必需参数：base（精简）或 all（详细）
-      });
-
+      runGetLocationRegeoAPI(
+        `${getLngAndLat(position)[0]},${getLngAndLat(position)[1]}`
+      );
       // 监听是否接近目标地点
-      monitorApproachedTarget(geolocation, AMap, position);
+      getCurrentUserInfo(AMap);
     }
   }, [position, mapInfo?.map]);
 
@@ -123,7 +159,7 @@ const LocationCheckIn = () => {
       position,
       lastCheckInPosition
     );
-    console.log(distance, "距离-----------");
+    console.log(`%c距离上次签到位置相差${distance}米`, "background:red;");
     const allowedDistance = 500; // 允许500米内签到
 
     if (distance > allowedDistance) {
@@ -150,7 +186,7 @@ const LocationCheckIn = () => {
       <div id="map-container" style={{ width: "100%", height: "70%" }} />
 
       <div style={{ padding: "20px" }}>
-        <h2>当前位置信息</h2>
+        <h2>签到点位置信息</h2>
         {address && <p>{address}</p>}
         <input
           type="file"
@@ -184,10 +220,12 @@ const LocationCheckIn = () => {
       </div>
 
       <div style={{ padding: "20px" }}>
+        <h2>当前位置信息</h2>
+        {currentAddress && <p>{currentAddress}</p>}
         <h2 style={{ margin: "5px 0" }}>获取某地坐标</h2>
         <p>
-          经度：{getLngAndLat(position)[0]}纬度：
-          {getLngAndLat(position)[1]}
+          经度：{currentUser[0]}纬度：
+          {currentUser[1]}
         </p>
       </div>
     </div>

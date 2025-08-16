@@ -76,38 +76,47 @@ export const commonSetCheckInPosition = (mapInstance, AMap, place) => {
 
 // 测算两点间距离信息
 function checkDistance(AMap, position, userLocation, radius = 10) {
-  console.log("--------------目标位置", position);
+  console.log(`%c目标位置${position}`, "background:green;");
   const distance = AMap.GeometryUtil.distance(
     new AMap.LngLat(userLocation[0], userLocation[1]),
     new AMap.LngLat(getLngAndLat(position)[0], getLngAndLat(position)[1])
   );
-  console.log(distance, "接近距离");
+  console.log(`%c目标位置与当前用户位置之间距离${distance}米`, "color:red;");
   return distance <= radius; // 返回是否在范围内
 }
 // 监听是否接近设定的签到目标地点
-export const monitorApproachedTarget = (geolocation, map, position) => {
-  geolocation.watchPosition((status, result) => {
-    if (status === "complete") {
-      // 实时移动位置
-      const userLocation = [result.position.lng, result.position.lat];
-      const isInRange = checkDistance(map, position, userLocation, 200);
-      console.log("监听目标,用户实时位置", userLocation, isInRange);
-      if (isInRange) {
-        alert("🚨 你已进入目标地点 200 米范围内！");
-        setTimeout(() => {
-          const nav: any = navigator;
-          nav.vibrate =
-            nav.vibrate || nav.webkitVibrate || nav.mozVibrate || nav.msVibrate;
-          if (nav.vibrate) {
-            console.log("支持设备震动！");
-            nav.vibrate(5000);
-          }
-        }, 1000);
-        // 可选：停止监听
-        geolocation.clearWatch();
+export const monitorApproachedTarget = async (geolocation, map, position) => {
+  return new Promise((resolve, reject) => {
+    geolocation?.watchPosition((status, result) => {
+      if (status === "complete") {
+        const userLocation = [result.position.lng, result.position.lat];
+        const isInRange = checkDistance(map, position, userLocation, 200);
+        console.log(
+          `%c监听用户实时位置${userLocation}, 是否在范围内：${isInRange}`,
+          "background:green;"
+        );
+
+        if (isInRange) {
+          alert("🚨 你已进入目标地点 200 米范围内！");
+          setTimeout(() => {
+            const nav: any = navigator;
+            nav.vibrate =
+              nav.vibrate ||
+              nav.webkitVibrate ||
+              nav.mozVibrate ||
+              nav.msVibrate;
+            if (nav.vibrate) {
+              console.log("支持设备震动！");
+              nav.vibrate(5000);
+            }
+          }, 1000);
+          geolocation.clearWatch();
+        }
+        resolve(userLocation); // 返回用户位置
+      } else {
+        console.error("定位失败:", result.message);
+        reject(new Error("定位失败"));
       }
-    } else {
-      console.error("定位失败:", result.message);
-    }
+    });
   });
 };

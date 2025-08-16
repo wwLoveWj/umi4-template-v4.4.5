@@ -1,5 +1,5 @@
 import React from "react";
-import { Steps, PullToRefresh } from "antd-mobile";
+import { Steps, PullToRefresh, Skeleton } from "antd-mobile";
 import styles from "../../../style.less";
 import { useRequest } from "ahooks";
 import { EventInfoListQueryAPI } from "@/service/api/event";
@@ -13,7 +13,11 @@ const colorStatus = {
   2: "#FF0000", //紧急
 };
 export default function MajorEvents({ title = "近期大事件" }) {
-  const { data: eventInfoList, runAsync } = useRequest(EventInfoListQueryAPI, {
+  const {
+    data: eventInfoList,
+    runAsync,
+    loading,
+  } = useRequest(EventInfoListQueryAPI, {
     onSuccess: (res) => {
       // debugger;
     },
@@ -25,39 +29,45 @@ export default function MajorEvents({ title = "近期大事件" }) {
   return (
     <div className={styles.majorEvents}>
       <h2>{title}</h2>
-      <PullToRefresh
-        onRefresh={async () => {
-          await runAsync({});
-        }}
-      >
-        <Steps direction="vertical">
-          {eventInfoList?.map((item) => (
-            <Step
-              title={
-                <div>
-                  <span>{item.title}</span>
-                  <span
-                    style={{
-                      // border: `1px solid ${(colorStatus as any)[item.tag]}`,
-                      width: "12px",
-                      height: "12px",
-                      marginLeft: "10px",
-                      padding: "2px",
-                      borderRadius: "5px",
-                      color: "#fff",
-                      background: (colorStatus as any)[item.tag],
-                    }}
-                  >
-                    {item.tag === 2 ? "重要" : item.tag === 1 ? "待办" : ""}
-                  </span>
-                </div>
-              }
-              status={item.status}
-              key={item.eventId}
-              description={
-                <div>
-                  <p>重要时刻：{formateTime(item?.processTime)}</p>
-                  {/* <p>
+      {loading ? (
+        <>
+          <Skeleton.Title animated />
+          <Skeleton.Paragraph lineCount={5} animated />
+        </>
+      ) : (
+        <PullToRefresh
+          onRefresh={async () => {
+            await runAsync({});
+          }}
+        >
+          <Steps direction="vertical">
+            {eventInfoList?.map((item) => (
+              <Step
+                title={
+                  <div>
+                    <span>{item.title}</span>
+                    <span
+                      style={{
+                        // border: `1px solid ${(colorStatus as any)[item.tag]}`,
+                        width: "12px",
+                        height: "12px",
+                        marginLeft: "10px",
+                        padding: "2px",
+                        borderRadius: "5px",
+                        color: "#fff",
+                        background: (colorStatus as any)[item.tag],
+                      }}
+                    >
+                      {item.tag === 2 ? "重要" : item.tag === 1 ? "待办" : ""}
+                    </span>
+                  </div>
+                }
+                status={item.status}
+                key={item.eventId}
+                description={
+                  <div>
+                    <p>重要时刻：{formateTime(item?.processTime)}</p>
+                    {/* <p>
                   {
                     item.status === "finish"
                     ? `完成时间：${formateTime(item.finishTime)}`
@@ -67,15 +77,16 @@ export default function MajorEvents({ title = "近期大事件" }) {
                       : ""
                   }
                 </p> */}
-                  <span>
-                    {item.description ? `备注：${item.description}` : ""}
-                  </span>
-                </div>
-              }
-            />
-          ))}
-        </Steps>
-      </PullToRefresh>
+                    <span>
+                      {item.description ? `备注：${item.description}` : ""}
+                    </span>
+                  </div>
+                }
+              />
+            ))}
+          </Steps>
+        </PullToRefresh>
+      )}
       {/* <AddFloatingBubble pathname="/event/add" /> */}
     </div>
   );

@@ -18,7 +18,10 @@ const Map = () => {
     {
       manual: true,
       onSuccess: (res) => {
-        console.log(res, "用户所在的地理位置信息=================");
+        console.log(
+          `%c获取签到点的地理位置信息${res}`,
+          "background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet); color: white; padding: 2px;"
+        );
       },
       onError(e, params) {
         console.log(e, params, "逆向编码地址报错了--------------");
@@ -41,7 +44,6 @@ const Map = () => {
     storage.set("lngAndLat-info", place);
     setPosition(place);
     // 获取签到地址信息
-    console.log(getLngAndLat(place), "转变吗钱");
     runGetLocationRegeoAPI({
       key: process.env.GD_KEY,
       location: `${getLngAndLat(place)[0]},${getLngAndLat(place)[1]}`,
@@ -67,12 +69,12 @@ const Map = () => {
       geolocation.getCurrentPosition((status, result) => {
         if (status === "complete") {
           const { position: current } = result;
-          console.log(current, "当前位置");
+          console.log(`%c当前位置${current}`, "color:green;");
           handleSetCheckInPosition(mapInstance, map, current);
         }
       });
     } else {
-      console.log(pos, "存在签到位置------------");
+      console.log(`%c存在签到位置${pos}`, "color:green;");
       handleSetCheckInPosition(mapInstance, map, pos);
     }
   };
